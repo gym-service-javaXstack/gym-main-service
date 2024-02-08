@@ -1,0 +1,3 @@
+data:
+  trainer:
+    path: classpath:TrainerStorage.csv
