@@ -13,4 +13,10 @@ public class User {
     private String userName;
     private String password;
     private Boolean isActive;
+
+    public User(String firstName, String lastName, Boolean isActive) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.isActive = isActive;
+    }
 }

@@ -10,27 +10,32 @@ import java.util.List;
 @Service
 public class TrainerService {
     private final TrainerDao trainerDao;
+    private final ProfileService profileService;
 
     @Autowired
-    public TrainerService(TrainerDao trainerDao) {
+    public TrainerService(TrainerDao trainerDao, ProfileService profileService) {
         this.trainerDao = trainerDao;
+        this.profileService = profileService;
     }
 
     public Trainer createTrainer(Trainer trainer) {
-        trainerDao.save(trainer);
-        return trainer;
-    }
-
-    public Trainer updateTrainer(Trainer trainer) {
-        trainerDao.save(trainer);
-        return trainer;
+        Trainer trainerToSave = new Trainer(
+                trainer.getFirstName(),
+                trainer.getLastName(),
+                profileService.generateUsername(trainer.getFirstName(), trainer.getLastName()),
+                profileService.generatePassword(),
+                trainer.getIsActive(),
+                trainer.getUserId(),
+                trainer.getSpecialization());
+        trainerDao.save(trainerToSave);
+        return trainerToSave;
     }
 
     public Trainer getTrainer(Integer id) {
         return trainerDao.get(id);
     }
 
-    public List<Trainer> getAllTrainers(){
+    public List<Trainer> getAllTrainers() {
         return trainerDao.getAll();
     }
 }

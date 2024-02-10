@@ -1,9 +1,8 @@
-package com.example.springcore.storage;
+package com.example.springcore.storage.impl;
 
-
-import com.example.springcore.model.Trainer;
-import com.example.springcore.model.TrainingType;
+import com.example.springcore.model.Trainee;
 import com.example.springcore.service.ProfileService;
+import com.example.springcore.storage.Storage;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,25 +14,28 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class TrainerStorage {
-    private final ResourceLoader resourceLoader;
-    private final ProfileService profileService;
+public class TraineeStorage implements Storage {
+    private ResourceLoader resourceLoader;
+    private ProfileService profileService;
 
     @Getter
-    private final Map<Integer, Trainer> trainerStorageMap = new HashMap<>();
-    @Value("${data.trainer.path}")
+    private final Map<Integer, Trainee> traineeStorageMap = new HashMap<>();
+
+    @Value("${data.trainee.path}")
     private String dataFilePath;
 
     @Autowired
-    public TrainerStorage(ResourceLoader resourceLoader, ProfileService profileService) {
-        this.resourceLoader = resourceLoader;
+    public void setInjection(ProfileService profileService, ResourceLoader resourceLoader) {
         this.profileService = profileService;
+        this.resourceLoader = resourceLoader;
     }
 
+    @Override
     @PostConstruct
     public void init() {
         Resource resource = resourceLoader.getResource(dataFilePath);
@@ -45,11 +47,12 @@ public class TrainerStorage {
                 String firstName = parts[1];
                 String lastName = parts[2];
                 Boolean isActive = Boolean.parseBoolean(parts[3]);
-                TrainingType specialization = new TrainingType(parts[4]);
+                String address = parts[4];
+                LocalDate localDate = LocalDate.parse(parts[5]);
                 String userName = profileService.generateUsername(firstName, lastName);
                 String password = profileService.generatePassword();
-                Trainer trainer = new Trainer(firstName, lastName, userName, password, isActive, userId, specialization);
-                trainerStorageMap.put(userId, trainer);
+                Trainee trainee = new Trainee(firstName, lastName, userName, password, isActive, userId, address, localDate);
+                traineeStorageMap.put(userId, trainee);
             }
         } catch (IOException e) {
             e.printStackTrace();
