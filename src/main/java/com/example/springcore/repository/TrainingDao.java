@@ -1,6 +1,5 @@
 package com.example.springcore.repository;
 
-import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
 import com.example.springcore.storage.impl.TrainingStorage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,18 +18,18 @@ public class TrainingDao {
     }
 
     public Training createTraining(Training training) {
-        int newId = storage.getTrainingStorageMap().size() + 1;
+        int newId = storage.getStorageMap().size() + 1;
         training.setTrainingId(newId);
 
-        storage.getTrainingStorageMap().put(newId, training);
+        storage.getStorageMap().put(newId, training);
         return training;
     }
 
     public Training getTraining(int trainingId) {
-        return storage.getTrainingStorageMap().get(trainingId);
+        return storage.getStorageMap().get(trainingId);
     }
 
     public List<Training> getAll() {
-        return new ArrayList<>(storage.getTrainingStorageMap().values());
+        return new ArrayList<>(storage.getStorageMap().values());
     }
 }

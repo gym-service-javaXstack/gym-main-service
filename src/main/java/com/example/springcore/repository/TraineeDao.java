@@ -18,18 +18,18 @@ public class TraineeDao {
     }
 
     public Trainee get(Integer id) {
-        return storage.getTraineeStorageMap().get(id);
+        return storage.getStorageMap().get(id);
     }
 
     public void save(Trainee trainee) {
-        storage.getTraineeStorageMap().put(trainee.getUserId(), trainee);
+        storage.getStorageMap().put(trainee.getUserId(), trainee);
     }
 
     public List<Trainee> getAll() {
-        return new ArrayList<>(storage.getTraineeStorageMap().values());
+        return new ArrayList<>(storage.getStorageMap().values());
     }
 
     public void delete(Integer id) {
-        storage.getTraineeStorageMap().remove(id);
+        storage.getStorageMap().remove(id);
     }
 }

@@ -18,14 +18,14 @@ public class TrainerDao {
     }
 
     public Trainer get(Integer id) {
-        return storage.getTrainerStorageMap().get(id);
+        return storage.getStorageMap().get(id);
     }
 
     public void save(Trainer trainer) {
-        storage.getTrainerStorageMap().put(trainer.getUserId(), trainer);
+        storage.getStorageMap().put(trainer.getUserId(), trainer);
     }
 
     public List<Trainer> getAll() {
-        return new ArrayList<>(storage.getTrainerStorageMap().values());
+        return new ArrayList<>(storage.getStorageMap().values());
     }
 }
