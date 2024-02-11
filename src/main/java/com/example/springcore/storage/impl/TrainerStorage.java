@@ -26,7 +26,15 @@ public class TrainerStorage extends AbstractStorage<Trainer> {
         TrainingType specialization = new TrainingType(parts[4]);
         String userName = profileService.generateUsername(firstName, lastName);
         String password = profileService.generatePassword();
-        return new Trainer(firstName, lastName, userName, password, isActive, userId, specialization);
+        return Trainer.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .userName(userName)
+                .password(password)
+                .isActive(isActive)
+                .userId(userId)
+                .specialization(specialization)
+                .build();
     }
 
     @Override

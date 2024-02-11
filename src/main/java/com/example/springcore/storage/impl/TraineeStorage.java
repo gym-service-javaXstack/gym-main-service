@@ -28,7 +28,16 @@ public class TraineeStorage extends AbstractStorage<Trainee> {
         LocalDate localDate = LocalDate.parse(parts[5]);
         String userName = profileService.generateUsername(firstName, lastName);
         String password = profileService.generatePassword();
-        return new Trainee(firstName, lastName, userName, password, isActive, userId, address, localDate);
+        return Trainee.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .userName(userName)
+                .password(password)
+                .isActive(isActive)
+                .userId(userId)
+                .address(address)
+                .dateOfBirth(localDate)
+                .build();
     }
 
     @Override

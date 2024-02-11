@@ -20,7 +20,6 @@ public class TrainingDao {
     public Training createTraining(Training training) {
         int newId = storage.getStorageMap().size() + 1;
         training.setTrainingId(newId);
-
         storage.getStorageMap().put(newId, training);
         return training;
     }

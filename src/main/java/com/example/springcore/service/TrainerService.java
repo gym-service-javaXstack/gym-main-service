@@ -2,6 +2,8 @@ package com.example.springcore.service;
 
 import com.example.springcore.model.Trainer;
 import com.example.springcore.repository.TrainerDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,7 @@ import java.util.List;
 
 @Service
 public class TrainerService {
+    private static final Logger logger = LoggerFactory.getLogger(TrainerService.class);
     private final TrainerDao trainerDao;
     private final ProfileService profileService;
 
@@ -19,23 +22,29 @@ public class TrainerService {
     }
 
     public Trainer createTrainer(Trainer trainer) {
-        Trainer trainerToSave = new Trainer(
-                trainer.getFirstName(),
-                trainer.getLastName(),
-                profileService.generateUsername(trainer.getFirstName(), trainer.getLastName()),
-                profileService.generatePassword(),
-                trainer.getIsActive(),
-                trainer.getUserId(),
-                trainer.getSpecialization());
+        Trainer trainerToSave = Trainer.builder()
+                .firstName(trainer.getFirstName())
+                .lastName(trainer.getLastName())
+                .userName(profileService.generateUsername(trainer.getFirstName(), trainer.getLastName()))
+                .password(profileService.generatePassword())
+                .isActive(trainer.getIsActive())
+                .userId(trainer.getUserId())
+                .specialization(trainer.getSpecialization())
+                .build();
         trainerDao.save(trainerToSave);
+        logger.info("Created trainer: {}", trainerToSave.getUserId());
         return trainerToSave;
     }
 
     public Trainer getTrainer(Integer id) {
-        return trainerDao.get(id);
+        Trainer trainer = trainerDao.get(id);
+        logger.info("Retrieved trainer: {}", id);
+        return trainer;
     }
 
     public List<Trainer> getAllTrainers() {
-        return trainerDao.getAll();
+        List<Trainer> trainers = trainerDao.getAll();
+        logger.info("Retrieved all trainers");
+        return trainers;
     }
 }

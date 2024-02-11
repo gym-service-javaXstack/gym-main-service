@@ -1,10 +1,12 @@
 package com.example.springcore.model;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @ToString
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -13,10 +15,4 @@ public class User {
     private String userName;
     private String password;
     private Boolean isActive;
-
-    public User(String firstName, String lastName, Boolean isActive) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.isActive = isActive;
-    }
 }

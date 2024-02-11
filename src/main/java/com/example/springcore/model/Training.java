@@ -7,6 +7,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Training {

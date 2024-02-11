@@ -5,3 +5,7 @@ data:
     path: classpath:TraineeStorage.csv
   training:
     path: classpath:TrainingStorage.csv
+
+logging:
+  level:
+    root: INFO

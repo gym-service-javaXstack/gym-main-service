@@ -21,8 +21,11 @@ public class TraineeDao {
         return storage.getStorageMap().get(id);
     }
 
-    public void save(Trainee trainee) {
-        storage.getStorageMap().put(trainee.getUserId(), trainee);
+    public Trainee save(Trainee trainee) {
+        int newId = storage.getStorageMap().size() + 1;
+        trainee.setUserId(newId);
+        storage.getStorageMap().put(newId, trainee);
+        return storage.getStorageMap().get(newId);
     }
 
     public List<Trainee> getAll() {
