@@ -1,14 +1,14 @@
 package com.example.springcore.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@SuperBuilder
+@ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Trainee extends User{
