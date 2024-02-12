@@ -30,38 +30,19 @@ public class SpringCoreApplication {
                 .build());
         System.out.println("--------------------------------------------------------------------------------");
 
-        System.out.println("----------------------------------ALL TRAINERS----------------------------------------------");
-        List<Trainer> allTrainers = trainingFacade.getAllTrainers();
 
-        allTrainers.forEach((a)-> System.out.println(a));
-        System.out.println("--------------------------------------------------------------------------------");
-
-        System.out.println("-----------------------------CREATING TRAINEE-------------------------------");
-
-
+        System.out.println("----------------------------------CREATING TRAINEE----------------------------------------------");
         trainingFacade.createTrainee(Trainee.builder()
-                .firstName("TRAINEE")
+                .firstName("TRAINER")
                 .lastName("CREATED")
                 .isActive(true)
-                .address("123 Main St")
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .dateOfBirth(LocalDate.now())
+                .address("Home street")
                 .build());
-
-        System.out.println("------------------------------------------------------------------------");
-
-
-        System.out.println("---------------------------------ALL TRAINEES---------------------------------------");
-
-        List<Trainee> allTrainee = trainingFacade.getAllTrainee();
-
-        allTrainee.forEach((a)-> System.out.println(a));
-
-        System.out.println("------------------------------------------------------------------------");
-
-
+        System.out.println("--------------------------------------------------------------------------------");
 
         System.out.println("-------------------------------CREATING TRAINING-----------------------------------------");
-        trainingFacade.createTrainingScenario(4, 4, Training.builder()
+        trainingFacade.createTrainingScenario(6, 5, Training.builder()
                 .trainingName("Test Training")
                 .trainingType( new TrainingType("KICKBOXING"))
                 .trainingDate(LocalDate.now())
@@ -69,12 +50,5 @@ public class SpringCoreApplication {
                 .build());
         System.out.println("--------------------------------------------------------------------------------");
 
-
-        System.out.println("-------------------------------ALL TRAININGS-----------------------------------------");
-        List<Training> allTrainings = trainingFacade.getAllTrainings();
-
-        allTrainings.forEach((a)-> System.out.println(a));
-
-        System.out.println("------------------------------------------------------------------------");
     }
 }

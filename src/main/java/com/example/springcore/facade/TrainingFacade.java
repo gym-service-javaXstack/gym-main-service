@@ -3,7 +3,6 @@ package com.example.springcore.facade;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
-import com.example.springcore.service.ProfileService;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingService;
@@ -68,13 +67,15 @@ public class TrainingFacade {
                 trainerId, traineeId, newTraining.getTrainingId());
     }
 
-    public List<Training> getAllTrainings(){
+    public List<Training> getAllTrainings() {
         return trainingService.getAllTrainings();
     }
-    public List<Trainee> getAllTrainee(){
+
+    public List<Trainee> getAllTrainee() {
         return traineeService.getAllTrainees();
     }
-    public List<Trainer> getAllTrainers(){
+
+    public List<Trainer> getAllTrainers() {
         return trainerService.getAllTrainers();
     }
 }

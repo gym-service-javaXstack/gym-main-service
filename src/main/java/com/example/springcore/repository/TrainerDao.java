@@ -28,6 +28,11 @@ public class TrainerDao {
         return storage.getStorageMap().get(newId);
     }
 
+    public Trainer update(Trainer trainer) {
+        storage.getStorageMap().put(trainer.getUserId(), trainer);
+        return storage.getStorageMap().get(trainer.getUserId());
+    }
+
     public List<Trainer> getAll() {
         return new ArrayList<>(storage.getStorageMap().values());
     }

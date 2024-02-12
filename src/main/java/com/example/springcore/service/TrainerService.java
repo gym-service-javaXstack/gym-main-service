@@ -36,6 +36,12 @@ public class TrainerService {
         return trainerToSave;
     }
 
+    public Trainer updateTrainer(Trainer trainer) {
+        Trainer update = trainerDao.update(trainer);
+        logger.info("Updated trainer: {}", trainer.getUserId());
+        return update;
+    }
+
     public Trainer getTrainer(Integer id) {
         Trainer trainer = trainerDao.get(id);
         logger.info("Retrieved trainer: {}", id);

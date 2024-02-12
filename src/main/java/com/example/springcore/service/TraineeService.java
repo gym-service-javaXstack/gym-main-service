@@ -38,7 +38,7 @@ public class TraineeService {
     }
 
     public Trainee updateTrainee(Trainee trainee) {
-        traineeDao.save(trainee);
+        traineeDao.update(trainee);
         logger.info("Updated trainee: {}", trainee.getUserId());
         return trainee;
     }
