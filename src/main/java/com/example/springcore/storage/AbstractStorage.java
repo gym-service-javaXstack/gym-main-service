@@ -40,9 +40,9 @@ public abstract class AbstractStorage<T> {
                 storageMap.put(getId(entity), entity);
                 logger.debug("Added entity with id: {}", getId(entity));
             }
-            logger.info("Successfully uploaded entities from file with path: " + getDataFilePath());
+            logger.info("Successfully uploaded entities from file with path: {}", getDataFilePath());
         } catch (IOException e) {
-            logger.error("Error reading data file " + e.getMessage());
+            logger.error("Error reading data file {}", e.getMessage());
         }
         logger.debug("END STORAGE INITIALIZATION");
     }

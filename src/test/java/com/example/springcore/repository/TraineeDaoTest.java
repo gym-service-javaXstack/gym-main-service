@@ -1,6 +1,7 @@
 package com.example.springcore.repository;
 
 import com.example.springcore.model.Trainee;
+import com.example.springcore.repository.impl.TraineeDao;
 import com.example.springcore.storage.impl.TraineeStorage;
 import com.example.springcore.util.TestUtil;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
@@ -36,10 +38,11 @@ class TraineeDaoTest {
         when(traineeStorage.getStorageMap()).thenReturn(storageMap);
 
         // When
-        Trainee result = traineeDao.get(1);
+        Optional<Trainee> result = traineeDao.get(1);
 
         // Then
-        assertThat(result, samePropertyValuesAs(expectedTrainee));
+        assertTrue(result.isPresent());
+        assertThat(result.get(), samePropertyValuesAs(expectedTrainee));
     }
 
     @Test
@@ -68,7 +71,7 @@ class TraineeDaoTest {
         when(traineeStorage.getStorageMap()).thenReturn(storageMap);
 
         // When
-        Trainee result = traineeDao.update(trainee);
+        Trainee result = traineeDao.update(trainee, trainee.getUserId());
 
         // Then
         assertThat(result, samePropertyValuesAs(trainee));

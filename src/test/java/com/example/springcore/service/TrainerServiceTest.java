@@ -1,7 +1,7 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.Trainer;
-import com.example.springcore.repository.TrainerDao;
+import com.example.springcore.repository.impl.TrainerDao;
 import com.example.springcore.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
@@ -50,27 +51,28 @@ class TrainerServiceTest {
     void updateTrainer() {
         // Given
         Trainer trainer = TestUtil.createTestTrainer();
-        when(trainerDao.update(any(Trainer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(trainerDao.update(any(Trainer.class),anyInt())).thenAnswer(invocation -> invocation.getArgument(0));
 
         // When
         Trainer result = trainerService.updateTrainer(trainer);
 
         // Then
         assertThat(result, samePropertyValuesAs(trainer));
-        verify(trainerDao, times(1)).update(any(Trainer.class));
+        verify(trainerDao, times(1)).update(any(Trainer.class),anyInt());
     }
 
     @Test
     void getTrainer() {
         // Given
         Trainer expectedTrainer = TestUtil.createTestTrainer();
-        when(trainerDao.get(anyInt())).thenReturn(expectedTrainer);
+        when(trainerDao.get(anyInt())).thenReturn(Optional.of(expectedTrainer));
 
         // When
-        Trainer result = trainerService.getTrainer(1);
+        Optional<Trainer> result = trainerService.getTrainer(1);
 
         // Then
-        assertThat(result, samePropertyValuesAs(expectedTrainer));
+        assertTrue(result.isPresent());
+        assertThat(result.get(), samePropertyValuesAs(expectedTrainer));
     }
 
     @Test

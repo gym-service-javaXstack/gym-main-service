@@ -6,35 +6,27 @@ import com.example.springcore.model.Training;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TrainingFacade {
     private static final Logger logger = LoggerFactory.getLogger(TrainingFacade.class);
     private final TrainerService trainerService;
     private final TraineeService traineeService;
     private final TrainingService trainingService;
 
-    @Autowired
-    public TrainingFacade(TrainerService trainerService, TraineeService traineeService, TrainingService trainingService) {
-        this.trainerService = trainerService;
-        this.traineeService = traineeService;
-        this.trainingService = trainingService;
-    }
-
     public Trainer createTrainer(Trainer trainer) {
-        Trainer newTrainer = trainerService.createTrainer(trainer);
-        return newTrainer;
+        return trainerService.createTrainer(trainer);
     }
 
     public Trainee createTrainee(Trainee trainee) {
-        Trainee newTrainee = traineeService.createTrainee(trainee);
-        return newTrainee;
+        return traineeService.createTrainee(trainee);
     }
 
     public void deleteTrainee(Integer id) {
@@ -42,17 +34,17 @@ public class TrainingFacade {
     }
 
     public void createTrainingScenario(Integer trainerId, Integer traineeId, Training training) {
-        Trainer trainer = trainerService.getTrainer(trainerId);
-        if (trainer == null) {
-            logger.error("Trainer with id {} not found", trainerId);
-            throw new IllegalArgumentException("Trainer not found");
-        }
+        Trainer trainer = trainerService.getTrainer(trainerId)
+                .orElseThrow(() -> {
+                    logger.error("Trainer with id {} not found", trainerId);
+                    return new IllegalArgumentException("Trainer not found");
+                });
 
-        Trainee trainee = traineeService.getTrainee(traineeId);
-        if (trainee == null) {
-            logger.error("Trainee with id {} not found", traineeId);
-            throw new IllegalArgumentException("Trainee not found");
-        }
+        Trainee trainee = traineeService.getTrainee(traineeId)
+                .orElseThrow(() -> {
+                    logger.error("Trainee with id {} not found", traineeId);
+                    return new IllegalArgumentException("Trainee not found");
+                });
 
         Training newTraining = trainingService.createTraining(Training.builder()
                 .traineeId(trainee.getUserId())

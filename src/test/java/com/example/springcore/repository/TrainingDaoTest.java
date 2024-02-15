@@ -1,6 +1,7 @@
 package com.example.springcore.repository;
 
 import com.example.springcore.model.Training;
+import com.example.springcore.repository.impl.TrainingDao;
 import com.example.springcore.storage.impl.TrainingStorage;
 import com.example.springcore.util.TestUtil;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
@@ -34,7 +36,7 @@ class TrainingDaoTest {
         when(trainingStorage.getStorageMap()).thenReturn(storageMap);
 
         // When
-        Training result = trainingDao.createTraining(training);
+        Training result = trainingDao.save(training);
 
         // Then
         assertThat(result, samePropertyValuesAs(training));
@@ -51,10 +53,11 @@ class TrainingDaoTest {
         when(trainingStorage.getStorageMap()).thenReturn(storageMap);
 
         // When
-        Training result = trainingDao.getTraining(1);
+        Optional<Training> result = trainingDao.get(1);
 
         // Then
-        assertThat(result, samePropertyValuesAs(expectedTraining));
+        assertTrue(result.isPresent());
+        assertThat(result.get(), samePropertyValuesAs(expectedTraining));
     }
 
     @Test

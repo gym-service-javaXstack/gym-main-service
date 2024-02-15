@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
@@ -80,8 +81,8 @@ class TrainingFacadeTest {
         Integer trainerId = 1;
         Integer traineeId = 1;
         Training training = TestUtil.createTestTraining();
-        when(trainerService.getTrainer(trainerId)).thenReturn(TestUtil.createTestTrainer());
-        when(traineeService.getTrainee(traineeId)).thenReturn(TestUtil.createTestTrainee());
+        when(trainerService.getTrainer(trainerId)).thenReturn(Optional.of(TestUtil.createTestTrainer()));
+        when(traineeService.getTrainee(traineeId)).thenReturn(Optional.of(TestUtil.createTestTrainee()));
         when(trainingService.createTraining(any(Training.class))).thenReturn(training);
 
         // When
@@ -99,7 +100,7 @@ class TrainingFacadeTest {
         Integer trainerId = 1;
         Integer traineeId = 1;
         Training training = TestUtil.createTestTraining();
-        when(trainerService.getTrainer(trainerId)).thenReturn(null);
+        when(trainerService.getTrainer(trainerId)).thenReturn(Optional.empty());
 
         // When
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -116,8 +117,8 @@ class TrainingFacadeTest {
         Integer trainerId = 1;
         Integer traineeId = 1;
         Training training = TestUtil.createTestTraining();
-        when(trainerService.getTrainer(trainerId)).thenReturn(TestUtil.createTestTrainer());
-        when(traineeService.getTrainee(traineeId)).thenReturn(null);
+        when(trainerService.getTrainer(trainerId)).thenReturn(Optional.of(TestUtil.createTestTrainer()));
+        when(traineeService.getTrainee(traineeId)).thenReturn(Optional.empty());
 
         // When
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {

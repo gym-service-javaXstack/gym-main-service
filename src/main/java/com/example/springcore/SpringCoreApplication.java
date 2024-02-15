@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @SpringBootApplication
 public class SpringCoreApplication {
@@ -33,7 +32,7 @@ public class SpringCoreApplication {
 
         System.out.println("----------------------------------CREATING TRAINEE----------------------------------------------");
         trainingFacade.createTrainee(Trainee.builder()
-                .firstName("TRAINER")
+                .firstName("TRAINEE")
                 .lastName("CREATED")
                 .isActive(true)
                 .dateOfBirth(LocalDate.now())
@@ -50,5 +49,17 @@ public class SpringCoreApplication {
                 .build());
         System.out.println("--------------------------------------------------------------------------------");
 
+
+        System.out.println("-----------------------------ALL TRAINEE---------------------------------------------------");
+        trainingFacade.getAllTrainee().forEach(System.out::println);
+        System.out.println("--------------------------------------------------------------------------------");
+
+        System.out.println("-----------------------------ALL TRAINERS---------------------------------------------------");
+        trainingFacade.getAllTrainers().forEach(System.out::println);
+        System.out.println("--------------------------------------------------------------------------------");
+
+        System.out.println("-----------------------------ALL TRAINING---------------------------------------------------");
+        trainingFacade.getAllTrainings().forEach(System.out::println);
+        System.out.println("--------------------------------------------------------------------------------");
     }
 }

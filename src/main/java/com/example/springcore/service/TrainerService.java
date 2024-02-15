@@ -1,25 +1,21 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.Trainer;
-import com.example.springcore.repository.TrainerDao;
+import com.example.springcore.repository.impl.TrainerDao;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TrainerService {
     private static final Logger logger = LoggerFactory.getLogger(TrainerService.class);
     private final TrainerDao trainerDao;
     private final ProfileService profileService;
-
-    @Autowired
-    public TrainerService(TrainerDao trainerDao, ProfileService profileService) {
-        this.trainerDao = trainerDao;
-        this.profileService = profileService;
-    }
 
     public Trainer createTrainer(Trainer trainer) {
         Trainer trainerToSave = Trainer.builder()
@@ -37,14 +33,14 @@ public class TrainerService {
     }
 
     public Trainer updateTrainer(Trainer trainer) {
-        Trainer update = trainerDao.update(trainer);
+        Trainer update = trainerDao.update(trainer, trainer.getUserId());
         logger.info("Updated trainer: {}", trainer.getUserId());
         return update;
     }
 
-    public Trainer getTrainer(Integer id) {
-        Trainer trainer = trainerDao.get(id);
-        logger.info("Retrieved trainer: {}", id);
+    public Optional<Trainer> getTrainer(Integer id) {
+        Optional<Trainer> trainer = trainerDao.get(id);
+        trainer.ifPresent(t -> logger.info("Retrieved trainer: {}", id));
         return trainer;
     }
 

@@ -1,25 +1,21 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.Trainee;
-import com.example.springcore.repository.TraineeDao;
+import com.example.springcore.repository.impl.TraineeDao;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TraineeService {
     private static final Logger logger = LoggerFactory.getLogger(TraineeService.class);
     private final TraineeDao traineeDao;
     private final ProfileService profileService;
-
-    @Autowired
-    public TraineeService(TraineeDao traineeDao, ProfileService profileService) {
-        this.traineeDao = traineeDao;
-        this.profileService = profileService;
-    }
 
     public Trainee createTrainee(Trainee trainee) {
         Trainee traineeToSave = Trainee.builder()
@@ -38,14 +34,14 @@ public class TraineeService {
     }
 
     public Trainee updateTrainee(Trainee trainee) {
-        traineeDao.update(trainee);
+        traineeDao.update(trainee, trainee.getUserId());
         logger.info("Updated trainee: {}", trainee.getUserId());
         return trainee;
     }
 
-    public Trainee getTrainee(Integer id) {
-        Trainee trainee = traineeDao.get(id);
-        logger.info("Retrieved trainee: {}", id);
+    public Optional<Trainee> getTrainee(Integer id) {
+        Optional<Trainee> trainee = traineeDao.get(id);
+        trainee.ifPresent(t -> logger.info("Retrieved trainee: {}", id));
         return trainee;
     }
 

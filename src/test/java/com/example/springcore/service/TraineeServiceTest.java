@@ -1,7 +1,7 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.Trainee;
-import com.example.springcore.repository.TraineeDao;
+import com.example.springcore.repository.impl.TraineeDao;
 import com.example.springcore.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
@@ -49,27 +50,28 @@ class TraineeServiceTest {
     void updateTrainee() {
         // Given
         Trainee trainee = TestUtil.createTestTrainee();
-        when(traineeDao.update(any(Trainee.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(traineeDao.update(any(Trainee.class), anyInt())).thenAnswer(invocation -> invocation.getArgument(0));
 
         // When
         Trainee result = traineeService.updateTrainee(trainee);
 
         // Then
         assertThat(result, samePropertyValuesAs(trainee));
-        verify(traineeDao, times(1)).update(any(Trainee.class));
+        verify(traineeDao, times(1)).update(any(Trainee.class), anyInt());
     }
 
     @Test
     void getTrainee() {
         // Given
         Trainee expectedTrainee = TestUtil.createTestTrainee();
-        when(traineeDao.get(anyInt())).thenReturn(expectedTrainee);
+        when(traineeDao.get(anyInt())).thenReturn(Optional.of(expectedTrainee));
 
         // When
-        Trainee result = traineeService.getTrainee(1);
+        Optional<Trainee> result = traineeService.getTrainee(1);
 
         // Then
-        assertThat(result, samePropertyValuesAs(expectedTrainee));
+        assertTrue(result.isPresent());
+        assertThat(result.get(), samePropertyValuesAs(expectedTrainee));
     }
 
     @Test
