@@ -1,0 +1,11 @@
+data:
+  trainer:
+    path: classpath:TrainerStorage.csv
+  trainee:
+    path: classpath:TraineeStorage.csv
+  training:
+    path: classpath:TrainingStorage.csv
+
+logging:
+  level:
+    root: INFO
