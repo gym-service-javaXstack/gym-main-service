@@ -47,8 +47,8 @@ public class TrainingFacade {
                 });
 
         Training newTraining = trainingService.createTraining(Training.builder()
-                .traineeId(trainee.getUserId())
-                .trainerId(trainer.getUserId())
+                .trainer(trainer)
+                .trainee(trainee)
                 .trainingName(training.getTrainingName())
                 .trainingType(training.getTrainingType())
                 .trainingDate(training.getTrainingDate())

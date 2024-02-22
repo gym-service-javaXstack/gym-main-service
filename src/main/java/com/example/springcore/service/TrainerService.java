@@ -1,6 +1,7 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.Trainer;
+import com.example.springcore.model.User;
 import com.example.springcore.repository.impl.TrainerDao;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,23 +19,26 @@ public class TrainerService {
     private final ProfileService profileService;
 
     public Trainer createTrainer(Trainer trainer) {
-        Trainer trainerToSave = Trainer.builder()
-                .firstName(trainer.getFirstName())
-                .lastName(trainer.getLastName())
-                .userName(profileService.generateUsername(trainer.getFirstName(), trainer.getLastName()))
+        User user = User.builder()
+                .firstName(trainer.getUser().getFirstName())
+                .lastName(trainer.getUser().getLastName())
+                .userName(profileService.generateUsername(trainer.getUser().getFirstName(), trainer.getUser().getLastName()))
                 .password(profileService.generatePassword())
-                .isActive(trainer.getIsActive())
-                .userId(trainer.getUserId())
+                .isActive(trainer.getUser().getIsActive())
+                .build();
+
+        Trainer trainerToSave = Trainer.builder()
+                .user(user)
                 .specialization(trainer.getSpecialization())
                 .build();
         trainerDao.save(trainerToSave);
-        logger.info("Created trainer: {}", trainerToSave.getUserId());
+        logger.info("Created trainer: {}", trainerToSave.getUser().getId());
         return trainerToSave;
     }
 
     public Trainer updateTrainer(Trainer trainer) {
-        Trainer update = trainerDao.update(trainer, trainer.getUserId());
-        logger.info("Updated trainer: {}", trainer.getUserId());
+        Trainer update = trainerDao.save(trainer);
+        logger.info("Updated trainer: {}", trainer.getUser().getId());
         return update;
     }
 

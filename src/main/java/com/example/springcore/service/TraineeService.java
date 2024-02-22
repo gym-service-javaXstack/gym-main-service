@@ -1,6 +1,7 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.Trainee;
+import com.example.springcore.model.User;
 import com.example.springcore.repository.impl.TraineeDao;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,24 +19,28 @@ public class TraineeService {
     private final ProfileService profileService;
 
     public Trainee createTrainee(Trainee trainee) {
-        Trainee traineeToSave = Trainee.builder()
-                .firstName(trainee.getFirstName())
-                .lastName(trainee.getLastName())
-                .userName(profileService.generateUsername(trainee.getFirstName(), trainee.getLastName()))
+        User user = User.builder()
+                .firstName(trainee.getUser().getFirstName())
+                .lastName(trainee.getUser().getLastName())
+                .userName(profileService.generateUsername(trainee.getUser().getFirstName(), trainee.getUser().getLastName()))
                 .password(profileService.generatePassword())
-                .isActive(trainee.getIsActive())
-                .userId(trainee.getUserId())
+                .isActive(trainee.getUser().getIsActive())
+                .build();
+
+        Trainee traineeToSave = Trainee.builder()
+                .user(user)
                 .address(trainee.getAddress())
                 .dateOfBirth(trainee.getDateOfBirth())
                 .build();
+
         traineeDao.save(traineeToSave);
-        logger.info("Created trainee: {}", traineeToSave.getUserId());
+        logger.info("Created trainee: {}", traineeToSave.getUser().getId());
         return traineeToSave;
     }
 
     public Trainee updateTrainee(Trainee trainee) {
-        traineeDao.update(trainee, trainee.getUserId());
-        logger.info("Updated trainee: {}", trainee.getUserId());
+        traineeDao.save(trainee);
+        logger.info("Updated trainee: {}", trainee.getUser().getId());
         return trainee;
     }
 

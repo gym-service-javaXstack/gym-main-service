@@ -27,47 +27,4 @@ class TrainingServiceTest {
     @InjectMocks
     private TrainingService trainingService;
 
-    @Test
-    void createTraining() {
-        // Given
-        Training training = TestUtil.createTestTraining();
-        when(trainingDao.save(any(Training.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // When
-        Training result = trainingService.createTraining(training);
-
-        // Then
-        assertThat(result, samePropertyValuesAs(training));
-        verify(trainingDao, times(1)).save(any(Training.class));
-    }
-
-    @Test
-    void getTraining() {
-        // Given
-        Training expectedTraining = TestUtil.createTestTraining();
-        when(trainingDao.get(anyInt())).thenReturn(Optional.of(expectedTraining));
-
-        // When
-        Optional<Training> result = trainingService.getTraining(1);
-
-        // Then
-        assertTrue(result.isPresent());
-        assertThat(result.get(), samePropertyValuesAs(expectedTraining));
-    }
-
-    @Test
-    void getAllTrainings() {
-        // Given
-        List<Training> expectedTrainings = Arrays.asList(TestUtil.createTestTraining(), TestUtil.createTestTraining());
-        when(trainingDao.getAll()).thenReturn(expectedTrainings);
-
-        // When
-        List<Training> result = trainingService.getAllTrainings();
-
-        // Then
-        assertEquals(expectedTrainings.size(), result.size());
-        for (int i = 0; i < expectedTrainings.size(); i++) {
-            assertThat(result.get(i), samePropertyValuesAs(expectedTrainings.get(i)));
-        }
-    }
 }

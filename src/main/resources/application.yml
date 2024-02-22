@@ -9,3 +9,13 @@ data:
 logging:
   level:
     root: INFO
+
+db:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/gym
+  username: postgres
+  password: postgres
+hibernate:
+  show_sql: true
+  hbm2ddl:
+    auto: update
