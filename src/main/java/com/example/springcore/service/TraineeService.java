@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,25 +40,28 @@ public class TraineeService {
     }
 
     public Trainee updateTrainee(Trainee trainee) {
+        if (!profileService.isAuthenticated(trainee.getUser().getUserName())) {
+            throw new RuntimeException("User is not authenticated");
+        }
         traineeDao.save(trainee);
         logger.info("Updated trainee: {}", trainee.getUser().getId());
         return trainee;
     }
 
-    public Optional<Trainee> getTrainee(Integer id) {
-        Optional<Trainee> trainee = traineeDao.get(id);
-        trainee.ifPresent(t -> logger.info("Retrieved trainee: {}", id));
-        return trainee;
+    public void deleteTrainee(String username) {
+        if (!profileService.isAuthenticated(username)) {
+            throw new RuntimeException("User is not authenticated " + username);
+        }
+        traineeDao.delete(username);
+        logger.info("Deleted trainee: {}", username);
     }
 
-    public List<Trainee> getAllTrainees() {
-        List<Trainee> trainees = traineeDao.getAll();
-        logger.info("Retrieved all trainees");
-        return trainees;
-    }
-
-    public void deleteTrainee(Integer id) {
-        traineeDao.delete(id);
-        logger.info("Deleted trainee: {}", id);
+    public Optional<Trainee> getByUsername(String username) {
+        if (!profileService.isAuthenticated(username)) {
+            throw new RuntimeException("User is not authenticated");
+        }
+        Optional<Trainee> byUsername = traineeDao.getUserByUsername(username, User::getTrainee);
+        byUsername.ifPresent(trainee -> logger.info("getByUsername trainee: {}", trainee.getUser().getUserName()));
+        return byUsername;
     }
 }

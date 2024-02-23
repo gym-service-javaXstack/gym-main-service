@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,45 +30,42 @@ public class TrainingFacade {
         return traineeService.createTrainee(trainee);
     }
 
-    public void deleteTrainee(Integer id) {
-        traineeService.deleteTrainee(id);
+    public void deleteTrainee(String username) {
+        traineeService.deleteTrainee(username);
     }
 
-    public void createTrainingScenario(Integer trainerId, Integer traineeId, Training training) {
-        Trainer trainer = trainerService.getTrainer(trainerId)
-                .orElseThrow(() -> {
-                    logger.error("Trainer with id {} not found", trainerId);
-                    return new IllegalArgumentException("Trainer not found");
-                });
+//    public void createTrainingScenario(Integer trainerId, Integer traineeId, Training training) {
+//        Trainer trainer = trainerService.getTrainer(trainerId)
+//                .orElseThrow(() -> {
+//                    logger.error("Trainer with id {} not found", trainerId);
+//                    return new IllegalArgumentException("Trainer not found");
+//                });
+//
+//        Trainee trainee = traineeService.getTrainee(traineeId)
+//                .orElseThrow(() -> {
+//                    logger.error("Trainee with id {} not found", traineeId);
+//                    return new IllegalArgumentException("Trainee not found");
+//                });
+//
+//        Training newTraining = trainingService.createTraining(Training.builder()
+//                .trainer(trainer)
+//                .trainee(trainee)
+//                .trainingName(training.getTrainingName())
+//                .trainingType(training.getTrainingType())
+//                .trainingDate(training.getTrainingDate())
+//                .duration(training.getDuration())
+//                .build());
+//
+//        logger.info("Created training scenario with trainer id {}, trainee id {}, and training id {}",
+//                trainerId, traineeId, newTraining.getTrainingId());
+//    }
 
-        Trainee trainee = traineeService.getTrainee(traineeId)
-                .orElseThrow(() -> {
-                    logger.error("Trainee with id {} not found", traineeId);
-                    return new IllegalArgumentException("Trainee not found");
-                });
-
-        Training newTraining = trainingService.createTraining(Training.builder()
-                .trainer(trainer)
-                .trainee(trainee)
-                .trainingName(training.getTrainingName())
-                .trainingType(training.getTrainingType())
-                .trainingDate(training.getTrainingDate())
-                .duration(training.getDuration())
-                .build());
-
-        logger.info("Created training scenario with trainer id {}, trainee id {}, and training id {}",
-                trainerId, traineeId, newTraining.getTrainingId());
+    public Optional<Trainee> getByUsername(String username) {
+        return traineeService.getByUsername(username);
     }
 
-    public List<Training> getAllTrainings() {
-        return trainingService.getAllTrainings();
+    public Trainee updateTrainee(Trainee trainee){
+        return traineeService.updateTrainee(trainee);
     }
 
-    public List<Trainee> getAllTrainee() {
-        return traineeService.getAllTrainees();
-    }
-
-    public List<Trainer> getAllTrainers() {
-        return trainerService.getAllTrainers();
-    }
 }

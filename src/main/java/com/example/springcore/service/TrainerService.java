@@ -41,16 +41,4 @@ public class TrainerService {
         logger.info("Updated trainer: {}", trainer.getUser().getId());
         return update;
     }
-
-    public Optional<Trainer> getTrainer(Integer id) {
-        Optional<Trainer> trainer = trainerDao.get(id);
-        trainer.ifPresent(t -> logger.info("Retrieved trainer: {}", id));
-        return trainer;
-    }
-
-    public List<Trainer> getAllTrainers() {
-        List<Trainer> trainers = trainerDao.getAll();
-        logger.info("Retrieved all trainers");
-        return trainers;
-    }
 }

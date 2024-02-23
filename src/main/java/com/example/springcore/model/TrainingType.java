@@ -34,8 +34,10 @@ public class TrainingType {
     private String trainingTypeName;
 
     @OneToMany(mappedBy = "specialization")
+    @ToString.Exclude
     private List<Trainer> trainers;
 
     @OneToMany(mappedBy = "trainingType")
+    @ToString.Exclude
     private List<Training> trainings;
 }
