@@ -1,11 +1,3 @@
-data:
-  trainer:
-    path: classpath:TrainerStorage.csv
-  trainee:
-    path: classpath:TraineeStorage.csv
-  training:
-    path: classpath:TrainingStorage.csv
-
 logging:
   level:
     root: INFO
@@ -15,7 +7,10 @@ db:
   url: jdbc:postgresql://localhost:5432/gym
   username: postgres
   password: postgres
+
 hibernate:
   show_sql: true
   hbm2ddl:
     auto: update
+  format_sql: true
+  use_sql_comments: true

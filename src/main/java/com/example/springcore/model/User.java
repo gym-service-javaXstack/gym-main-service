@@ -44,9 +44,11 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
+    @ToString.Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Trainer trainer;
 
+    @ToString.Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Trainee trainee;
 }

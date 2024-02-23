@@ -2,8 +2,6 @@ package com.example.springcore;
 
 import com.example.springcore.facade.TrainingFacade;
 import com.example.springcore.model.Trainee;
-import com.example.springcore.model.Trainer;
-import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +12,7 @@ import java.time.LocalDate;
 @SpringBootApplication
 public class SpringCoreApplication {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         ApplicationContext context = SpringApplication.run(SpringCoreApplication.class, args);
 
         TrainingFacade trainingFacade = context.getBean(TrainingFacade.class);
@@ -51,7 +49,10 @@ public class SpringCoreApplication {
                 .address("Home street")
                 .build());
 
-        Thread.sleep(50000);
+        System.out.println("--------------------------------------------------------------------------------");
+
+        System.out.println("----------------------------------DELETE TRAINEE----------------------------------------------");
+        trainingFacade.deleteTrainee(1502);
         System.out.println("--------------------------------------------------------------------------------");
 
 //        System.out.println("-------------------------------CREATING TRAINING-----------------------------------------");
@@ -65,9 +66,11 @@ public class SpringCoreApplication {
 
 
 //        System.out.println("-----------------------------ALL TRAINEE---------------------------------------------------");
-//        trainingFacade.getAllTrainee().forEach(System.out::println);
+//        List<Trainee> trainees = trainingFacade.getAllTrainee();
+//        System.out.println("Number of trainees: " + trainees.size());
+//        trainees.forEach(System.out::println);
 //        System.out.println("--------------------------------------------------------------------------------");
-//
+
 //        System.out.println("-----------------------------ALL TRAINERS---------------------------------------------------");
 //        trainingFacade.getAllTrainers().forEach(System.out::println);
 //        System.out.println("--------------------------------------------------------------------------------");

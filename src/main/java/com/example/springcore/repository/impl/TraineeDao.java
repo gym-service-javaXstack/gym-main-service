@@ -1,55 +1,44 @@
 package com.example.springcore.repository.impl;
 
 import com.example.springcore.model.Trainee;
+import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@AllArgsConstructor
 public class TraineeDao {
-    @Autowired
     private SessionFactory sessionFactory;
 
+    @Transactional
     public Trainee save(Trainee trainee) {
-        Session session = sessionFactory.openSession();
-        Transaction tx = null;
-        Trainee savedTrainee;
-        try {
-            tx = session.beginTransaction();
-            session.persist(trainee);
-            savedTrainee = trainee;
-            tx.commit();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            throw e;
-        } finally {
-            session.close();
-        }
-        return savedTrainee;
+        Session session = sessionFactory.getCurrentSession();
+        session.persist(trainee);
+        return trainee;
     }
 
+    @Transactional(readOnly = true)
     public Optional<Trainee> get(Integer id) {
         Session session = sessionFactory.getCurrentSession();
         return Optional.ofNullable(session.get(Trainee.class, id));
     }
 
+    @Transactional(readOnly = true)
     public List<Trainee> getAll() {
         Session session = sessionFactory.getCurrentSession();
-        return session.createQuery("from Trainee", Trainee.class).getResultList();
+        List<Trainee> trainees = session.createQuery("from Trainee t left join fetch t.trainers", Trainee.class).getResultList();
+        return trainees;
     }
 
+    @Transactional
     public void delete(Integer id) {
         Session session = sessionFactory.getCurrentSession();
-        Trainee trainee = session.get(Trainee.class, id);
-        if (trainee != null) {
-            session.delete(trainee);
-        }
+        Optional<Trainee> trainee = Optional.ofNullable(session.get(Trainee.class, id));
+        trainee.ifPresent(session::remove);
     }
 }

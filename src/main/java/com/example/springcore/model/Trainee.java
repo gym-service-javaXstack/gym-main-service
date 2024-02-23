@@ -27,7 +27,7 @@ import java.util.List;
 @Entity
 @Table(name = "trainee")
 @SuperBuilder
-@ToString(callSuper = true)
+@ToString(exclude = "trainers")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Trainee{
@@ -52,6 +52,7 @@ public class Trainee{
             joinColumns = @JoinColumn(name = "trainee_id"),
             inverseJoinColumns = @JoinColumn(name = "trainer_id"))
     private List<Trainer> trainers;
+
 
     @OneToMany(mappedBy = "trainee")
     private List<Training> trainings;
