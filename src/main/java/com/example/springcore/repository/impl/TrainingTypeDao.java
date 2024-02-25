@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class TrainingTypeDao {
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public TrainingTypeDao(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;

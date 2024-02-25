@@ -2,6 +2,7 @@ package com.example.springcore.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,11 +34,11 @@ public class TrainingType {
     @Column(name = "training_type_name", nullable = false)
     private String trainingTypeName;
 
-    @OneToMany(mappedBy = "specialization")
+    @OneToMany(mappedBy = "specialization", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Trainer> trainers;
 
-    @OneToMany(mappedBy = "trainingType")
+    @OneToMany(mappedBy = "trainingType", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Training> trainings;
 }

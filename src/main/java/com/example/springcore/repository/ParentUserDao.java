@@ -4,7 +4,6 @@ import com.example.springcore.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +17,6 @@ public class ParentUserDao<T> {
         this.sessionFactory = sessionFactory;
     }
 
-    @Transactional(readOnly = true)
     public List<String> getUsernamesByFirstNameAndLastName(String firstName, String lastName) {
         Session session = sessionFactory.getCurrentSession();
         return session.createQuery("select u.userName from User u where u.firstName = :firstName and u.lastName = :lastName", String.class)
@@ -27,19 +25,54 @@ public class ParentUserDao<T> {
                 .getResultList();
     }
 
-    @Transactional
     public T save(T entity) {
         Session session = sessionFactory.getCurrentSession();
         session.persist(entity);
         return entity;
     }
 
-    @Transactional(readOnly = true)
+    public T update(T entity) {
+        Session session = sessionFactory.getCurrentSession();
+        session.merge(entity);
+        return entity;
+    }
+
+    public T changePassword(String username, String newPassword, Function<User, T> converter) {
+        Session session = sessionFactory.getCurrentSession();
+        Optional<User> userOptional = session.createQuery("from User u left join fetch u.trainee left join fetch  u.trainer t left join fetch t.specialization where u.userName = :username", User.class)
+                .setParameter("username", username)
+                .uniqueResultOptional();
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setPassword(newPassword);
+            session.merge(user);
+            return converter.apply(user);
+        } else {
+            throw new RuntimeException("User not found");
+        }
+    }
+
     public Optional<T> getUserByUsername(String username, Function<User, T> converter) {
         Session session = sessionFactory.getCurrentSession();
-        return session.createQuery("from User u where u.userName = :username", User.class)
+        return session.createQuery("from User u left join fetch u.trainee left join fetch u.trainer t left join fetch t.specialization where u.userName = :username", User.class)
                 .setParameter("username", username)
                 .uniqueResultOptional()
                 .map(converter);
+    }
+
+    public void changeUserStatus(String username, boolean isActive) {
+        Session session = sessionFactory.getCurrentSession();
+        Optional<User> userOptional = session.createQuery("from User u where u.userName = :username", User.class)
+                .setParameter("username", username)
+                .uniqueResultOptional();
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setIsActive(isActive);
+            session.merge(user);
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.springcore.model;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,12 +28,12 @@ import java.util.List;
 @Entity
 @Table(name = "trainee")
 @SuperBuilder
-@ToString(exclude = "trainers")
+@ToString(exclude = {"trainers", "trainings"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class Trainee{
+public class Trainee {
     @Id
-    @Column(name="id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -42,7 +43,7 @@ public class Trainee{
     @Column(name = "date_of_birth", nullable = false)
     LocalDate dateOfBirth;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usr_id", referencedColumnName = "id", unique = true)
     private User user;
 
@@ -54,6 +55,6 @@ public class Trainee{
     private List<Trainer> trainers;
 
 
-    @OneToMany(mappedBy = "trainee")
+    @OneToMany(mappedBy = "trainee", fetch = FetchType.LAZY)
     private List<Training> trainings;
 }
