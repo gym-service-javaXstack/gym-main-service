@@ -1,17 +1,16 @@
 package com.example.springcore.service;
 
-import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
+import com.example.springcore.model.Training;
+import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
-import com.example.springcore.repository.impl.TrainerDao;
+import com.example.springcore.repository.TrainerDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,31 +52,20 @@ public class TrainerService {
         return updated;
     }
 
-    @Transactional
-    public Trainer changeTrainerPassword(String username, String newPassword) {
-        if (!authenticationService.isAuthenticated(username)) {
-            throw new RuntimeException("User is not authenticated");
-        }
-        Trainer trainerWithNewPassword = trainerDao.changePassword(username, newPassword, User::getTrainer);
-        log.info("Updated trainer password: {}", trainerWithNewPassword.getUser().getUserName());
-        return trainerWithNewPassword;
-    }
-
     @Transactional(readOnly = true)
-    public Optional<Trainer> getByUsername(String username) {
+    public Optional<Trainer> getTrainerByUsername(String username) {
         if (!authenticationService.isAuthenticated(username)) {
             throw new RuntimeException("User is not authenticated");
         }
-        Optional<Trainer> byUsername = trainerDao.getUserByUsername(username, User::getTrainer);
+        Optional<Trainer> byUsername = trainerDao.getTrainerByUsername(username);
         log.info("getByUsername trainer: {}", username);
         return byUsername;
     }
 
-    @Transactional
-    public void changeTrainerStatus(String username, boolean isActive) {
-        if (!authenticationService.isAuthenticated(username)) {
-            throw new RuntimeException("User is not authenticated");
-        }
-        trainerDao.changeUserStatus(username, isActive);
+    @Transactional(readOnly = true)
+    public List<Training> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName) {
+        List<Training> trainerTrainingsByCriteria = trainerDao.getTrainerTrainingsByCriteria(username, fromDate, toDate, trainerName);
+        log.info("getTrainerTrainingsByCriteria method: ");
+        return trainerTrainingsByCriteria;
     }
 }

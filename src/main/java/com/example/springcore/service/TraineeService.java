@@ -1,13 +1,18 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.Trainee;
+import com.example.springcore.model.Trainer;
+import com.example.springcore.model.Training;
+import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
-import com.example.springcore.repository.impl.TraineeDao;
+import com.example.springcore.repository.TraineeDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -44,19 +49,9 @@ public class TraineeService {
         if (!authenticationService.isAuthenticated(trainee.getUser().getUserName())) {
             throw new RuntimeException("User is not authenticated");
         }
-            Trainee updated = traineeDao.update(trainee);
+        Trainee updated = traineeDao.update(trainee);
         log.info("Updated trainee: {}", trainee.getUser().getId());
         return updated;
-    }
-
-    @Transactional
-    public Trainee changeTraineePassword(String username, String newPassword) {
-        if (!authenticationService.isAuthenticated(username)) {
-            throw new RuntimeException("User is not authenticated");
-        }
-        Trainee traineeWithNewPassword = traineeDao.changePassword(username, newPassword, User::getTrainee);
-        log.info("Updated trainee password: {}", traineeWithNewPassword.getUser().getUserName());
-        return traineeWithNewPassword;
     }
 
     @Transactional
@@ -69,20 +64,32 @@ public class TraineeService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Trainee> getByUsername(String username) {
+    public Optional<Trainee> getTraineeByUsername(String username) {
         if (!authenticationService.isAuthenticated(username)) {
             throw new RuntimeException("User is not authenticated");
         }
-        Optional<Trainee> byUsername = traineeDao.getUserByUsername(username, User::getTrainee);
+        Optional<Trainee> byUsername = traineeDao.getTraineeByUsername(username);
         log.info("getByUsername trainee: {}", username);
         return byUsername;
     }
 
     @Transactional
-    public void changeTraineeStatus(String username, boolean isActive) {
-        if (!authenticationService.isAuthenticated(username)) {
-            throw new RuntimeException("User is not authenticated");
-        }
-        traineeDao.changeUserStatus(username, isActive);
+    public void updateTraineesTrainersList(Trainee trainee, Trainer trainer) {
+        traineeDao.updateTraineesTrainersList(trainee, trainer);
+        log.info("Updating trainee's trainers list: ");
+    }
+
+    @Transactional(readOnly = true)
+    public List<Trainer> getTrainersNotAssignedToTrainee(String username) {
+        List<Trainer> trainersNotAssignedToTrainee = traineeDao.getTrainersNotAssignedToTrainee(username);
+        log.info("getTrainersNotAssignedToTrainee method: ");
+        return trainersNotAssignedToTrainee;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Training> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, TrainingType trainingType) {
+        List<Training> traineeTrainingsByCriteria = traineeDao.getTraineeTrainingsByCriteria(username, fromDate, toDate, trainerName, trainingType);
+        log.info("getTraineeTrainingsByCriteria method: ");
+        return traineeTrainingsByCriteria;
     }
 }

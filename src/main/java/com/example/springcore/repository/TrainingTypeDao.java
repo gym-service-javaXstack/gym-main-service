@@ -1,4 +1,4 @@
-package com.example.springcore.repository.impl;
+package com.example.springcore.repository;
 
 import com.example.springcore.model.TrainingType;
 import org.hibernate.Session;
@@ -19,7 +19,8 @@ public class TrainingTypeDao {
     public TrainingType findTrainingTypeByName(String name) {
         Session session = sessionFactory.getCurrentSession();
         Query<TrainingType> query = session.createQuery(
-                "select t from TrainingType t where t.trainingTypeName = :name",
+                "select t from TrainingType t " +
+                        "where t.trainingTypeName = :name",
                 TrainingType.class);
         query.setParameter("name", name);
         return query.uniqueResult();

@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "training")
-@ToString
+@ToString(exclude = {"trainee", "trainer"})
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

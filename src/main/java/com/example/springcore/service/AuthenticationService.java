@@ -1,7 +1,7 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.User;
-import com.example.springcore.repository.ParentUserDao;
+import com.example.springcore.repository.UserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,16 +15,16 @@ import java.util.function.Function;
 @Slf4j
 @Service
 public class AuthenticationService {
-    private final ParentUserDao<User> parentUserDao;
+    private final UserDao<User> userDao;
     private final Map<String, User> authenticatedUsers = new ConcurrentHashMap<>();
 
-    public AuthenticationService(ParentUserDao<User> parentUserDao) {
-        this.parentUserDao = parentUserDao;
+    public AuthenticationService(UserDao<User> userDao) {
+        this.userDao = userDao;
     }
 
     @Transactional(readOnly = true)
     public boolean authenticationUser(String username, String password) {
-        Optional<User> userOptional = parentUserDao.getUserByUsername(username, Function.identity());
+        Optional<User> userOptional = userDao.getUserByUsername(username, Function.identity());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user.getPassword().equals(password)) {
@@ -45,6 +45,6 @@ public class AuthenticationService {
 
     @Transactional(readOnly = true)
     public List<String> getUsernameByFirstNameAndLastName(String firstName, String lastName) {
-        return parentUserDao.getUsernamesByFirstNameAndLastName(firstName, lastName);
+        return userDao.getUsernamesByFirstNameAndLastName(firstName, lastName);
     }
 }

@@ -20,14 +20,18 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "trainer")
 @SuperBuilder
-@ToString(exclude = {"trainees", "trainings"})
+@ToString(exclude = {"trainings"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Trainer {
@@ -36,17 +40,29 @@ public class Trainer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "specialization_id")
     TrainingType specialization;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "usr_id", referencedColumnName = "id", unique = true)
     private User user;
 
-    @ManyToMany(mappedBy = "trainers", fetch = FetchType.LAZY)
-    private List<Trainee> trainees;
+    @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
+    private Set<Trainee> trainees = new HashSet<>();
 
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)
     private List<Training> trainings;
+
+    @Override
+    public String toString() {
+        return "Trainer{" +
+                "id=" + id +
+                ", specialization=" + specialization +
+                ", user=" + user +
+                ", trainees=" + (trainees.isEmpty() ? "not initialized" : trainees.stream()
+                .map(trainee -> "Trainee{user=" + trainee.getUser() + "}")
+                .collect(Collectors.joining(", "))) +
+                '}';
+    }
 }

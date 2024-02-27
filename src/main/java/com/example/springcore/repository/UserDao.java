@@ -6,14 +6,15 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
 @Repository
-public class ParentUserDao<T> {
+public class UserDao<T> {
     protected SessionFactory sessionFactory;
 
-    protected ParentUserDao(SessionFactory sessionFactory) {
+    protected UserDao(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -37,25 +38,24 @@ public class ParentUserDao<T> {
         return entity;
     }
 
-    public T changePassword(String username, String newPassword, Function<User, T> converter) {
+    public void changePassword(String username,String oldPassword, String newPassword) {
         Session session = sessionFactory.getCurrentSession();
-        Optional<User> userOptional = session.createQuery("from User u left join fetch u.trainee left join fetch  u.trainer t left join fetch t.specialization where u.userName = :username", User.class)
+        User user = session.createQuery("from User u where u.userName = :username", User.class)
                 .setParameter("username", username)
-                .uniqueResultOptional();
+                .uniqueResultOptional()
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setPassword(newPassword);
-            session.merge(user);
-            return converter.apply(user);
-        } else {
-            throw new RuntimeException("User not found");
+        if (!Objects.equals(user.getPassword(), oldPassword)) {
+            throw new RuntimeException("Old password is incorrect");
         }
+
+        user.setPassword(newPassword);
+        session.merge(user);
     }
 
     public Optional<T> getUserByUsername(String username, Function<User, T> converter) {
         Session session = sessionFactory.getCurrentSession();
-        return session.createQuery("from User u left join fetch u.trainee left join fetch u.trainer t left join fetch t.specialization where u.userName = :username", User.class)
+        return session.createQuery("from User u where u.userName = :username", User.class)
                 .setParameter("username", username)
                 .uniqueResultOptional()
                 .map(converter);
