@@ -28,18 +28,18 @@ public class TraineeDao extends UserDao<Trainee> {
     public Optional<Trainee> getTraineeByUsername(String username) {
         Session session = sessionFactory.getCurrentSession();
         return session.createQuery(
-                "select t from Trainee t " +
-                        "join fetch t.user u " +
-                        "left join fetch t.trainers tr " +
-                        "left join fetch tr.specialization " +
-                        "left join fetch tr.user " +
-                        "where u.userName = :username",
+                        "select t from Trainee t " +
+                                "join fetch t.user u " +
+                                "left join fetch t.trainers tr " +
+                                "left join fetch tr.specialization " +
+                                "left join fetch tr.user " +
+                                "where u.userName = :username",
                         Trainee.class)
                 .setParameter("username", username)
                 .uniqueResultOptional();
     }
 
-    public void updateTraineesTrainersList(Trainee trainee, Trainer trainer){
+    public void updateTraineesTrainersList(Trainee trainee, Trainer trainer) {
         Session session = sessionFactory.getCurrentSession();
         Trainee mergedTrainee = session.merge(trainee);
         Trainer mergedTrainer = session.merge(trainer);
@@ -49,14 +49,23 @@ public class TraineeDao extends UserDao<Trainee> {
 
     public List<Trainer> getTrainersNotAssignedToTrainee(String username) {
         Session session = sessionFactory.getCurrentSession();
-        return session.createQuery(
+
+        List<Trainer> allTrainers = session.createQuery(
                         "select t from Trainer t " +
-                                "where t not in (" +
-                                "select elements(tr.trainers) from Trainee tr join tr.user u " +
-                                "where u.userName = :username)",
+                                "left join fetch t.trainees",
                         Trainer.class)
-                .setParameter("username", username)
                 .getResultList();
+
+        Trainee trainee = session.createQuery(
+                        "select tr from Trainee tr join tr.user u " +
+                                "where u.userName = :username",
+                        Trainee.class)
+                .setParameter("username", username)
+                .getSingleResult();
+
+        return allTrainers.stream()
+                .filter(trainer -> !trainer.getTrainees().contains(trainee))
+                .toList();
     }
 
     public List<Training> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, TrainingType trainingType) {
@@ -80,4 +89,3 @@ public class TraineeDao extends UserDao<Trainee> {
                 .getResultList();
     }
 }
-

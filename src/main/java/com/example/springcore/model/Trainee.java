@@ -18,11 +18,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +31,6 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "trainee")
 @SuperBuilder
-@ToString(exclude = {"trainings"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Trainee {
@@ -42,13 +39,13 @@ public class Trainee {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     String address;
 
-    @Column(name = "date_of_birth", nullable = false)
+    @Column(name = "date_of_birth")
     LocalDate dateOfBirth;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "usr_id", referencedColumnName = "id", unique = true)
     private User user;
 
@@ -56,7 +53,7 @@ public class Trainee {
             CascadeType.PERSIST,
             CascadeType.MERGE
     },
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     @JoinTable(
             name = "trainee_trainer",
             joinColumns = @JoinColumn(name = "trainee_id"),

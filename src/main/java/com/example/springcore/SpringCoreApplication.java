@@ -22,59 +22,20 @@ public class SpringCoreApplication {
     public static void main(String[] args) {
         ApplicationContext context = SpringApplication.run(SpringCoreApplication.class, args);
 
-        AuthenticationService authenticationService = context.getBean(AuthenticationService.class);
-        TrainingTypeDao trainingTypeDao = context.getBean(TrainingTypeDao.class);
         TrainingFacade trainingFacade = context.getBean(TrainingFacade.class);
+        TrainingTypeDao trainingTypeDao = context.getBean(TrainingTypeDao.class);
 
-        //todo:: AUTHENTICATE BY USERNAME
-        System.out.println("----------------------------------authenticationUser----------------------------------------------");
-
-        System.out.println(authenticationService.authenticationUser("Ivan.Trainee", "1pUBtNyoKX"));
-        System.out.println("--------------------------------------------------------------------------------");
-        System.out.println(authenticationService.authenticationUser("Andriy.Trainers1", "w6HrP7SOwU"));
-
-        System.out.println("----------------------------------------END----------------------------------------");
-
-        //todo:: ACTIVATE/DEACTIVATE user's isActive field
-/*        System.out.println("------------------------------------ACTIVATE/DEACTIVATE user--------------------------------------------");
-        trainingFacade.changeUserStatus("Ivan.Trainee", false);
-        System.out.println("--------------------------------------------------------------------------------");
-        trainingFacade.changeUserStatus("Andriy.Trainer", false);
-        System.out.println("-----------------------------------END---------------------------------------------");*/
-
-        //todo:: GET TRAINEE/TRAINER with linked Entities(Trainee+User)/(Trainer+User+TrainingType)
-        System.out.println("----------------------------------GET USER----------------------------------------------");
-
-        Optional<Trainee> traineeByUsername = trainingFacade.getTraineeByUsername("Ivan.Trainee");
-        System.out.println(traineeByUsername);
-        System.out.println("--------------------------------------------------------------------------------");
-        Optional<Trainer> trainerByUsername = trainingFacade.getTrainerByUsername("Andriy.Trainers1");
-        System.out.println(trainerByUsername);
-
-        System.out.println("-----------------------------------END---------------------------------------------");
-
-        //todo:: CHANGING PASSWORD by username(working both to Trainee/Trainer without selecting inner linked Entities)
-/*
-      System.out.println("----------------------------------CHANGE PASSWORD TRAINEE/TRAINER----------------------------------------------");
-        System.out.println(trainingFacade.getTrainerByUsername("Ivan.Trainee1"));
-        System.out.println("--------------------------------------------------------------------------------");
-        trainingFacade.changeUserPassword("Ivan.Trainee1", "1testPassword", "12345678");
-        System.out.println("--------------------------------------------------------------------------------");
-        System.out.println("--------------------------------------------------------------------------------");
-        System.out.println(trainingFacade.getTrainerByUsername("Ivan.Trainee1"));
-        System.out.println("------------------------------------END--------------------------------------------");
-*/
 
         //todo:: CREATING TRAINER
- /*       System.out.println("----------------------------------CREATING TRAINER----------------------------------------------");
+        System.out.println("----------------------------------STEP 1: CREATING TRAINER----------------------------------------------");
 
         User userTrainer = User.builder()
-                .firstName("Andriy")
-                .lastName("Trainers")
+                .firstName("John")
+                .lastName("Trainer")
                 .isActive(false)
                 .build();
         System.out.println("--------------------------------------------------------------------------------");
-        TrainingType trainingTypeForTrainer = trainingTypeDao.findTrainingTypeByName("Test");
+        TrainingType trainingTypeForTrainer = trainingTypeDao.findTrainingTypeByName("Boxing");
 
         System.out.println("--------------------------------------------------------------------------------");
 
@@ -82,73 +43,133 @@ public class SpringCoreApplication {
 
         System.out.println("--------------------------------------------------------------------------------");
 
-        trainingFacade.createTrainer(Trainer.builder()
+        Trainer trainerCreatedForTest = trainingFacade.createTrainer(Trainer.builder()
                 .user(userTrainer)
                 .specialization(trainingTypeForTrainer)
                 .build());
 
-        System.out.println("-----------------------------------END---------------------------------------------");
-*/
-        //todo:: CREATING TRAINEE
+        System.out.println("---------------------------------STEP 1: END---------------------------------------------");
 
-     /*   System.out.println("----------------------------------CREATING TRAINEE----------------------------------------------");
+        //todo:: CREATING TRAINEE
+        System.out.println("----------------------------------STEP 2: CREATING TRAINEE----------------------------------------------");
         User userTrainee = User.builder()
                 .firstName("Ivan")
                 .lastName("Trainee")
-                .isActive(true)
+                .isActive(false)
                 .build();
 
-        trainingFacade.createTrainee(Trainee.builder()
+        Trainee traineeCreatedForTest = trainingFacade.createTrainee(Trainee.builder()
                 .user(userTrainee)
                 .dateOfBirth(LocalDate.now())
                 .address("Home street")
                 .build());
 
+        System.out.println("-----------------------------------STEP 2: END---------------------------------------------");
+
+        //todo:: AUTHENTICATE BY USERNAME
+        System.out.println("----------------------------------STEP 3-4: authenticationUser----------------------------------------------");
+        System.out.println(trainingFacade.authenticationUser(
+                traineeCreatedForTest.getUser().getUserName(),
+                traineeCreatedForTest.getUser().getPassword())
+        );
+        System.out.println("--------------------------------------------------------------------------------");
+        System.out.println(trainingFacade.authenticationUser(
+                trainerCreatedForTest.getUser().getUserName(),
+                trainerCreatedForTest.getUser().getPassword())
+        );
+        System.out.println("-------------------------------------STEP 3-4: END----------------------------------------");
+
+        //todo:: SELECT TRAINEE/TRAINER with linked Entities(Trainee+User)/(Trainer+User+TrainingType)
+        System.out.println("----------------------------------STEP 5-6: Select Trainer/Trainee profile----------------------------------------------");
+
+        Optional<Trainee> traineeByUsername = trainingFacade.getTraineeByUsername(traineeCreatedForTest.getUser().getUserName());
+        System.out.println(traineeByUsername);
+        System.out.println("--------------------------------------------------------------------------------");
+        Optional<Trainer> trainerByUsername = trainingFacade.getTrainerByUsername(trainerCreatedForTest.getUser().getUserName());
+        System.out.println(trainerByUsername);
+
+        System.out.println("-----------------------------------STEP 5-6: END---------------------------------------------");
+
+        //todo:: CHANGING PASSWORD by username(working both to Trainee/Trainer without selecting inner linked Entities)
+        System.out.println("----------------------------------STEP 7-8: Change password Trainee/Trainer----------------------------------------------");
+        System.out.println("-----------------------------------Changing password to traineeCreatedForTest by 1234567890---------------------------------------------");
+
+        trainingFacade.changeUserPassword(
+                traineeByUsername.get().getUser().getUserName(),
+                traineeByUsername.get().getUser().getPassword(),
+                "1234567890");
+
+        System.out.println("-----------------------------------Changing password to trainerCreatedForTest by 0987654321---------------------------------------------");
+
+        trainingFacade.changeUserPassword(
+                trainerByUsername.get().getUser().getUserName(),
+                trainerByUsername.get().getUser().getPassword(),
+                "0987654321");
+
+        System.out.println("------------------------------------STEP 7-8: END--------------------------------------------");
+
+
+        //todo:: Updating Trainer
+ /*       System.out.println("-----------------------------------STEP 9-10: Updating Trainee/Trainer profile---------------------------------------------");
+        trainerByUsername.get().getUser().setFirstName("Neytan");
+        traineeByUsername.get().getUser().setFirstName("TanTan");
+        System.out.println("--------------------------------------------------------------------------------");
+        trainingFacade.updateTrainer(trainerByUsername.get());
+        trainingFacade.updateTrainee(traineeByUsername.get());
+        System.out.println("-----------------------------------STEP 9-10: END---------------------------------------------");
+*/
+        //todo:: ACTIVATE/DEACTIVATE user's isActive field
+/*        System.out.println("------------------------------------STEP 11-12: ACTIVATE/DEACTIVATE user--------------------------------------------");
+        trainingFacade.changeUserStatus(trainerByUsername.get().getUser().getUserName(), true);
+        System.out.println("--------------------------------------------------------------------------------");
+        trainingFacade.changeUserStatus(traineeByUsername.get().getUser().getUserName(), true);
+        System.out.println("-----------------------------------STEP 11-12: END---------------------------------------------");
+        */
+        //todo: DELETE with Trainee if u try to delete Trainer nothing happens via Trainer data in DB
+/*
+        System.out.println("----------------------------------DELETE TRAINEE----------------------------------------------");
+        trainingFacade.deleteTrainee("Ivan.Trainee");
         System.out.println("--------------------------------------------------------------------------------");
 */
-        //todo: WORKING with Trainee if u try to delete Trainer nothing happens via Trainer data in DB
-/*        System.out.println("----------------------------------DELETE TRAINEE----------------------------------------------");
-        trainingFacade.deleteTrainee("Andriy.Trainer");
-        System.out.println("--------------------------------------------------------------------------------");
-    */
 
         //todo:: CREATING TRAINING
-/*
-        System.out.println("-------------------------------CREATING TRAINING-----------------------------------------");
+   /*     System.out.println("-------------------------------CREATING TRAINING-----------------------------------------");
         trainingFacade.createTraining(
                 traineeByUsername.get(),
                 trainerByUsername.get(),
-                "Test Training",
+                "Test11 Training123123",
                 trainerByUsername.get().getSpecialization(),
-                LocalDate.now(),
+                LocalDate.now().plusDays(14),
                 60);
 
         System.out.println("---------------------------------END-----------------------------------------------");
 */
-
         //todo:: DELETING Trainee(cascading deleted Training)
 
-     /*    trainingFacade.deleteTrainee("Ivan.Trainee2");*/
+        /*    trainingFacade.deleteTrainee("Ivan.Trainee2");*/
 
         //todo:: Get Trainers not assigned to Trainee with username
- /*       System.out.println("-------------------------------GET TRAINERS NOT ASSIGNED TO TRAINEE-----------------------------------------");
-        List<Trainer> trainersNotAssignedToTrainee = trainingFacade.getTrainersNotAssignedToTrainee("Ivan.Trainee");
+/*
+        System.out.println("-------------------------------GET TRAINERS NOT ASSIGNED TO TRAINEE-----------------------------------------");
+        List<Trainer> trainersNotAssignedToTrainee = trainingFacade.getTrainersNotAssignedToTrainee("Ivan.Trainee2");
         System.out.println(trainersNotAssignedToTrainee);
-        System.out.println("-------------------------------END-----------------------------------------");*/
+        System.out.println("-------------------------------END-----------------------------------------");
+*/
 
         //todo:: GET Trainee Trainings List by trainee username and criteria (from date, to date, trainer name, training type)
-   /*     System.out.println("-------------------------------GET Trainee Trainings List by trainee username and criteria-----------------------------------------");
+/*
+        System.out.println("-------------------------------GET Trainee Trainings List by trainee username and criteria-----------------------------------------");
         List<Training> traineeTrainingsByCriteria = trainingFacade.getTraineeTrainingsByCriteria(
-                "Ivan.Trainee",
+                "Ivan.Trainee1",
                 LocalDate.now(),
-                LocalDate.now().plusDays(1),
+                LocalDate.now().plusDays(14),
                 "Andriy",
                 trainerByUsername.get().getSpecialization()
 
         );
         System.out.println(traineeTrainingsByCriteria);
         System.out.println("-------------------------------END-----------------------------------------");
-        */
+*/
 
         //todo:: GET Trainer Trainings List by trainer username and criteria (from date, to date, trainee name)
 /*        System.out.println("-------------------------------GET Trainer Trainings List by trainer username and criteria-----------------------------------------");

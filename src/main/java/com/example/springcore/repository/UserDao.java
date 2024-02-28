@@ -20,9 +20,9 @@ public class UserDao<T> {
 
     public List<String> getUsernamesByFirstNameAndLastName(String firstName, String lastName) {
         Session session = sessionFactory.getCurrentSession();
-        return session.createQuery("select u.userName from User u where u.firstName = :firstName and u.lastName = :lastName", String.class)
-                .setParameter("firstName", firstName)
-                .setParameter("lastName", lastName)
+        String baseUsername = firstName + "." + lastName;
+        return session.createQuery("select u.userName from User u where u.userName like :baseUsername", String.class)
+                .setParameter("baseUsername", baseUsername + "%")
                 .getResultList();
     }
 
@@ -38,7 +38,7 @@ public class UserDao<T> {
         return entity;
     }
 
-    public void changePassword(String username,String oldPassword, String newPassword) {
+    public User changePassword(String username, String oldPassword, String newPassword) {
         Session session = sessionFactory.getCurrentSession();
         User user = session.createQuery("from User u where u.userName = :username", User.class)
                 .setParameter("username", username)
@@ -50,7 +50,8 @@ public class UserDao<T> {
         }
 
         user.setPassword(newPassword);
-        session.merge(user);
+
+        return session.merge(user);
     }
 
     public Optional<T> getUserByUsername(String username, Function<User, T> converter) {
@@ -63,16 +64,16 @@ public class UserDao<T> {
 
     public void changeUserStatus(String username, boolean isActive) {
         Session session = sessionFactory.getCurrentSession();
-        Optional<User> userOptional = session.createQuery("from User u where u.userName = :username", User.class)
+        session.createQuery("from User u where u.userName = :username", User.class)
                 .setParameter("username", username)
-                .uniqueResultOptional();
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setIsActive(isActive);
-            session.merge(user);
-        } else {
-            throw new RuntimeException("User not found");
-        }
+                .uniqueResultOptional()
+                .ifPresentOrElse(
+                        user -> {
+                            user.setIsActive(isActive);
+                            session.flush();
+//                            session.merge(user);
+                        },
+                        () -> { throw new RuntimeException("User not found"); }
+                );
     }
 }

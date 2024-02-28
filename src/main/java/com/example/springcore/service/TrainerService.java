@@ -2,7 +2,6 @@ package com.example.springcore.service;
 
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
-import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TrainerDao;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +43,7 @@ public class TrainerService {
 
     @Transactional
     public Trainer updateTrainer(Trainer trainer) {
-        if (!authenticationService.isAuthenticated(trainer.getUser().getUserName())) {
-            throw new RuntimeException("User is not authenticated");
-        }
+        authenticationService.isAuthenticated(trainer.getUser().getUserName());
         Trainer updated = trainerDao.update(trainer);
         log.info("Updated trainer: {}", trainer.getUser().getId());
         return updated;
@@ -54,9 +51,7 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public Optional<Trainer> getTrainerByUsername(String username) {
-        if (!authenticationService.isAuthenticated(username)) {
-            throw new RuntimeException("User is not authenticated");
-        }
+        authenticationService.isAuthenticated(username);
         Optional<Trainer> byUsername = trainerDao.getTrainerByUsername(username);
         log.info("getByUsername trainer: {}", username);
         return byUsername;
@@ -64,6 +59,7 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public List<Training> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName) {
+        authenticationService.isAuthenticated(username);
         List<Training> trainerTrainingsByCriteria = trainerDao.getTrainerTrainingsByCriteria(username, fromDate, toDate, trainerName);
         log.info("getTrainerTrainingsByCriteria method: ");
         return trainerTrainingsByCriteria;

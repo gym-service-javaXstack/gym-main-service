@@ -16,18 +16,15 @@ public class UserService {
 
     @Transactional
     public void changeUserStatus(String username, boolean isActive) {
-        if (!authenticationService.isAuthenticated(username)) {
-            throw new RuntimeException("User is not authenticated");
-        }
+        authenticationService.isAuthenticated(username);
         userDao.changeUserStatus(username, isActive);
     }
 
     @Transactional
-    public void changeUserPassword(String username, String oldPassword, String newPassword) {
-        if (!authenticationService.isAuthenticated(username)) {
-            throw new RuntimeException("User is not authenticated");
-        }
-        userDao.changePassword(username, oldPassword, newPassword);
+    public User changeUserPassword(String username, String oldPassword, String newPassword) {
+        authenticationService.isAuthenticated(username);
+        User user = userDao.changePassword(username, oldPassword, newPassword);
         log.info("Updated trainer password: {}", username);
+        return user;
     }
 }

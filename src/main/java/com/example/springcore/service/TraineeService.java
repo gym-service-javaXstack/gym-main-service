@@ -40,34 +40,28 @@ public class TraineeService {
                 .build();
 
         Trainee saved = traineeDao.save(traineeToSave);
-        log.info("Created trainee: {}", traineeToSave.getUser().getId());
+        log.info("Created trainee: {}", saved.getUser().getId());
         return saved;
     }
 
     @Transactional
     public Trainee updateTrainee(Trainee trainee) {
-        if (!authenticationService.isAuthenticated(trainee.getUser().getUserName())) {
-            throw new RuntimeException("User is not authenticated");
-        }
+        authenticationService.isAuthenticated(trainee.getUser().getUserName());
         Trainee updated = traineeDao.update(trainee);
-        log.info("Updated trainee: {}", trainee.getUser().getId());
+        log.info("Updated trainee: {}", updated.getUser().getId());
         return updated;
     }
 
     @Transactional
     public void deleteTrainee(String username) {
-        if (!authenticationService.isAuthenticated(username)) {
-            throw new RuntimeException("User is not authenticated " + username);
-        }
+        authenticationService.isAuthenticated(username);
         traineeDao.delete(username);
         log.info("Deleted trainee: {}", username);
     }
 
     @Transactional(readOnly = true)
     public Optional<Trainee> getTraineeByUsername(String username) {
-        if (!authenticationService.isAuthenticated(username)) {
-            throw new RuntimeException("User is not authenticated");
-        }
+        authenticationService.isAuthenticated(username);
         Optional<Trainee> byUsername = traineeDao.getTraineeByUsername(username);
         log.info("getByUsername trainee: {}", username);
         return byUsername;
@@ -81,15 +75,17 @@ public class TraineeService {
 
     @Transactional(readOnly = true)
     public List<Trainer> getTrainersNotAssignedToTrainee(String username) {
+        authenticationService.isAuthenticated(username);
         List<Trainer> trainersNotAssignedToTrainee = traineeDao.getTrainersNotAssignedToTrainee(username);
-        log.info("getTrainersNotAssignedToTrainee method: ");
+        log.info("getTrainersNotAssignedToTrainee method: {}", username);
         return trainersNotAssignedToTrainee;
     }
 
     @Transactional(readOnly = true)
     public List<Training> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, TrainingType trainingType) {
+        authenticationService.isAuthenticated(username);
         List<Training> traineeTrainingsByCriteria = traineeDao.getTraineeTrainingsByCriteria(username, fromDate, toDate, trainerName, trainingType);
-        log.info("getTraineeTrainingsByCriteria method: ");
+        log.info("getTraineeTrainingsByCriteria method: {}", username);
         return traineeTrainingsByCriteria;
     }
 }

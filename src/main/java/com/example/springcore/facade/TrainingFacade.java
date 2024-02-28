@@ -4,6 +4,8 @@ import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
 import com.example.springcore.model.TrainingType;
+import com.example.springcore.model.User;
+import com.example.springcore.service.AuthenticationService;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingService;
@@ -24,6 +26,7 @@ public class TrainingFacade {
     private final TraineeService traineeService;
     private final TrainingService trainingService;
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     public Trainer createTrainer(Trainer trainer) {
         return trainerService.createTrainer(trainer);
@@ -80,8 +83,8 @@ public class TrainingFacade {
     }
 
 
-    public void changeUserPassword(String username, String oldPassword, String newPassword) {
-        userService.changeUserPassword(username, oldPassword, newPassword);
+    public User changeUserPassword(String username, String oldPassword, String newPassword) {
+        return userService.changeUserPassword(username, oldPassword, newPassword);
     }
 
     public void changeUserStatus(String username, boolean isActive) {
@@ -102,5 +105,9 @@ public class TrainingFacade {
 
     public List<Training> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName) {
         return trainerService.getTrainerTrainingsByCriteria(username, fromDate, toDate, trainerName);
+    }
+
+    public boolean authenticationUser(String username, String password) {
+        return authenticationService.authenticationUser(username, password);
     }
 }

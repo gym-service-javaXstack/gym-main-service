@@ -35,8 +35,10 @@ public class AuthenticationService {
         return false;
     }
 
-    public boolean isAuthenticated(String username) {
-        return authenticatedUsers.containsKey(username);
+    public void isAuthenticated(String username) {
+        if (!authenticatedUsers.containsKey(username)){
+            throw new RuntimeException("User is not authenticated");
+        }
     }
 
     public void logout(String username) {

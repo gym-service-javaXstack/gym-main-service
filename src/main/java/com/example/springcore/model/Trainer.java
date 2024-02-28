@@ -17,10 +17,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +29,6 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "trainer")
 @SuperBuilder
-@ToString(exclude = {"trainings"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Trainer {
@@ -48,7 +45,7 @@ public class Trainer {
     @JoinColumn(name = "usr_id", referencedColumnName = "id", unique = true)
     private User user;
 
-    @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "trainers", fetch = FetchType.LAZY)
     private Set<Trainee> trainees = new HashSet<>();
 
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)
