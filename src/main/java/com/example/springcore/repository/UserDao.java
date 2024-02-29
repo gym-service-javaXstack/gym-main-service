@@ -6,7 +6,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -38,11 +37,10 @@ public class UserDao<T> {
         return entity;
     }
 
-    public Optional<T> getUserByUsername(String username, Function<User, T> converter) {
+    public Optional<User> getUserByUsername(String username) {
         Session session = sessionFactory.getCurrentSession();
         return session.createQuery("from User u where u.userName = :username", User.class)
                 .setParameter("username", username)
-                .uniqueResultOptional()
-                .map(converter);
+                .uniqueResultOptional();
     }
 }

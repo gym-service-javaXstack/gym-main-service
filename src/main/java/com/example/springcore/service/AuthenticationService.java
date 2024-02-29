@@ -24,7 +24,7 @@ public class AuthenticationService {
 
     @Transactional(readOnly = true)
     public boolean authenticationUser(String username, String password) {
-        Optional<User> userOptional = userDao.getUserByUsername(username, Function.identity());
+        Optional<User> userOptional = userDao.getUserByUsername(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (user.getPassword().equals(password)) {

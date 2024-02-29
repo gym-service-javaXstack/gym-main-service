@@ -6,10 +6,10 @@ import com.example.springcore.model.Training;
 import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TraineeDao;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -58,10 +58,9 @@ public class TraineeService {
     @Transactional
     public void deleteTrainee(String username) {
         authenticationService.isAuthenticated(username);
-
-        Optional<Trainee> traineeByUsername = traineeDao.getTraineeByUsername(username);
-        System.out.println("--------------------------------------------1");
-        traineeDao.delete(traineeByUsername.get());
+        Trainee trainee = traineeDao.getTraineeByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + username + " not found"));
+        traineeDao.delete(trainee);
         log.info("Deleted trainee: {}", username);
     }
 
@@ -76,7 +75,7 @@ public class TraineeService {
     @Transactional
     public void updateTraineesTrainersList(Trainee trainee, Trainer trainer) {
         traineeDao.updateTraineesTrainersList(trainee, trainer);
-        log.info("Updating trainee's trainers list: ");
+        log.info("Updating trainee's trainers list: {} with {}", trainee.getId(), trainer.getId());
     }
 
     @Transactional(readOnly = true)

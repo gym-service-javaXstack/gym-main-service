@@ -33,6 +33,6 @@ public class TrainingService {
                 .build();
 
         trainingDao.save(training);
-        log.info("Created training");
+        log.info("Created training: {}", training);
     }
 }

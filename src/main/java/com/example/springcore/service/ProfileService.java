@@ -9,7 +9,7 @@ import java.util.Random;
 @Service
 @Slf4j
 public class ProfileService {
-    private Random random = new Random();
+    private final Random random = new Random();
     private final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     private final AuthenticationService authenticationService;

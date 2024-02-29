@@ -63,7 +63,7 @@ public class TrainerService {
     public List<Training> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String traineeName) {
         authenticationService.isAuthenticated(username);
         List<Training> trainerTrainingsByCriteria = trainerDao.getTrainerTrainingsByCriteria(username, fromDate, toDate, traineeName);
-        log.info("getTrainerTrainingsByCriteria method: ");
+        log.info("getTrainerTrainingsByCriteria method: {}", username);
         return trainerTrainingsByCriteria;
     }
 }
