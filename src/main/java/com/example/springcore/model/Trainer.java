@@ -14,10 +14,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "trainer")
-@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Trainer {
@@ -57,7 +57,7 @@ public class Trainer {
                 "id=" + id +
                 ", specialization=" + specialization +
                 ", user=" + user +
-                ", trainees=" + (trainees.isEmpty() ? "not initialized" : trainees.stream()
+                ", trainees=" + (trainees == null || trainees.isEmpty() ? "not initialized" : trainees.stream()
                 .map(trainee -> "Trainee{user=" + trainee.getUser() + "}")
                 .collect(Collectors.joining(", "))) +
                 '}';

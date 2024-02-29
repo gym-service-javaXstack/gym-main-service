@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +35,7 @@ public class TrainerService {
         Trainer trainerToSave = Trainer.builder()
                 .user(user)
                 .specialization(trainer.getSpecialization())
+                .trainees(new HashSet<>())
                 .build();
 
         Trainer saved = trainerDao.save(trainerToSave);
@@ -58,9 +60,9 @@ public class TrainerService {
     }
 
     @Transactional(readOnly = true)
-    public List<Training> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName) {
+    public List<Training> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String traineeName) {
         authenticationService.isAuthenticated(username);
-        List<Training> trainerTrainingsByCriteria = trainerDao.getTrainerTrainingsByCriteria(username, fromDate, toDate, trainerName);
+        List<Training> trainerTrainingsByCriteria = trainerDao.getTrainerTrainingsByCriteria(username, fromDate, toDate, traineeName);
         log.info("getTrainerTrainingsByCriteria method: ");
         return trainerTrainingsByCriteria;
     }

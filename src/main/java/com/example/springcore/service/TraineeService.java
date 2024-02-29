@@ -9,9 +9,11 @@ import com.example.springcore.repository.TraineeDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +39,7 @@ public class TraineeService {
                 .user(user)
                 .address(trainee.getAddress())
                 .dateOfBirth(trainee.getDateOfBirth())
+                .trainers(new HashSet<>())
                 .build();
 
         Trainee saved = traineeDao.save(traineeToSave);
@@ -55,7 +58,10 @@ public class TraineeService {
     @Transactional
     public void deleteTrainee(String username) {
         authenticationService.isAuthenticated(username);
-        traineeDao.delete(username);
+
+        Optional<Trainee> traineeByUsername = traineeDao.getTraineeByUsername(username);
+        System.out.println("--------------------------------------------1");
+        traineeDao.delete(traineeByUsername.get());
         log.info("Deleted trainee: {}", username);
     }
 

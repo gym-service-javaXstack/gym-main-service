@@ -7,7 +7,6 @@ import com.example.springcore.model.Training;
 import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TrainingTypeDao;
-import com.example.springcore.service.AuthenticationService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -23,7 +22,6 @@ public class SpringCoreApplication {
         ApplicationContext context = SpringApplication.run(SpringCoreApplication.class, args);
 
         TrainingFacade trainingFacade = context.getBean(TrainingFacade.class);
-        TrainingTypeDao trainingTypeDao = context.getBean(TrainingTypeDao.class);
 
 
         //todo:: CREATING TRAINER
@@ -35,7 +33,7 @@ public class SpringCoreApplication {
                 .isActive(false)
                 .build();
         System.out.println("--------------------------------------------------------------------------------");
-        TrainingType trainingTypeForTrainer = trainingTypeDao.findTrainingTypeByName("Boxing");
+        TrainingType trainingTypeForTrainer = trainingFacade.findTrainingTypeByName("Boxing");
 
         System.out.println("--------------------------------------------------------------------------------");
 
@@ -92,94 +90,91 @@ public class SpringCoreApplication {
 
         //todo:: CHANGING PASSWORD by username(working both to Trainee/Trainer without selecting inner linked Entities)
         System.out.println("----------------------------------STEP 7-8: Change password Trainee/Trainer----------------------------------------------");
-        System.out.println("-----------------------------------Changing password to traineeCreatedForTest by 1234567890---------------------------------------------");
+        System.out.println("-----------------------------------Changing password to traineeByUsername by 1234567890---------------------------------------------");
 
         trainingFacade.changeUserPassword(
-                traineeByUsername.get().getUser().getUserName(),
+                traineeByUsername.get().getUser(),
                 traineeByUsername.get().getUser().getPassword(),
                 "1234567890");
 
-        System.out.println("-----------------------------------Changing password to trainerCreatedForTest by 0987654321---------------------------------------------");
+        System.out.println("-----------------------------------Changing password to trainerByUsername by 0987654321---------------------------------------------");
 
         trainingFacade.changeUserPassword(
-                trainerByUsername.get().getUser().getUserName(),
+                trainerByUsername.get().getUser(),
                 trainerByUsername.get().getUser().getPassword(),
                 "0987654321");
 
         System.out.println("------------------------------------STEP 7-8: END--------------------------------------------");
 
-
         //todo:: Updating Trainer
- /*       System.out.println("-----------------------------------STEP 9-10: Updating Trainee/Trainer profile---------------------------------------------");
+        System.out.println("-----------------------------------STEP 9-10: Updating Trainee/Trainer profile---------------------------------------------");
         trainerByUsername.get().getUser().setFirstName("Neytan");
         traineeByUsername.get().getUser().setFirstName("TanTan");
         System.out.println("--------------------------------------------------------------------------------");
         trainingFacade.updateTrainer(trainerByUsername.get());
         trainingFacade.updateTrainee(traineeByUsername.get());
         System.out.println("-----------------------------------STEP 9-10: END---------------------------------------------");
-*/
+
         //todo:: ACTIVATE/DEACTIVATE user's isActive field
-/*        System.out.println("------------------------------------STEP 11-12: ACTIVATE/DEACTIVATE user--------------------------------------------");
-        trainingFacade.changeUserStatus(trainerByUsername.get().getUser().getUserName(), true);
+        System.out.println("------------------------------------STEP 11-12: ACTIVATE/DEACTIVATE user--------------------------------------------");
+        trainingFacade.changeUserStatus(trainerByUsername.get().getUser(), true);
         System.out.println("--------------------------------------------------------------------------------");
-        trainingFacade.changeUserStatus(traineeByUsername.get().getUser().getUserName(), true);
+        trainingFacade.changeUserStatus(traineeByUsername.get().getUser(), true);
         System.out.println("-----------------------------------STEP 11-12: END---------------------------------------------");
-        */
-        //todo: DELETE with Trainee if u try to delete Trainer nothing happens via Trainer data in DB
-/*
-        System.out.println("----------------------------------DELETE TRAINEE----------------------------------------------");
-        trainingFacade.deleteTrainee("Ivan.Trainee");
-        System.out.println("--------------------------------------------------------------------------------");
-*/
+
+        System.out.println(traineeCreatedForTest);
+        System.out.println(traineeByUsername);
 
         //todo:: CREATING TRAINING
-   /*     System.out.println("-------------------------------CREATING TRAINING-----------------------------------------");
-        trainingFacade.createTraining(
-                traineeByUsername.get(),
-                trainerByUsername.get(),
-                "Test11 Training123123",
-                trainerByUsername.get().getSpecialization(),
-                LocalDate.now().plusDays(14),
-                60);
+        System.out.println("-------------------------------STEP 16: CREATING TRAINING-----------------------------------------");
+        for (int i = 1; i <= 10; i++) {
+            trainingFacade.createTraining(
+                    traineeByUsername.get(),
+                    trainerByUsername.get(),
+                    "Test Training" + i,
+                    trainerByUsername.get().getSpecialization(),
+                    LocalDate.now().plusDays(2 + i),
+                    60 + (i * 2));
+            i++;
+        }
+        System.out.println("---------------------------------STEP 16: END-----------------------------------------------");
 
-        System.out.println("---------------------------------END-----------------------------------------------");
-*/
-        //todo:: DELETING Trainee(cascading deleted Training)
-
-        /*    trainingFacade.deleteTrainee("Ivan.Trainee2");*/
 
         //todo:: Get Trainers not assigned to Trainee with username
-/*
-        System.out.println("-------------------------------GET TRAINERS NOT ASSIGNED TO TRAINEE-----------------------------------------");
-        List<Trainer> trainersNotAssignedToTrainee = trainingFacade.getTrainersNotAssignedToTrainee("Ivan.Trainee2");
+
+        System.out.println("-------------------------------STEP 17: GET TRAINERS NOT ASSIGNED TO TRAINEE-----------------------------------------");
+        List<Trainer> trainersNotAssignedToTrainee = trainingFacade.getTrainersNotAssignedToTrainee(traineeByUsername.get().getUser().getUserName());
         System.out.println(trainersNotAssignedToTrainee);
-        System.out.println("-------------------------------END-----------------------------------------");
-*/
+        System.out.println("-------------------------------STEP 17: END-----------------------------------------");
 
         //todo:: GET Trainee Trainings List by trainee username and criteria (from date, to date, trainer name, training type)
-/*
-        System.out.println("-------------------------------GET Trainee Trainings List by trainee username and criteria-----------------------------------------");
+        System.out.println("-------------------------------STEP 14: GET Trainee Trainings List by trainee username and criteria-----------------------------------------");
         List<Training> traineeTrainingsByCriteria = trainingFacade.getTraineeTrainingsByCriteria(
-                "Ivan.Trainee1",
+                traineeByUsername.get().getUser().getUserName(),
                 LocalDate.now(),
-                LocalDate.now().plusDays(14),
-                "Andriy",
+                LocalDate.now().plusDays(6),
+                trainerByUsername.get().getUser().getFirstName(),
                 trainerByUsername.get().getSpecialization()
 
         );
         System.out.println(traineeTrainingsByCriteria);
-        System.out.println("-------------------------------END-----------------------------------------");
-*/
+        System.out.println("-------------------------------STEP 14: END-----------------------------------------");
 
         //todo:: GET Trainer Trainings List by trainer username and criteria (from date, to date, trainee name)
-/*        System.out.println("-------------------------------GET Trainer Trainings List by trainer username and criteria-----------------------------------------");
+        System.out.println("-------------------------------STEP 15: GET Trainer Trainings List by trainer username and criteria-----------------------------------------");
         List<Training> trainerTrainingsByCriteria = trainingFacade.getTrainerTrainingsByCriteria(
-                "Andriy.Trainers1",
+                trainerByUsername.get().getUser().getUserName(),
                 LocalDate.now(),
-                LocalDate.now().plusDays(1),
-                "Ivan"
+                LocalDate.now().plusDays(20),
+                traineeByUsername.get().getUser().getFirstName()
         );
         System.out.println(trainerTrainingsByCriteria);
-        System.out.println("-------------------------------END-----------------------------------------");*/
+        System.out.println("------------------------------STEP 15: END-----------------------------------------");
+
+
+        //todo: DELETING Trainee(cascading deleted Training)
+        System.out.println("----------------------------------STEP 13: DELETE TRAINEE----------------------------------------------");
+        trainingFacade.deleteTrainee(traineeByUsername.get().getUser().getUserName());
+        System.out.println("------------------------------------END--------------------------------------------");
     }
 }

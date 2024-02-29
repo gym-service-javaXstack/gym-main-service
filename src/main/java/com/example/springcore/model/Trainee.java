@@ -15,10 +15,10 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "trainee")
-@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Trainee {
@@ -81,7 +81,7 @@ public class Trainee {
                 ", address='" + address + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 ", user=" + user +
-                ", trainers=" + (trainers.isEmpty() ? "not initialized" : trainers.stream()
+                ", trainers=" + (trainers == null || trainers.isEmpty() ? "not initialized" : trainers.stream()
                 .map(trainer -> "Trainer{user=" + trainer.getUser() + ", specialization=" + trainer.getSpecialization() + "}")
                 .collect(Collectors.joining(", "))) +
                 '}';

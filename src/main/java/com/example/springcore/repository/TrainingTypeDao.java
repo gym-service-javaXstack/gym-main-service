@@ -1,6 +1,7 @@
 package com.example.springcore.repository;
 
 import com.example.springcore.model.TrainingType;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -8,12 +9,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@RequiredArgsConstructor
 public class TrainingTypeDao {
     private final SessionFactory sessionFactory;
-
-    public TrainingTypeDao(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     @Transactional(readOnly = true)
     public TrainingType findTrainingTypeByName(String name) {

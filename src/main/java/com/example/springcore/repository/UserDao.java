@@ -38,42 +38,11 @@ public class UserDao<T> {
         return entity;
     }
 
-    public User changePassword(String username, String oldPassword, String newPassword) {
-        Session session = sessionFactory.getCurrentSession();
-        User user = session.createQuery("from User u where u.userName = :username", User.class)
-                .setParameter("username", username)
-                .uniqueResultOptional()
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!Objects.equals(user.getPassword(), oldPassword)) {
-            throw new RuntimeException("Old password is incorrect");
-        }
-
-        user.setPassword(newPassword);
-
-        return session.merge(user);
-    }
-
     public Optional<T> getUserByUsername(String username, Function<User, T> converter) {
         Session session = sessionFactory.getCurrentSession();
         return session.createQuery("from User u where u.userName = :username", User.class)
                 .setParameter("username", username)
                 .uniqueResultOptional()
                 .map(converter);
-    }
-
-    public void changeUserStatus(String username, boolean isActive) {
-        Session session = sessionFactory.getCurrentSession();
-        session.createQuery("from User u where u.userName = :username", User.class)
-                .setParameter("username", username)
-                .uniqueResultOptional()
-                .ifPresentOrElse(
-                        user -> {
-                            user.setIsActive(isActive);
-                            session.flush();
-//                            session.merge(user);
-                        },
-                        () -> { throw new RuntimeException("User not found"); }
-                );
     }
 }

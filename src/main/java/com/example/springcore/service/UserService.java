@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -15,16 +17,23 @@ public class UserService {
     private final AuthenticationService authenticationService;
 
     @Transactional
-    public void changeUserStatus(String username, boolean isActive) {
-        authenticationService.isAuthenticated(username);
-        userDao.changeUserStatus(username, isActive);
+    public void changeUserStatus(User user, boolean isActive) {
+        authenticationService.isAuthenticated(user.getUserName());
+        user.setIsActive(isActive);
+        userDao.update(user);
     }
 
     @Transactional
-    public User changeUserPassword(String username, String oldPassword, String newPassword) {
-        authenticationService.isAuthenticated(username);
-        User user = userDao.changePassword(username, oldPassword, newPassword);
-        log.info("Updated trainer password: {}", username);
+    public User changeUserPassword(User user, String oldPassword, String newPassword) {
+        authenticationService.isAuthenticated(user.getUserName());
+        if (!Objects.equals(user.getPassword(), oldPassword)) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+        user.setPassword(newPassword);
+
+        userDao.update(user);
+
+        log.info("Updated trainer password: {}", user.getUserName());
         return user;
     }
 }

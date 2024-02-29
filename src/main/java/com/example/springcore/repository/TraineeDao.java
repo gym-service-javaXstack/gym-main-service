@@ -19,10 +19,9 @@ public class TraineeDao extends UserDao<Trainee> {
         super(sessionFactory);
     }
 
-    public void delete(String username) {
+    public void delete(Trainee trainee) {
         Session session = sessionFactory.getCurrentSession();
-        Optional<Trainee> userByUsername = getTraineeByUsername(username);
-        userByUsername.ifPresent(session::remove);
+        session.remove(trainee);
     }
 
     public Optional<Trainee> getTraineeByUsername(String username) {
@@ -41,10 +40,10 @@ public class TraineeDao extends UserDao<Trainee> {
 
     public void updateTraineesTrainersList(Trainee trainee, Trainer trainer) {
         Session session = sessionFactory.getCurrentSession();
-        Trainee mergedTrainee = session.merge(trainee);
-        Trainer mergedTrainer = session.merge(trainer);
-
-        mergedTrainee.addTrainer(mergedTrainer);
+        if (!trainee.getTrainers().contains(trainer)) {
+            trainee.addTrainer(trainer);
+            session.merge(trainee);
+        }
     }
 
     public List<Trainer> getTrainersNotAssignedToTrainee(String username) {
