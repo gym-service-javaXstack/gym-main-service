@@ -174,6 +174,6 @@ public class SpringCoreApplication {
         //todo: DELETING Trainee(cascading deleted Training)
         System.out.println("----------------------------------STEP 13: DELETE TRAINEE----------------------------------------------");
         trainingFacade.deleteTrainee(traineeByUsername.get().getUser().getUserName());
-        System.out.println("------------------------------------END--------------------------------------------");
+        System.out.println("------------------------------------STEP 13: END--------------------------------------------");
     }
 }

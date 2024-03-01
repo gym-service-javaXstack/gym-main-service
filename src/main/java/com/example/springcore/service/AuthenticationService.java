@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -36,7 +35,7 @@ public class AuthenticationService {
     }
 
     public void isAuthenticated(String username) {
-        if (!authenticatedUsers.containsKey(username)){
+        if (!authenticatedUsers.containsKey(username)) {
             throw new RuntimeException("User is not authenticated");
         }
     }
