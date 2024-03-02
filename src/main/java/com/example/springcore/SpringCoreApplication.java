@@ -160,7 +160,7 @@ public class SpringCoreApplication {
         System.out.println("-------------------------------STEP 14: END-----------------------------------------");
 
         //todo:: GET Trainer Trainings List by trainer username and criteria (from date, to date, trainee name)
-        System.out.println("-------------------------------STEP 15: GET Trainer Trainings List by trainer username and criteria-----------------------------------------");
+      /*  System.out.println("-------------------------------STEP 15: GET Trainer Trainings List by trainer username and criteria-----------------------------------------");
         List<Training> trainerTrainingsByCriteria = trainingFacade.getTrainerTrainingsByCriteria(
                 trainerByUsername.get().getUser().getUserName(),
                 LocalDate.now(),
@@ -169,11 +169,12 @@ public class SpringCoreApplication {
         );
         System.out.println(trainerTrainingsByCriteria);
         System.out.println("------------------------------STEP 15: END-----------------------------------------");
-
+*/
 
         //todo: DELETING Trainee(cascading deleted Training)
-        System.out.println("----------------------------------STEP 13: DELETE TRAINEE----------------------------------------------");
+      /*  System.out.println("----------------------------------STEP 13: DELETE TRAINEE----------------------------------------------");
         trainingFacade.deleteTrainee(traineeByUsername.get().getUser().getUserName());
         System.out.println("------------------------------------STEP 13: END--------------------------------------------");
+   */
     }
 }

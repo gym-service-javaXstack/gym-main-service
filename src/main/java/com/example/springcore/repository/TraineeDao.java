@@ -48,23 +48,16 @@ public class TraineeDao extends UserDao<Trainee> {
 
     public List<Trainer> getTrainersNotAssignedToTrainee(String username) {
         Session session = sessionFactory.getCurrentSession();
-
-        List<Trainer> allTrainers = session.createQuery(
+        return session.createQuery(
                         "select t from Trainer t " +
-                                "left join fetch t.trainees",
+                                "join fetch t.user ttu " +
+                                "join fetch t.specialization " +
+                                "left join fetch t.trainees tt " +
+                                "join fetch tt.user " +
+                                "where ttu.userName !=:username or tt.id is null",
                         Trainer.class)
-                .getResultList();
-
-        Trainee trainee = session.createQuery(
-                        "select tr from Trainee tr join tr.user u " +
-                                "where u.userName = :username",
-                        Trainee.class)
                 .setParameter("username", username)
-                .getSingleResult();
-
-        return allTrainers.stream()
-                .filter(trainer -> !trainer.getTrainees().contains(trainee))
-                .toList();
+                .getResultList();
     }
 
     public List<Training> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, TrainingType trainingType) {

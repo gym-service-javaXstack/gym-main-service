@@ -45,7 +45,7 @@ public class Trainee {
     @Column(name = "date_of_birth")
     LocalDate dateOfBirth;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "usr_id", referencedColumnName = "id", unique = true)
     private User user;
 

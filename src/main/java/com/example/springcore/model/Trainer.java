@@ -37,11 +37,11 @@ public class Trainer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "specialization_id")
     TrainingType specialization;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "usr_id", referencedColumnName = "id", unique = true)
     private User user;
 
@@ -57,7 +57,7 @@ public class Trainer {
                 "id=" + id +
                 ", specialization=" + specialization +
                 ", user=" + user +
-                ", trainees=" + (trainees == null || trainees.isEmpty() ? "not initialized" : trainees.stream()
+                ", trainees=" + (trainees == null || trainees.isEmpty() ? "not initialized" : getTrainees().stream()
                 .map(trainee -> "Trainee{user=" + trainee.getUser() + "}")
                 .collect(Collectors.joining(", "))) +
                 '}';
