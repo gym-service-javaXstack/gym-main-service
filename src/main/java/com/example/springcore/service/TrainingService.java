@@ -1,36 +1,38 @@
 package com.example.springcore.service;
 
+import com.example.springcore.model.Trainee;
+import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
-import com.example.springcore.repository.impl.TrainingDao;
+import com.example.springcore.model.TrainingType;
+import com.example.springcore.repository.TrainingDao;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TrainingService {
-    private static final Logger logger = LoggerFactory.getLogger(TrainingService.class);
     private final TrainingDao trainingDao;
+    private final TraineeService traineeService;
 
-    public Training createTraining(Training training) {
-        Training createdTraining = trainingDao.save(training);
-        logger.info("Created training: {}", createdTraining.getTrainingId());
-        return createdTraining;
-    }
+    @Transactional
+    public void createTraining(Trainee trainee, Trainer trainer, String trainingName, TrainingType trainingType, LocalDate trainingDate, Integer duration) {
+        traineeService.updateTraineesTrainersList(trainee, trainer);
 
-    public Optional<Training> getTraining(int trainingId) {
-        Optional<Training> training = trainingDao.get(trainingId);
-        training.ifPresent(t -> logger.info("Retrieved training: {}", trainingId));
-        return training;
-    }
+        Training training = Training.builder()
+                .trainee(trainee)
+                .trainer(trainer)
+                .trainingName(trainingName)
+                .trainingType(trainingType)
+                .trainingDate(trainingDate)
+                .duration(duration)
+                .build();
 
-    public List<Training> getAllTrainings() {
-        List<Training> trainings = trainingDao.getAll();
-        logger.info("Retrieved all trainings");
-        return trainings;
+        trainingDao.save(training);
+        log.info("Created training: {}", training);
     }
 }

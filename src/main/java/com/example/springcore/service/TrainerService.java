@@ -1,52 +1,69 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.Trainer;
-import com.example.springcore.repository.impl.TrainerDao;
+import com.example.springcore.model.Training;
+import com.example.springcore.model.User;
+import com.example.springcore.repository.TrainerDao;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TrainerService {
-    private static final Logger logger = LoggerFactory.getLogger(TrainerService.class);
     private final TrainerDao trainerDao;
     private final ProfileService profileService;
+    private final AuthenticationService authenticationService;
 
+    @Transactional
     public Trainer createTrainer(Trainer trainer) {
-        Trainer trainerToSave = Trainer.builder()
-                .firstName(trainer.getFirstName())
-                .lastName(trainer.getLastName())
-                .userName(profileService.generateUsername(trainer.getFirstName(), trainer.getLastName()))
+        User user = User.builder()
+                .firstName(trainer.getUser().getFirstName())
+                .lastName(trainer.getUser().getLastName())
+                .userName(profileService.generateUsername(trainer.getUser().getFirstName(), trainer.getUser().getLastName()))
                 .password(profileService.generatePassword())
-                .isActive(trainer.getIsActive())
-                .userId(trainer.getUserId())
-                .specialization(trainer.getSpecialization())
+                .isActive(trainer.getUser().getIsActive())
                 .build();
-        trainerDao.save(trainerToSave);
-        logger.info("Created trainer: {}", trainerToSave.getUserId());
-        return trainerToSave;
+
+        Trainer trainerToSave = Trainer.builder()
+                .user(user)
+                .specialization(trainer.getSpecialization())
+                .trainees(new HashSet<>())
+                .build();
+
+        Trainer saved = trainerDao.save(trainerToSave);
+        log.info("Created trainer: {}", trainerToSave.getUser().getId());
+        return saved;
     }
 
+    @Transactional
     public Trainer updateTrainer(Trainer trainer) {
-        Trainer update = trainerDao.update(trainer, trainer.getUserId());
-        logger.info("Updated trainer: {}", trainer.getUserId());
-        return update;
+        authenticationService.isAuthenticated(trainer.getUser().getUserName());
+        Trainer updated = trainerDao.update(trainer);
+        log.info("Updated trainer: {}", trainer.getUser().getId());
+        return updated;
     }
 
-    public Optional<Trainer> getTrainer(Integer id) {
-        Optional<Trainer> trainer = trainerDao.get(id);
-        trainer.ifPresent(t -> logger.info("Retrieved trainer: {}", id));
-        return trainer;
+    @Transactional(readOnly = true)
+    public Optional<Trainer> getTrainerByUsername(String username) {
+        authenticationService.isAuthenticated(username);
+        Optional<Trainer> byUsername = trainerDao.getTrainerByUsername(username);
+        log.info("getByUsername trainer: {}", username);
+        return byUsername;
     }
 
-    public List<Trainer> getAllTrainers() {
-        List<Trainer> trainers = trainerDao.getAll();
-        logger.info("Retrieved all trainers");
-        return trainers;
+    @Transactional(readOnly = true)
+    public List<Training> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String traineeName) {
+        authenticationService.isAuthenticated(username);
+        List<Training> trainerTrainingsByCriteria = trainerDao.getTrainerTrainingsByCriteria(username, fromDate, toDate, traineeName);
+        log.info("getTrainerTrainingsByCriteria method: {}", username);
+        return trainerTrainingsByCriteria;
     }
 }
