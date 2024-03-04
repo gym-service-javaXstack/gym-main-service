@@ -1,28 +1,32 @@
 package com.example.springcore.service;
 
+import com.example.springcore.model.Trainee;
+import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
-import com.example.springcore.repository.impl.TrainingDao;
+import com.example.springcore.model.TrainingType;
+import com.example.springcore.model.User;
+import com.example.springcore.repository.TrainingDao;
 import com.example.springcore.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TrainingServiceTest {
+
     @Mock
     private TrainingDao trainingDao;
+
+    @Mock
+    private TraineeService traineeService;
 
     @InjectMocks
     private TrainingService trainingService;
@@ -30,44 +34,27 @@ class TrainingServiceTest {
     @Test
     void createTraining() {
         // Given
-        Training training = TestUtil.createTestTraining();
-        when(trainingDao.save(any(Training.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        User user = TestUtil.createUser("traineeUser", "password");
+        Trainee trainee = TestUtil.createTrainee(user, null);
+        TrainingType trainingType = TestUtil.createTrainingType("specialization");
+        Trainer trainer = TestUtil.createTrainer(user, trainingType);
+        String trainingName = "testTraining";
+        LocalDate trainingDate = LocalDate.now();
+        Integer duration = 60;
 
         // When
-        Training result = trainingService.createTraining(training);
+        trainingService.createTraining(trainee, trainer, trainingName, trainingType, trainingDate, duration);
 
         // Then
-        assertThat(result, samePropertyValuesAs(training));
-        verify(trainingDao, times(1)).save(any(Training.class));
-    }
-
-    @Test
-    void getTraining() {
-        // Given
-        Training expectedTraining = TestUtil.createTestTraining();
-        when(trainingDao.get(anyInt())).thenReturn(Optional.of(expectedTraining));
-
-        // When
-        Optional<Training> result = trainingService.getTraining(1);
-
-        // Then
-        assertTrue(result.isPresent());
-        assertThat(result.get(), samePropertyValuesAs(expectedTraining));
-    }
-
-    @Test
-    void getAllTrainings() {
-        // Given
-        List<Training> expectedTrainings = Arrays.asList(TestUtil.createTestTraining(), TestUtil.createTestTraining());
-        when(trainingDao.getAll()).thenReturn(expectedTrainings);
-
-        // When
-        List<Training> result = trainingService.getAllTrainings();
-
-        // Then
-        assertEquals(expectedTrainings.size(), result.size());
-        for (int i = 0; i < expectedTrainings.size(); i++) {
-            assertThat(result.get(i), samePropertyValuesAs(expectedTrainings.get(i)));
-        }
+        verify(traineeService).updateTraineesTrainersList(trainee, trainer);
+        ArgumentCaptor<Training> trainingCaptor = ArgumentCaptor.forClass(Training.class);
+        verify(trainingDao).save(trainingCaptor.capture());
+        Training savedTraining = trainingCaptor.getValue();
+        assertEquals(trainee, savedTraining.getTrainee());
+        assertEquals(trainer, savedTraining.getTrainer());
+        assertEquals(trainingName, savedTraining.getTrainingName());
+        assertEquals(trainingType, savedTraining.getTrainingType());
+        assertEquals(trainingDate, savedTraining.getTrainingDate());
+        assertEquals(duration, savedTraining.getDuration());
     }
 }

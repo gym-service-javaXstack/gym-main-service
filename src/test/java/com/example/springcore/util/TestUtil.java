@@ -4,44 +4,55 @@ import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
 import com.example.springcore.model.TrainingType;
+import com.example.springcore.model.User;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 
 public class TestUtil {
-    public static Trainee createTestTrainee() {
-        return Trainee.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .userName("username")
-                .password("password")
+
+    public static User createUser(String username, String password) {
+        return User.builder()
+                .userName(username)
+                .password(password)
+                .firstName("firstName")
+                .lastName("lastName")
                 .isActive(true)
-                .userId(1)
-                .address("Address")
-                .dateOfBirth(LocalDate.now())
                 .build();
     }
 
-    public static Trainer createTestTrainer() {
+    public static Trainer createTrainer(User user, TrainingType trainingType) {
         return Trainer.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .userName("username")
-                .password("password")
-                .isActive(true)
-                .userId(1)
-                .specialization(new TrainingType("Specialization"))
+                .user(user)
+                .specialization(trainingType)
                 .build();
     }
 
-    public static Training createTestTraining() {
+    public static Trainee createTrainee(User user, Trainer trainer) {
+        Trainee trainee = Trainee.builder()
+                .user(user)
+                .trainers(new HashSet<>())
+                .build();
+        if (trainer != null) {
+            trainee.addTrainer(trainer);
+        }
+        return trainee;
+    }
+
+    public static Training createTraining(Trainee trainee, Trainer trainer, TrainingType trainingType) {
         return Training.builder()
-                .trainingId(1)
-                .traineeId(1)
-                .trainerId(1)
-                .trainingName("TrainingName")
-                .trainingType(new TrainingType("TrainingType"))
+                .trainee(trainee)
+                .trainer(trainer)
+                .trainingType(trainingType)
+                .trainingName("trainingName")
                 .trainingDate(LocalDate.now())
-                .duration(1)
+                .duration(60)
+                .build();
+    }
+
+    public static TrainingType createTrainingType(String trainingTypeName) {
+        return TrainingType.builder()
+                .trainingTypeName(trainingTypeName)
                 .build();
     }
 }
