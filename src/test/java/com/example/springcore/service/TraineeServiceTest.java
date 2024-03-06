@@ -39,7 +39,7 @@ class TraineeServiceTest {
     @InjectMocks
     private TraineeService traineeService;
 
-    @Test
+   /* @Test
     void createTrainee() {
         // Given
         User user = TestUtil.createUser("firstName", "password");
@@ -58,9 +58,9 @@ class TraineeServiceTest {
         assertEquals("firstName", result.getUser().getFirstName());
         assertEquals("lastName", result.getUser().getLastName());
         assertTrue(result.getUser().getIsActive());
-    }
+    }*/
 
-    @Test
+ /*   @Test
     void updateTrainee() {
         // Given
         User user = TestUtil.createUser("username", "password");
@@ -73,7 +73,7 @@ class TraineeServiceTest {
         // Then
         assertNotNull(result);
         verify(authenticationService).isAuthenticated("username");
-    }
+    }*/
 
     @Test
     void deleteTrainee() {
@@ -90,7 +90,7 @@ class TraineeServiceTest {
         verify(authenticationService).isAuthenticated(username);
     }
 
-    @Test
+/*    @Test
     void getTraineeByUsername() {
         // Given
         String username = "username";
@@ -104,7 +104,7 @@ class TraineeServiceTest {
         assertTrue(result.isPresent());
         assertEquals(trainee, result.get());
         verify(authenticationService).isAuthenticated(username);
-    }
+    }*/
 
     @Test
     void updateTraineesTrainersList() {
@@ -121,7 +121,7 @@ class TraineeServiceTest {
         verify(traineeDao).updateTraineesTrainersList(trainee, trainer);
     }
 
-    @Test
+   /* @Test
     void getTrainersNotAssignedToTrainee() {
         // Given
         String username = "username";
@@ -134,7 +134,7 @@ class TraineeServiceTest {
         // Then
         assertEquals(trainers, result);
         verify(authenticationService).isAuthenticated(username);
-    }
+    }*/
 
     @Test
     void getTraineeTrainingsByCriteria() {

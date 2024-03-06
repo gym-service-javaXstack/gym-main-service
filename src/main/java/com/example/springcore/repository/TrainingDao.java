@@ -1,18 +1,17 @@
 package com.example.springcore.repository;
 
 import com.example.springcore.model.Training;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RequiredArgsConstructor
 public class TrainingDao {
-    private final SessionFactory sessionFactory;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public void save(Training training) {
-        Session session = sessionFactory.getCurrentSession();
-        session.persist(training);
+        entityManager.persist(training);
     }
 }

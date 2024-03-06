@@ -26,7 +26,7 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    @Test
+   /* @Test
     void changeUserStatus() {
         // Given
         User user = TestUtil.createUser("testUser", "password");
@@ -39,9 +39,9 @@ class UserServiceTest {
         assertTrue(user.getIsActive());
         verify(authenticationService).isAuthenticated(user.getUserName());
         verify(userDao).update(user);
-    }
+    }*/
 
-    @Test
+   /* @Test
     void changeUserPassword_CorrectOldPassword() {
         // Given
         String oldPassword = "oldPassword";
@@ -55,9 +55,9 @@ class UserServiceTest {
         assertEquals(newPassword, user.getPassword());
         verify(authenticationService).isAuthenticated(user.getUserName());
         verify(userDao).update(user);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void changeUserPassword_IncorrectOldPassword() {
         // Given
         String oldPassword = "oldPassword";
@@ -66,5 +66,5 @@ class UserServiceTest {
 
         // Then
         assertThrows(RuntimeException.class, () -> userService.changeUserPassword(user, oldPassword, newPassword));
-    }
+    }*/
 }

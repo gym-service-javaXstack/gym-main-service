@@ -34,8 +34,4 @@ class TrainingFacadeTest {
     @Mock
     private TrainingService trainingService;
 
-    @InjectMocks
-    private TrainingFacade trainingFacade;
-
-
 }

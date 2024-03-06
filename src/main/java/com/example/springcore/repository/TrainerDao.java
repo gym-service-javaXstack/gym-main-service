@@ -2,8 +2,8 @@ package com.example.springcore.repository;
 
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -12,27 +12,25 @@ import java.util.Optional;
 
 @Repository
 public class TrainerDao extends UserDao<Trainer> {
-    protected TrainerDao(SessionFactory sessionFactory) {
-        super(sessionFactory);
-    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public Optional<Trainer> getTrainerByUsername(String username) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.createQuery(
-                "select t from Trainer t " +
-                        "join fetch t.user u " +
-                        "join fetch t.specialization " +
-                        "left join fetch t.trainees tn " +
-                        "left join fetch tn.user " +
-                        "where u.userName = :username",
+        return Optional.of(entityManager.createQuery(
+                        "select t from Trainer t " +
+                                "join fetch t.user u " +
+                                "join fetch t.specialization " +
+                                "left join fetch t.trainees tn " +
+                                "left join fetch tn.user " +
+                                "where u.userName = :username",
                         Trainer.class)
                 .setParameter("username", username)
-                .uniqueResultOptional();
+                .getSingleResult());
     }
 
     public List<Training> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String traineeName) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.createQuery(
+        return entityManager.createQuery(
                         "select tr from Training tr " +
                                 "join tr.trainer t " +
                                 "join t.user u " +

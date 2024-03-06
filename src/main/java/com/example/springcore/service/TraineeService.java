@@ -1,5 +1,10 @@
 package com.example.springcore.service;
 
+import com.example.springcore.dto.TraineeDTO;
+import com.example.springcore.dto.TraineeWithTrainersDTO;
+import com.example.springcore.dto.TrainerDTO;
+import com.example.springcore.mapper.TraineeWithTrainersMapper;
+import com.example.springcore.mapper.TrainerMapper;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
@@ -15,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,35 +28,43 @@ public class TraineeService {
     private final TraineeDao traineeDao;
     private final ProfileService profileService;
     private final AuthenticationService authenticationService;
+    private final TrainerMapper trainerMapper;
+    private final TraineeWithTrainersMapper traineeWithTrainersMapper;
 
     @Transactional
-    public Trainee createTrainee(Trainee trainee) {
+    public Trainee createTrainee(TraineeDTO traineeDTO) {
         User user = User.builder()
-                .firstName(trainee.getUser().getFirstName())
-                .lastName(trainee.getUser().getLastName())
-                .userName(profileService.generateUsername(trainee.getUser().getFirstName(), trainee.getUser().getLastName()))
+                .firstName(traineeDTO.getFirstName())
+                .lastName(traineeDTO.getLastName())
+                .userName(profileService.generateUsername(traineeDTO.getFirstName(), traineeDTO.getLastName()))
                 .password(profileService.generatePassword())
-                .isActive(trainee.getUser().getIsActive())
+                .isActive(false)
                 .build();
 
         Trainee traineeToSave = Trainee.builder()
                 .user(user)
-                .address(trainee.getAddress())
-                .dateOfBirth(trainee.getDateOfBirth())
+                .address(traineeDTO.getAddress())
+                .dateOfBirth(traineeDTO.getDateOfBirth())
                 .trainers(new HashSet<>())
                 .build();
 
         Trainee saved = traineeDao.save(traineeToSave);
-        log.info("Created trainee: {}", saved.getUser().getId());
+        log.info("Created traineeDTO: {}", saved.getUser().getId());
         return saved;
     }
 
     @Transactional
-    public Trainee updateTrainee(Trainee trainee) {
-        authenticationService.isAuthenticated(trainee.getUser().getUserName());
+    public TraineeWithTrainersDTO updateTrainee(TraineeDTO traineeDTO) {
+        authenticationService.isAuthenticated(traineeDTO.getUserName());
+
+        Trainee trainee = traineeDao.getTraineeByUsername(traineeDTO.getUserName())
+                .orElseThrow(() -> new EntityNotFoundException(traineeDTO.getUserName()));
+
+        traineeWithTrainersMapper.updateTraineeFromDTO(traineeDTO, trainee);
+
         Trainee updated = traineeDao.update(trainee);
         log.info("Updated trainee: {}", updated.getUser().getId());
-        return updated;
+        return traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(updated);
     }
 
     @Transactional
@@ -65,11 +77,11 @@ public class TraineeService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Trainee> getTraineeByUsername(String username) {
+    public TraineeWithTrainersDTO getTraineeByUsername(String username) {
         authenticationService.isAuthenticated(username);
-        Optional<Trainee> byUsername = traineeDao.getTraineeByUsername(username);
-        log.info("getByUsername trainee: {}", username);
-        return byUsername;
+        Trainee trainee = traineeDao.getTraineeByUsername(username).orElseThrow(() -> new EntityNotFoundException(username));
+        log.info("getTraineeByUsername trainee: {}", username);
+        return traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(trainee);
     }
 
     @Transactional
@@ -79,11 +91,12 @@ public class TraineeService {
     }
 
     @Transactional(readOnly = true)
-    public List<Trainer> getTrainersNotAssignedToTrainee(String username) {
+    public List<TrainerDTO> getTrainersNotAssignedToTrainee(String username) {
         authenticationService.isAuthenticated(username);
+
         List<Trainer> trainersNotAssignedToTrainee = traineeDao.getTrainersNotAssignedToTrainee(username);
         log.info("getTrainersNotAssignedToTrainee method: {}", username);
-        return trainersNotAssignedToTrainee;
+        return trainerMapper.fromTrainerListToTrainerListDTO(trainersNotAssignedToTrainee);
     }
 
     @Transactional(readOnly = true)

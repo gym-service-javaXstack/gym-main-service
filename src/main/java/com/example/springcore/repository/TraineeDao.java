@@ -4,8 +4,8 @@ import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
 import com.example.springcore.model.TrainingType;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -15,18 +15,15 @@ import java.util.Optional;
 @Repository
 public class TraineeDao extends UserDao<Trainee> {
 
-    protected TraineeDao(SessionFactory sessionFactory) {
-        super(sessionFactory);
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public void delete(Trainee trainee) {
-        Session session = sessionFactory.getCurrentSession();
-        session.remove(trainee);
+        entityManager.remove(entityManager.contains(trainee) ? trainee : entityManager.merge(trainee));
     }
 
     public Optional<Trainee> getTraineeByUsername(String username) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.createQuery(
+        return Optional.of(entityManager.createQuery(
                         "select t from Trainee t " +
                                 "join fetch t.user u " +
                                 "left join fetch t.trainers tr " +
@@ -35,34 +32,31 @@ public class TraineeDao extends UserDao<Trainee> {
                                 "where u.userName = :username",
                         Trainee.class)
                 .setParameter("username", username)
-                .uniqueResultOptional();
+                .getSingleResult());
     }
 
     public void updateTraineesTrainersList(Trainee trainee, Trainer trainer) {
-        Session session = sessionFactory.getCurrentSession();
         if (!trainee.getTrainers().contains(trainer)) {
             trainee.addTrainer(trainer);
-            session.merge(trainee);
+            entityManager.merge(trainee);
         }
     }
 
     public List<Trainer> getTrainersNotAssignedToTrainee(String username) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.createQuery(
+        return entityManager.createQuery(
                         "select t from Trainer t " +
                                 "join fetch t.user ttu " +
                                 "join fetch t.specialization " +
                                 "left join fetch t.trainees tt " +
-                                "join fetch tt.user " +
-                                "where ttu.userName !=:username or tt.id is null",
+                                "left join fetch tt.user traineename " +
+                                "where (traineename.userName !=:username or tt.id is null) and ttu.isActive = true",
                         Trainer.class)
                 .setParameter("username", username)
                 .getResultList();
     }
 
     public List<Training> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, TrainingType trainingType) {
-        Session session = sessionFactory.getCurrentSession();
-        return session.createQuery(
+        return entityManager.createQuery(
                         "select tr from Training tr " +
                                 "join tr.trainee t " +
                                 "join t.user u " +
