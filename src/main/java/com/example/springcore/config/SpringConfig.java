@@ -1,6 +1,8 @@
 package com.example.springcore.config;
 
+import com.example.springcore.interceptor.TransactionIdInterceptor;
 import jakarta.persistence.EntityManagerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,13 +11,18 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-public class SpringConfig {
+public class SpringConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private TransactionIdInterceptor transactionIdInterceptor;
 
     @Value("${db.driver}")
     private String DRIVER;
@@ -73,5 +80,10 @@ public class SpringConfig {
         properties.put("hibernate.format_sql", FORMAT_SQL);
         properties.put("hibernate.use_sql_comments", USE_SQL_COMMENTS);
         return properties;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(transactionIdInterceptor);
     }
 }

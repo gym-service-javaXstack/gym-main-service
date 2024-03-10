@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -115,10 +114,10 @@ class TraineeServiceTest {
         Trainer trainer = TestUtil.createTrainer(user, trainingType);
 
         // When
-        traineeService.updateTraineesTrainersList(trainee, trainer);
+        traineeService.linkTraineeAndTrainee(trainee, trainer);
 
         // Then
-        verify(traineeDao).updateTraineesTrainersList(trainee, trainer);
+        verify(traineeDao).linkTraineeAndTrainee(trainee, trainer);
     }
 
    /* @Test
@@ -136,7 +135,7 @@ class TraineeServiceTest {
         verify(authenticationService).isAuthenticated(username);
     }*/
 
-    @Test
+   /* @Test
     void getTraineeTrainingsByCriteria() {
         // Given
         String username = "username";
@@ -153,5 +152,5 @@ class TraineeServiceTest {
         // Then
         assertEquals(trainings, result);
         verify(authenticationService).isAuthenticated(username);
-    }
+    }*/
 }

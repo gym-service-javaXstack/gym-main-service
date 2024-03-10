@@ -3,12 +3,13 @@ package com.example.springcore.service;
 import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
+import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
 import com.example.springcore.mapper.TrainerMapper;
+import com.example.springcore.mapper.TrainingMapper;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
-import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TraineeDao;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,10 +27,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TraineeService {
     private final TraineeDao traineeDao;
+    private final TrainerService trainerService;
     private final ProfileService profileService;
     private final AuthenticationService authenticationService;
     private final TrainerMapper trainerMapper;
     private final TraineeWithTrainersMapper traineeWithTrainersMapper;
+    private final TrainingMapper trainingMapper;
 
     @Transactional
     public Trainee createTrainee(TraineeDTO traineeDTO) {
@@ -49,7 +52,8 @@ public class TraineeService {
                 .build();
 
         Trainee saved = traineeDao.save(traineeToSave);
-        log.info("Created traineeDTO: {}", saved.getUser().getId());
+
+        log.info("TraineeService createTrainee traineeDTO: {}", saved.getUser().getId());
         return saved;
     }
 
@@ -63,47 +67,77 @@ public class TraineeService {
         traineeWithTrainersMapper.updateTraineeFromDTO(traineeDTO, trainee);
 
         Trainee updated = traineeDao.update(trainee);
-        log.info("Updated trainee: {}", updated.getUser().getId());
+
+        log.info("TraineeService updateTrainee trainee: {}", updated.getUser().getId());
         return traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(updated);
     }
 
     @Transactional
     public void deleteTrainee(String username) {
         authenticationService.isAuthenticated(username);
+
         Trainee trainee = traineeDao.getTraineeByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + username + " not found"));
+
         traineeDao.delete(trainee);
-        log.info("Deleted trainee: {}", username);
+        log.info("TraineeService deleteTrainee trainee: {}", username);
     }
 
     @Transactional(readOnly = true)
     public TraineeWithTrainersDTO getTraineeByUsername(String username) {
         authenticationService.isAuthenticated(username);
-        Trainee trainee = traineeDao.getTraineeByUsername(username).orElseThrow(() -> new EntityNotFoundException(username));
-        log.info("getTraineeByUsername trainee: {}", username);
+
+        Trainee trainee = traineeDao.getTraineeByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(username));
+
+        log.info("TraineeService getTraineeByUsername trainee: {}", username);
         return traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(trainee);
     }
 
     @Transactional
-    public void updateTraineesTrainersList(Trainee trainee, Trainer trainer) {
-        traineeDao.updateTraineesTrainersList(trainee, trainer);
-        log.info("Updating trainee's trainers list: {} with {}", trainee.getId(), trainer.getId());
+    public void linkTraineeAndTrainee(Trainee trainee, Trainer trainer) {
+        traineeDao.linkTraineeAndTrainee(trainee, trainer);
+        log.info("TraineeService linkTraineeAndTrainee: {} with {}", trainee.getId(), trainer.getId());
     }
+
+
+    @Transactional
+    public List<TrainerDTO> updateTrainersListInTraineeByUsername(TraineeWithTrainersDTO traineeWithTrainersDTO) {
+        Trainee trainee = traineeDao.getTraineeByUsername(traineeWithTrainersDTO.getUserName())
+                .orElseThrow(() -> new EntityNotFoundException(traineeWithTrainersDTO.getUserName()));
+
+        List<Trainer> trainersByUsernameList = trainerService.getTrainersByUsernameList(
+                traineeWithTrainersDTO.getTrainers().stream()
+                        .map(trainerDTO -> trainerDTO.getUserName())
+                        .toList()
+        );
+
+        trainee.setTrainers(new HashSet<>(trainersByUsernameList));
+
+        traineeDao.save(trainee);
+
+        log.info("TraineeService updateTrainersListInTraineeByUsername: {}", trainee.getId());
+        return trainerMapper.fromTrainerListToTrainerListDTO(trainersByUsernameList);
+    }
+
 
     @Transactional(readOnly = true)
     public List<TrainerDTO> getTrainersNotAssignedToTrainee(String username) {
         authenticationService.isAuthenticated(username);
 
         List<Trainer> trainersNotAssignedToTrainee = traineeDao.getTrainersNotAssignedToTrainee(username);
-        log.info("getTrainersNotAssignedToTrainee method: {}", username);
+
+        log.info("TraineeService getTrainersNotAssignedToTrainee method: {}", username);
         return trainerMapper.fromTrainerListToTrainerListDTO(trainersNotAssignedToTrainee);
     }
 
     @Transactional(readOnly = true)
-    public List<Training> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, TrainingType trainingType) {
+    public List<TrainingDTO> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerUsername, String trainingTypeName) {
         authenticationService.isAuthenticated(username);
-        List<Training> traineeTrainingsByCriteria = traineeDao.getTraineeTrainingsByCriteria(username, fromDate, toDate, trainerName, trainingType);
-        log.info("getTraineeTrainingsByCriteria method: {}", username);
-        return traineeTrainingsByCriteria;
+
+        List<Training> traineeTrainingsByCriteria = traineeDao.getTraineeTrainingsByCriteria(username, fromDate, toDate, trainerUsername, trainingTypeName);
+
+        log.info("TraineeService getTraineeTrainingsByCriteria method: {}", username);
+        return trainingMapper.fromTrainingListToTraineeTrainingListDTO(traineeTrainingsByCriteria);
     }
 }

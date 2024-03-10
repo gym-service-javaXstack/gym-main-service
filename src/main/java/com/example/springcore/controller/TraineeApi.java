@@ -3,17 +3,21 @@ package com.example.springcore.controller;
 import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
+import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
+import com.example.springcore.dto.UserDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequestMapping("/api/v1/trainee")
@@ -33,4 +37,18 @@ public interface TraineeApi {
 
     @GetMapping("/available-trainers")
     ResponseEntity<List<TrainerDTO>> getTrainersNotAssignedToTrainee(@RequestParam String username);
+
+    @PutMapping("/trainers")
+    ResponseEntity<List<TrainerDTO>> updateTraineesTrainersList(@RequestBody TraineeWithTrainersDTO traineeWithTrainersDTO);
+
+    @GetMapping("/trainings")
+    ResponseEntity<List<TrainingDTO>> getTraineeTrainingsByCriteria(
+            @RequestParam String username,
+            @RequestParam(required = false) LocalDate fromDate,
+            @RequestParam(required = false) LocalDate toDate,
+            @RequestParam(required = false) String trainerUsername,
+            @RequestParam(required = false) String trainingTypeName);
+
+    @PatchMapping
+    ResponseEntity<Void> changeTraineeStatus(@RequestBody UserDTO userDTO);
 }

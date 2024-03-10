@@ -32,9 +32,9 @@ public class UserDao<T> {
     }
 
     public Optional<User> getUserByUsername(String username) {
-        return Optional.of(entityManager.createQuery("from User u where u.userName = :username", User.class)
+        List<User> users = entityManager.createQuery("from User u where u.userName = :username", User.class)
                 .setParameter("username", username)
-                .getSingleResult());
-
+                .getResultList();
+        return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
     }
 }

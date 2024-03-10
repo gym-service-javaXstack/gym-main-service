@@ -5,6 +5,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class TrainingTypeDao {
 
@@ -14,5 +16,12 @@ public class TrainingTypeDao {
     public TrainingType findTrainingTypeByName(String name) {
         return entityManager.createQuery("select t from TrainingType t where t.trainingTypeName = :name",
                 TrainingType.class).setParameter("name", name).getSingleResult();
+    }
+
+    public List<TrainingType> getAllTrainingTypes() {
+        return entityManager.createQuery(
+                "select t from TrainingType t",
+                        TrainingType.class)
+                .getResultList();
     }
 }

@@ -1,38 +1,48 @@
 package com.example.springcore.service;
 
+import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
-import com.example.springcore.model.TrainingType;
+import com.example.springcore.repository.TraineeDao;
+import com.example.springcore.repository.TrainerDao;
 import com.example.springcore.repository.TrainingDao;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class TrainingService {
     private final TrainingDao trainingDao;
+    private final TraineeDao traineeDao;
+    private final TrainerDao trainerDao;
     private final TraineeService traineeService;
 
     @Transactional
-    public void createTraining(Trainee trainee, Trainer trainer, String trainingName, TrainingType trainingType, LocalDate trainingDate, Integer duration) {
-        traineeService.updateTraineesTrainersList(trainee, trainer);
+    public void createTraining(TrainingDTO trainingDTO) {
+        Trainee traineeByUsername = traineeDao.getTraineeByUsername(trainingDTO.getTraineeUserName())
+                .orElseThrow(() -> new EntityNotFoundException(trainingDTO.getTraineeUserName()));
+
+        Trainer trainerByUsername = trainerDao.getTrainerByUsername(trainingDTO.getTrainerUserName())
+                .orElseThrow(() -> new EntityNotFoundException(trainingDTO.getTrainerUserName()));
+
+
+        traineeService.linkTraineeAndTrainee(traineeByUsername, trainerByUsername);
 
         Training training = Training.builder()
-                .trainee(trainee)
-                .trainer(trainer)
-                .trainingName(trainingName)
-                .trainingType(trainingType)
-                .trainingDate(trainingDate)
-                .duration(duration)
+                .trainee(traineeByUsername)
+                .trainer(trainerByUsername)
+                .trainingName(trainingDTO.getTrainingName())
+                .trainingType(trainerByUsername.getSpecialization())
+                .trainingDate(trainingDTO.getTrainingDate())
+                .duration(trainingDTO.getDuration())
                 .build();
 
         trainingDao.save(training);
-        log.info("Created training: {}", training);
+        log.info("TrainingService createTraining: {}", training);
     }
 }

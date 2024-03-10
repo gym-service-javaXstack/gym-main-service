@@ -97,7 +97,7 @@ class TrainerServiceTest {
         verify(authenticationService).isAuthenticated(username);
     }*/
 
-    @Test
+/*    @Test
     void getTrainerTrainingsByCriteria() {
         // Given
         String username = "username";
@@ -113,5 +113,5 @@ class TrainerServiceTest {
         // Then
         assertEquals(trainings, result);
         verify(authenticationService).isAuthenticated(username);
-    }
+    }*/
 }

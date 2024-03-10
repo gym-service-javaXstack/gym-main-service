@@ -14,10 +14,12 @@ public interface TrainerMapper {
     @Mapping(source = "user.userName", target = "userName")
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
+    @Mapping(target = "specialization.id",ignore = true)
     TrainerDTO fromTrainerToTrainerDTO(Trainer trainer);
 
     @Mapping(source = "user.userName", target = "userName")
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
+    @Mapping(target = "specialization.id",ignore = true)
     List<TrainerDTO> fromTrainerListToTrainerListDTO(List<Trainer> trainerList);
 }

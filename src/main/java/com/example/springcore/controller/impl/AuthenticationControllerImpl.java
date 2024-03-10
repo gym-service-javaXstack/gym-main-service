@@ -6,10 +6,12 @@ import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.service.AuthenticationService;
 import com.example.springcore.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class AuthenticationControllerImpl implements AuthenticationApi {
@@ -23,11 +25,8 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
                 userCredentialsDTORequest.getPassword()
         );
 
-        if (isAuthenticated) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        log.info("Controller loginUserWithCredentials isAuthenticated : {}", isAuthenticated);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
@@ -37,7 +36,7 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
                 newPasswordDTORequest.getPassword(),
                 newPasswordDTORequest.getNewPassword()
         );
+        log.info("AuthenticationController changeLoginWithNewPassword ");
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

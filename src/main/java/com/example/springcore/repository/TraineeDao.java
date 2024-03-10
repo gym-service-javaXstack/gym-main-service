@@ -3,12 +3,16 @@ package com.example.springcore.repository;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
-import com.example.springcore.model.TrainingType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +39,7 @@ public class TraineeDao extends UserDao<Trainee> {
                 .getSingleResult());
     }
 
-    public void updateTraineesTrainersList(Trainee trainee, Trainer trainer) {
+    public void linkTraineeAndTrainee(Trainee trainee, Trainer trainer) {
         if (!trainee.getTrainers().contains(trainer)) {
             trainee.addTrainer(trainer);
             entityManager.merge(trainee);
@@ -55,23 +59,26 @@ public class TraineeDao extends UserDao<Trainee> {
                 .getResultList();
     }
 
-    public List<Training> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerName, TrainingType trainingType) {
-        return entityManager.createQuery(
-                        "select tr from Training tr " +
-                                "join tr.trainee t " +
-                                "join t.user u " +
-                                "join tr.trainer trn " +
-                                "join trn.user trnUser " +
-                                "where u.userName = :username " +
-                                "and (tr.trainingDate between :fromDate and :toDate) " +
-                                "and trnUser.firstName = :trainerName " +
-                                "and tr.trainingType = :trainingType",
-                        Training.class)
-                .setParameter("username", username)
-                .setParameter("fromDate", fromDate)
-                .setParameter("toDate", toDate)
-                .setParameter("trainerName", trainerName)
-                .setParameter("trainingType", trainingType)
-                .getResultList();
+    public List<Training> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerUserName, String trainingTypeName) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Training> query = cb.createQuery(Training.class);
+        Root<Training> training = query.from(Training.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(training.get("trainee").get("user").get("userName"), username));
+
+        if (fromDate != null && toDate != null) {
+            predicates.add(cb.between(training.get("trainingDate"), fromDate, toDate));
+        }
+        if (trainerUserName != null) {
+            predicates.add(cb.equal(training.get("trainer").get("user").get("userName"), trainerUserName));
+        }
+        if (trainingTypeName != null) {
+            predicates.add(cb.equal(training.get("trainingType").get("trainingTypeName"), trainingTypeName));
+        }
+
+        query.where(predicates.toArray(new Predicate[0]));
+
+        return entityManager.createQuery(query).getResultList();
     }
 }

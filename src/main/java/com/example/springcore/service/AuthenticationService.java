@@ -1,14 +1,15 @@
 package com.example.springcore.service;
 
+import com.example.springcore.exceptions.UserNotAuthenticatedException;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.UserDao;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -23,20 +24,19 @@ public class AuthenticationService {
 
     @Transactional(readOnly = true)
     public boolean authenticationUser(String username, String password) {
-        Optional<User> userOptional = userDao.getUserByUsername(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (user.getPassword().equals(password)) {
-                authenticatedUsers.put(username, user);
-                return true;
-            }
+        User user = userDao.getUserByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
+        if (!user.getPassword().equals(password)) {
+            throw new IllegalArgumentException("Invalid password for user: " + username);
         }
-        return false;
+        authenticatedUsers.put(username, user);
+        log.info("AuthenticationService authenticationUser username: {}", username);
+        return true;
     }
 
     public void isAuthenticated(String username) {
         if (!authenticatedUsers.containsKey(username)) {
-            throw new RuntimeException("User is not authenticated");
+            throw new UserNotAuthenticatedException("User not authenticated: " + username);
         }
     }
 
