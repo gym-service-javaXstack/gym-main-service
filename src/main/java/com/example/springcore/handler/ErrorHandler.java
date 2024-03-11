@@ -87,7 +87,6 @@ public class ErrorHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-
     @ExceptionHandler(Exception.class)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "500", description = "Server error", content = {
