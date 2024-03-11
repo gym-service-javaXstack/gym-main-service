@@ -24,6 +24,8 @@ public class TrainingService {
 
     @Transactional
     public void createTraining(TrainingDTO trainingDTO) {
+        log.info("Enter TrainingService createTraining");
+
         Trainee traineeByUsername = traineeDao.getTraineeByUsername(trainingDTO.getTraineeUserName())
                 .orElseThrow(() -> new EntityNotFoundException(trainingDTO.getTraineeUserName()));
 
@@ -43,6 +45,6 @@ public class TrainingService {
                 .build();
 
         trainingDao.save(training);
-        log.info("TrainingService createTraining: {}", training);
+        log.info("Exit TrainingService createTraining: {}", training);
     }
 }

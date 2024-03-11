@@ -24,13 +24,16 @@ public class AuthenticationService {
 
     @Transactional(readOnly = true)
     public boolean authenticationUser(String username, String password) {
+        log.info("Enter AuthenticationService authenticationUser username: {}", username);
+
         User user = userDao.getUserByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
         if (!user.getPassword().equals(password)) {
             throw new IllegalArgumentException("Invalid password for user: " + username);
         }
         authenticatedUsers.put(username, user);
-        log.info("AuthenticationService authenticationUser username: {}", username);
+
+        log.info("Exit AuthenticationService authenticationUser username: {}", username);
         return true;
     }
 

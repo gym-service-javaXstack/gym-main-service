@@ -23,7 +23,7 @@ public class TrainingControllerImpl implements TrainingApi {
     @Override
     public ResponseEntity<Void> createTraining(TrainingDTO trainingDTO) {
         trainingService.createTraining(trainingDTO);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @Override

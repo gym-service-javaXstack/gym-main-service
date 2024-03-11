@@ -61,14 +61,12 @@ public class TraineeControllerImpl implements TraineeApi {
     @Override
     public ResponseEntity<List<TrainerDTO>> getTrainersNotAssignedToTrainee(String username) {
         List<TrainerDTO> trainersNotAssignedToTrainee = traineeService.getTrainersNotAssignedToTrainee(username);
-        log.info("TraineeController getTrainersNotAssignedToTrainee trainersNotAssignedToTrainee : {}", trainersNotAssignedToTrainee);
         return new ResponseEntity<>(trainersNotAssignedToTrainee, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<TrainerDTO>> updateTraineesTrainersList(TraineeWithTrainersDTO traineeWithTrainersDTO) {
         List<TrainerDTO> trainerDTOS = traineeService.updateTrainersListInTraineeByUsername(traineeWithTrainersDTO);
-        log.info("TraineeController updateTraineesTrainersList trainerDTOS : {}", trainerDTOS);
         return new ResponseEntity<>(trainerDTOS, HttpStatus.OK);
     }
 
@@ -81,14 +79,12 @@ public class TraineeControllerImpl implements TraineeApi {
             String trainingTypeName
     ) {
         List<TrainingDTO> traineeTrainingsByCriteria = traineeService.getTraineeTrainingsByCriteria(username, fromDate, toDate, trainerUsername, trainingTypeName);
-        log.info("TraineeController getTraineeTrainingsByCriteria criteria : {},{},{},{},{}", username, fromDate, toDate, trainerUsername, trainingTypeName);
         return new ResponseEntity<>(traineeTrainingsByCriteria, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> changeTraineeStatus(UserDTO userDTO) {
         userService.changeUserStatus(userDTO.getUserName(), userDTO.getIsActive());
-        log.info("TraineeController changeTraineeStatus userDTO : {}", userDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

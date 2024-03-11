@@ -33,6 +33,8 @@ public class TrainerService {
 
     @Transactional
     public Trainer createTrainer(TrainerDTO trainerDTO) {
+        log.info("Entry TrainerService createTrainer ");
+
         User user = User.builder()
                 .firstName(trainerDTO.getFirstName())
                 .lastName(trainerDTO.getLastName())
@@ -49,12 +51,14 @@ public class TrainerService {
                 .build();
 
         Trainer saved = trainerDao.save(trainerToSave);
-        log.info("TrainerService createTrainer Trainer: {}", trainerToSave.getUser().getId());
+        log.info("Exit TrainerService createTrainer Trainer: {}", trainerToSave.getUser().getId());
         return saved;
     }
 
     @Transactional
     public TrainerWithTraineesDTO updateTrainer(TrainerDTO trainerDTO) {
+        log.info("Enter TrainerService updateTrainer trainer: {}", trainerDTO.getUserName());
+
         authenticationService.isAuthenticated(trainerDTO.getUserName());
 
         Trainer trainer = trainerDao.getTrainerByUsername(trainerDTO.getUserName())
@@ -67,30 +71,36 @@ public class TrainerService {
 
         Trainer updated = trainerDao.update(trainer);
 
-        log.info("TrainerService updateTrainer trainer: {}", trainerDTO.getUserName());
+        log.info("Exit TrainerService updateTrainer trainer: {}", trainerDTO.getUserName());
         return trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(updated);
     }
 
     @Transactional(readOnly = true)
     public TrainerWithTraineesDTO getTrainerByUsername(String username) {
+        log.info("Enter TrainerService getTrainerByUsername trainer: {}", username);
+
         authenticationService.isAuthenticated(username);
         Trainer trainer = trainerDao.getTrainerByUsername(username).orElseThrow(() -> new EntityNotFoundException(username));
-        log.info("TrainerService getTrainerByUsername trainer: {}", username);
+        log.info("Exit TrainerService getTrainerByUsername trainer: {}", username);
         return trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(trainer);
     }
 
     @Transactional(readOnly = true)
     public List<TrainingDTO> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String traineeUserName) {
+        log.info("Enter TrainerService getTrainerTrainingsByCriteria method: {}", username);
+
         authenticationService.isAuthenticated(username);
         List<Training> trainerTrainingsByCriteria = trainerDao.getTrainerTrainingsByCriteria(username, fromDate, toDate, traineeUserName);
-        log.info("TrainerService getTrainerTrainingsByCriteria method: {}", username);
+        log.info("Exit TrainerService getTrainerTrainingsByCriteria method: {}", username);
         return trainingMapper.fromTrainingListToTraineeTrainingListDTO(trainerTrainingsByCriteria);
     }
 
     @Transactional(readOnly = true)
     public List<Trainer> getTrainersByUsernameList(List<String> trainerUsernames) {
+        log.info("Enter TrainerService getTrainersByUsernameList method: {}", trainerUsernames);
+
         List<Trainer> trainersByUsernameList = trainerDao.getTrainersByUsernameList(trainerUsernames);
-        log.info("TrainerService getTrainersByUsernameList method: {}", trainerUsernames);
+        log.info("Exit TrainerService getTrainersByUsernameList method: {}", trainerUsernames);
         return trainersByUsernameList;
     }
 }

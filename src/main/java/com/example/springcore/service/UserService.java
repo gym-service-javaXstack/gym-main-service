@@ -20,6 +20,8 @@ public class UserService {
 
     @Transactional
     public void changeUserStatus(String username, boolean isActive) {
+        log.info("Enter UserService changeUserStatus username: {}, status: {}", username, isActive);
+
         authenticationService.isAuthenticated(username);
         Optional<User> userByUsername = userDao.getUserByUsername(username);
         userByUsername.ifPresent(user -> {
@@ -27,11 +29,13 @@ public class UserService {
                     userDao.update(user);
                 }
         );
-        log.info("UserService changeUserStatus username: {}, status: {}", username, isActive);
+        log.info("Exit UserService changeUserStatus username: {}, status: {}", username, isActive);
     }
 
     @Transactional
     public void changeUserPassword(String username, String oldPassword, String newPassword) {
+        log.info("Enter UserService changeUserPassword username");
+
         authenticationService.isAuthenticated(username);
         User user = userDao.getUserByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
@@ -44,7 +48,7 @@ public class UserService {
 
         userDao.update(user);
 
-        log.info("UserService changeUserPassword username: {}, oldPassword: {}, newPassword: {}",
+        log.info("Exit UserService changeUserPassword username: {}, oldPassword: {}, newPassword: {}",
                 username,
                 oldPassword,
                 newPassword

@@ -2,28 +2,29 @@ package com.example.springcore.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.MDC;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.UUID;
+import java.util.Collections;
 
+@Slf4j
 @Component
-public class TransactionIdInterceptor implements HandlerInterceptor {
-    private static final String TRACE_HEADER = "X-Trace-Id";
+public class RestDetailsLoggerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String transactionId = request.getHeader(TRACE_HEADER);
-        if (transactionId == null || transactionId.isEmpty()) {
-            transactionId = UUID.randomUUID().toString();
-        }
-        MDC.put("transactionId", transactionId);
+        log.info("Incoming request: method={}, uri={}, headers={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                Collections.list(request.getHeaderNames()));
         return true;
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        MDC.remove("transactionId");
+        log.info("Outgoing response: status={}, headers={}",
+                response.getStatus(),
+                response.getHeaderNames());
     }
 }

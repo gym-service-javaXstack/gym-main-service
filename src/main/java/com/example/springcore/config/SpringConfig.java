@@ -1,8 +1,9 @@
 package com.example.springcore.config;
 
-import com.example.springcore.interceptor.TransactionIdInterceptor;
+import com.example.springcore.interceptor.RestDetailsLoggerInterceptor;
+import com.example.springcore.interceptor.TransactionLoggerInterceptor;
 import jakarta.persistence.EntityManagerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +20,11 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+@RequiredArgsConstructor
 public class SpringConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private TransactionIdInterceptor transactionIdInterceptor;
+    private final TransactionLoggerInterceptor transactionLoggerInterceptor;
+    private final RestDetailsLoggerInterceptor restDetailsLoggerInterceptor;
 
     @Value("${db.driver}")
     private String DRIVER;
@@ -84,6 +86,7 @@ public class SpringConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(transactionIdInterceptor);
+        registry.addInterceptor(transactionLoggerInterceptor).addPathPatterns("/api/**");
+        registry.addInterceptor(restDetailsLoggerInterceptor).addPathPatterns("/api/**");
     }
 }

@@ -36,6 +36,8 @@ public class TraineeService {
 
     @Transactional
     public Trainee createTrainee(TraineeDTO traineeDTO) {
+        log.info("Enter TraineeService createTrainee traineeDTO");
+
         User user = User.builder()
                 .firstName(traineeDTO.getFirstName())
                 .lastName(traineeDTO.getLastName())
@@ -53,12 +55,14 @@ public class TraineeService {
 
         Trainee saved = traineeDao.save(traineeToSave);
 
-        log.info("TraineeService createTrainee traineeDTO: {}", saved.getUser().getId());
+        log.info("Exit TraineeService createTrainee traineeDTO: {}", saved.getUser().getId());
         return saved;
     }
 
     @Transactional
     public TraineeWithTrainersDTO updateTrainee(TraineeDTO traineeDTO) {
+        log.info("Enter TraineeService updateTrainee");
+
         authenticationService.isAuthenticated(traineeDTO.getUserName());
 
         Trainee trainee = traineeDao.getTraineeByUsername(traineeDTO.getUserName())
@@ -68,41 +72,47 @@ public class TraineeService {
 
         Trainee updated = traineeDao.update(trainee);
 
-        log.info("TraineeService updateTrainee trainee: {}", updated.getUser().getId());
+        log.info("Exit TraineeService updateTrainee trainee: {}", updated.getUser().getId());
         return traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(updated);
     }
 
     @Transactional
     public void deleteTrainee(String username) {
+        log.info("Enter TraineeService deleteTrainee trainee: {}", username);
+
         authenticationService.isAuthenticated(username);
 
         Trainee trainee = traineeDao.getTraineeByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + username + " not found"));
 
         traineeDao.delete(trainee);
-        log.info("TraineeService deleteTrainee trainee: {}", username);
+        log.info("Exit TraineeService deleteTrainee trainee: {}", username);
     }
 
     @Transactional(readOnly = true)
     public TraineeWithTrainersDTO getTraineeByUsername(String username) {
+        log.info("Enter TraineeService  getTraineeByUsername trainee: {}", username);
         authenticationService.isAuthenticated(username);
 
         Trainee trainee = traineeDao.getTraineeByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(username));
 
-        log.info("TraineeService getTraineeByUsername trainee: {}", username);
+        log.info("Exit TraineeService getTraineeByUsername trainee: {}", username);
         return traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(trainee);
     }
 
     @Transactional
     public void linkTraineeAndTrainee(Trainee trainee, Trainer trainer) {
+        log.info("Enter TraineeService  linkTraineeAndTrainee: {} with {}", trainee.getId(), trainer.getId());
         traineeDao.linkTraineeAndTrainee(trainee, trainer);
-        log.info("TraineeService linkTraineeAndTrainee: {} with {}", trainee.getId(), trainer.getId());
+        log.info("Exit TraineeService linkTraineeAndTrainee: {} with {}", trainee.getId(), trainer.getId());
     }
 
 
     @Transactional
     public List<TrainerDTO> updateTrainersListInTraineeByUsername(TraineeWithTrainersDTO traineeWithTrainersDTO) {
+        log.info("Enter TraineeService updateTrainersListInTraineeByUsername");
+
         Trainee trainee = traineeDao.getTraineeByUsername(traineeWithTrainersDTO.getUserName())
                 .orElseThrow(() -> new EntityNotFoundException(traineeWithTrainersDTO.getUserName()));
 
@@ -116,28 +126,31 @@ public class TraineeService {
 
         traineeDao.save(trainee);
 
-        log.info("TraineeService updateTrainersListInTraineeByUsername: {}", trainee.getId());
+        log.info("Exit TraineeService updateTrainersListInTraineeByUsername: {}", trainee.getId());
         return trainerMapper.fromTrainerListToTrainerListDTO(trainersByUsernameList);
     }
 
-
     @Transactional(readOnly = true)
     public List<TrainerDTO> getTrainersNotAssignedToTrainee(String username) {
+        log.info("Enter TraineeService getTrainersNotAssignedToTrainee method: {}", username);
+
         authenticationService.isAuthenticated(username);
 
         List<Trainer> trainersNotAssignedToTrainee = traineeDao.getTrainersNotAssignedToTrainee(username);
 
-        log.info("TraineeService getTrainersNotAssignedToTrainee method: {}", username);
+        log.info("Exit TraineeService getTrainersNotAssignedToTrainee method: {}", username);
         return trainerMapper.fromTrainerListToTrainerListDTO(trainersNotAssignedToTrainee);
     }
 
     @Transactional(readOnly = true)
     public List<TrainingDTO> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerUsername, String trainingTypeName) {
+        log.info("Enter TraineeService getTraineeTrainingsByCriteria method: {}", username);
+
         authenticationService.isAuthenticated(username);
 
         List<Training> traineeTrainingsByCriteria = traineeDao.getTraineeTrainingsByCriteria(username, fromDate, toDate, trainerUsername, trainingTypeName);
 
-        log.info("TraineeService getTraineeTrainingsByCriteria method: {}", username);
+        log.info("Exit TraineeService getTraineeTrainingsByCriteria method: {}", username);
         return trainingMapper.fromTrainingListToTraineeTrainingListDTO(traineeTrainingsByCriteria);
     }
 }

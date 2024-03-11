@@ -20,12 +20,10 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
 
     @Override
     public ResponseEntity<Void> loginUserWithCredentials(UserCredentialsDTO userCredentialsDTORequest) {
-        boolean isAuthenticated = authenticationService.authenticationUser(
+       authenticationService.authenticationUser(
                 userCredentialsDTORequest.getUsername(),
                 userCredentialsDTORequest.getPassword()
         );
-
-        log.info("Controller loginUserWithCredentials isAuthenticated : {}", isAuthenticated);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -36,7 +34,6 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
                 newPasswordDTORequest.getPassword(),
                 newPasswordDTORequest.getNewPassword()
         );
-        log.info("AuthenticationController changeLoginWithNewPassword ");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
