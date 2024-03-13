@@ -1,5 +1,6 @@
 package com.example.springcore.controller;
 
+import com.example.springcore.dto.CreateTraineeRequestDTO;
 import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;

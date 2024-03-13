@@ -30,7 +30,10 @@ public interface TrainingApi {
 
     @Operation(summary = "Get list of training types")
     @ApiResponse(responseCode = "200", description = "OK",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = TrainingTypeDTO.class))))
+            content = @Content(
+                    mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = TrainingTypeDTO.class))
+            ))
     @GetMapping("/type")
     ResponseEntity<List<TrainingTypeDTO>> getTrainingTypeList();
 }

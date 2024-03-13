@@ -19,10 +19,10 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<Void> loginUserWithCredentials(UserCredentialsDTO userCredentialsDTORequest) {
+    public ResponseEntity<Void> loginUserWithCredentials( String username, String password) {
        authenticationService.authenticationUser(
-                userCredentialsDTORequest.getUsername(),
-                userCredentialsDTORequest.getPassword()
+               username,
+               password
         );
         return new ResponseEntity<>(HttpStatus.OK);
     }
