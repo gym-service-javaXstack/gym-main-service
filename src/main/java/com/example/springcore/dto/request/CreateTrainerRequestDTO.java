@@ -20,6 +20,6 @@ public class CreateTrainerRequestDTO {
 
     @Valid
     @NotNull
-    TrainingTypeDTO specialization;
+    private TrainingTypeDTO specialization;
 
 }

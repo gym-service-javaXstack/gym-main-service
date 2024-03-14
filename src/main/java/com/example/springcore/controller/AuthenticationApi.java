@@ -1,7 +1,7 @@
 package com.example.springcore.controller;
 
 
-import com.example.springcore.dto.NewPasswordDTO;
+import com.example.springcore.dto.request.NewPasswordRequestDTO;
 import com.example.springcore.exceptions.Error;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,7 +54,7 @@ public interface AuthenticationApi {
             description = "This can only be executed after authentication",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "New password details", required = true,
-                    content = @Content(schema = @Schema(implementation = NewPasswordDTO.class))),
+                    content = @Content(schema = @Schema(implementation = NewPasswordRequestDTO.class))),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -87,5 +87,5 @@ public interface AuthenticationApi {
             }
     )
     @PutMapping
-    ResponseEntity<Void> changeLoginWithNewPassword(@Valid @RequestBody NewPasswordDTO newPasswordDTORequest);
+    ResponseEntity<Void> changeLoginWithNewPassword(@Valid @RequestBody NewPasswordRequestDTO newPasswordRequestDTORequest);
 }

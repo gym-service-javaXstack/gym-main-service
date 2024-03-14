@@ -11,6 +11,6 @@ public class TrainerDTO extends UserDTO{
 
     @Valid
     @NotNull
-    TrainingTypeDTO specialization;
+    private TrainingTypeDTO specialization;
 
 }

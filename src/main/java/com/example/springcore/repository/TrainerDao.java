@@ -22,7 +22,7 @@ public class TrainerDao extends UserDao<Trainer> {
     private EntityManager entityManager;
 
     public Optional<Trainer> getTrainerByUsername(String username) {
-        return Optional.of(entityManager.createQuery(
+        return entityManager.createQuery(
                         "select t from Trainer t " +
                                 "join fetch t.user u " +
                                 "join fetch t.specialization " +
@@ -31,7 +31,8 @@ public class TrainerDao extends UserDao<Trainer> {
                                 "where u.userName = :username",
                         Trainer.class)
                 .setParameter("username", username)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     public List<Training> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String traineeUserName) {

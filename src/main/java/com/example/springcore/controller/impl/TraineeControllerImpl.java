@@ -9,6 +9,7 @@ import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.dto.UserDTO;
 import com.example.springcore.dto.request.ChangeUserStatusRequestDTO;
 import com.example.springcore.dto.request.CreateTraineeRequestDTO;
+import com.example.springcore.dto.request.UpdateTraineesTrainersListRequestDTO;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.UserService;
@@ -67,8 +68,8 @@ public class TraineeControllerImpl implements TraineeApi {
     }
 
     @Override
-    public ResponseEntity<List<TrainerDTO>> updateTraineesTrainersList(TraineeWithTrainersDTO traineeWithTrainersDTO) {
-        List<TrainerDTO> trainerDTOS = traineeService.updateTrainersListInTraineeByUsername(traineeWithTrainersDTO);
+    public ResponseEntity<List<TrainerDTO>> updateTraineesTrainersList(UpdateTraineesTrainersListRequestDTO updateTraineesTrainersListRequestDTO) {
+        List<TrainerDTO> trainerDTOS = traineeService.updateTrainersListInTraineeByUsername(updateTraineesTrainersListRequestDTO);
         return new ResponseEntity<>(trainerDTOS, HttpStatus.OK);
     }
 

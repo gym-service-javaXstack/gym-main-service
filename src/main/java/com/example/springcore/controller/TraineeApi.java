@@ -7,6 +7,7 @@ import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.dto.request.ChangeUserStatusRequestDTO;
 import com.example.springcore.dto.request.CreateTraineeRequestDTO;
+import com.example.springcore.dto.request.UpdateTraineesTrainersListRequestDTO;
 import com.example.springcore.exceptions.Error;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -212,13 +213,45 @@ public interface TraineeApi {
     @GetMapping("/available-trainers")
     ResponseEntity<List<TrainerDTO>> getTrainersNotAssignedToTrainee(@RequestParam String username);
 
-    @Operation(summary = "Update trainee's trainers list")
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Trainee with trainers details", required = true,
-            content = @Content(schema = @Schema(implementation = TraineeWithTrainersDTO.class)))
-    @ApiResponse(responseCode = "200", description = "Trainee's trainers list updated successfully",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = TrainerDTO.class))))
+    @Operation(summary = "Update trainee's trainers list", tags = {"Trainee service"},
+            description = "This can only be executed after authentication",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Trainee with trainers details", required = true,
+                    content = @Content(schema = @Schema(implementation = UpdateTraineesTrainersListRequestDTO.class))),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Trainee's trainers list updated successfully",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = TrainerDTO.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Specified wrong fields",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Error.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Error.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Trainee with this username doesnt found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Error.class)
+                            )
+                    )
+            }
+    )
     @PutMapping("/trainers")
-    ResponseEntity<List<TrainerDTO>> updateTraineesTrainersList(@RequestBody TraineeWithTrainersDTO traineeWithTrainersDTO);
+    ResponseEntity<List<TrainerDTO>> updateTraineesTrainersList(@Valid @RequestBody UpdateTraineesTrainersListRequestDTO updateTraineesTrainersListRequestDTO);
 
     @Operation(summary = "Get trainee trainings by criteria")
     @ApiResponse(responseCode = "200", description = "Successful operation",

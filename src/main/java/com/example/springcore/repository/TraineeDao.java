@@ -27,7 +27,7 @@ public class TraineeDao extends UserDao<Trainee> {
     }
 
     public Optional<Trainee> getTraineeByUsername(String username) {
-        return Optional.of(entityManager.createQuery(
+        return entityManager.createQuery(
                         "select t from Trainee t " +
                                 "join fetch t.user u " +
                                 "left join fetch t.trainers tr " +
@@ -36,7 +36,8 @@ public class TraineeDao extends UserDao<Trainee> {
                                 "where u.userName = :username",
                         Trainee.class)
                 .setParameter("username", username)
-                .getSingleResult());
+                .getResultStream()
+                .findFirst();
     }
 
     public void linkTraineeAndTrainee(Trainee trainee, Trainer trainer) {

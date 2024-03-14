@@ -12,21 +12,21 @@ public class TrainingDTO {
 
     @NotEmpty
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    String traineeUserName;
+    private String traineeUserName;
 
     @NotEmpty
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    String trainerUserName;
+    private String trainerUserName;
 
     @NotEmpty
-    String trainingName;
+    private String trainingName;
 
     @NotNull
-    LocalDate trainingDate;
+    private LocalDate trainingDate;
 
     @NotNull
-    Integer duration;
+    private Integer duration;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    String trainingTypeName;
+    private String trainingTypeName;
 }

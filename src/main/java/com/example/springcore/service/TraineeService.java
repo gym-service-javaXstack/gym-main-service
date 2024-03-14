@@ -5,6 +5,7 @@ import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.request.CreateTraineeRequestDTO;
+import com.example.springcore.dto.request.UpdateTraineesTrainersListRequestDTO;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
 import com.example.springcore.mapper.TrainerMapper;
 import com.example.springcore.mapper.TrainingMapper;
@@ -111,14 +112,16 @@ public class TraineeService {
 
 
     @Transactional
-    public List<TrainerDTO> updateTrainersListInTraineeByUsername(TraineeWithTrainersDTO traineeWithTrainersDTO) {
+    public List<TrainerDTO> updateTrainersListInTraineeByUsername(UpdateTraineesTrainersListRequestDTO updateTraineesTrainersListRequestDTO) {
         log.info("Enter TraineeService updateTrainersListInTraineeByUsername");
 
-        Trainee trainee = traineeDao.getTraineeByUsername(traineeWithTrainersDTO.getUserName())
-                .orElseThrow(() -> new EntityNotFoundException(traineeWithTrainersDTO.getUserName()));
+        authenticationService.isAuthenticated(updateTraineesTrainersListRequestDTO.getUserName());
+
+        Trainee trainee = traineeDao.getTraineeByUsername(updateTraineesTrainersListRequestDTO.getUserName())
+                .orElseThrow(() -> new EntityNotFoundException(updateTraineesTrainersListRequestDTO.getUserName()));
 
         List<Trainer> trainersByUsernameList = trainerService.getTrainersByUsernameList(
-                traineeWithTrainersDTO.getTrainers().stream()
+                updateTraineesTrainersListRequestDTO.getTrainers().stream()
                         .map(trainerDTO -> trainerDTO.getUserName())
                         .toList()
         );

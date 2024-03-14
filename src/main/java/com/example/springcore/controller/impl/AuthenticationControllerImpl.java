@@ -1,8 +1,7 @@
 package com.example.springcore.controller.impl;
 
 import com.example.springcore.controller.AuthenticationApi;
-import com.example.springcore.dto.NewPasswordDTO;
-import com.example.springcore.dto.UserCredentialsDTO;
+import com.example.springcore.dto.request.NewPasswordRequestDTO;
 import com.example.springcore.service.AuthenticationService;
 import com.example.springcore.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +27,11 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
     }
 
     @Override
-    public ResponseEntity<Void> changeLoginWithNewPassword(NewPasswordDTO newPasswordDTORequest) {
+    public ResponseEntity<Void> changeLoginWithNewPassword(NewPasswordRequestDTO newPasswordRequestDTORequest) {
         userService.changeUserPassword(
-                newPasswordDTORequest.getUsername(),
-                newPasswordDTORequest.getPassword(),
-                newPasswordDTORequest.getNewPassword()
+                newPasswordRequestDTORequest.getUsername(),
+                newPasswordRequestDTORequest.getPassword(),
+                newPasswordRequestDTORequest.getNewPassword()
         );
         return new ResponseEntity<>(HttpStatus.OK);
     }
