@@ -19,13 +19,9 @@ db:
   username: postgres
   password: postgres
 
-
+#SPRING-DOC SWAGGER CONFIGURATION
 springdoc:
   api-docs:
     enabled: false
   swagger-ui:
     url: /swagger-config.yml
-    #config-url: swagger-config.yml
-    #path: src/main/resources/swagger-config.yml
-  cache:
-    disabled: true

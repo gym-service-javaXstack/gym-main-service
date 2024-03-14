@@ -818,15 +818,3 @@ components:
         isActive:
           type: boolean
           description: User isActive (optional)
-    ChangeUserStatusRequestDTO:
-      required:
-        - isActive
-        - userName
-      type: object
-      properties:
-        userName:
-          type: string
-          description: User userName (required)
-        isActive:
-          type: boolean
-          description: User isActive to update (required)
