@@ -23,6 +23,7 @@ public class UserService {
         log.info("Enter UserService changeUserStatus username: {}, status: {}", username, isActive);
 
         authenticationService.isAuthenticated(username);
+
         Optional<User> userByUsername = userDao.getUserByUsername(username);
         userByUsername.ifPresent(user -> {
                     user.setIsActive(isActive);

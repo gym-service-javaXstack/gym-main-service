@@ -7,6 +7,8 @@ import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.dto.UserDTO;
+import com.example.springcore.dto.request.ChangeUserStatusRequestDTO;
+import com.example.springcore.dto.request.CreateTraineeRequestDTO;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.UserService;
@@ -28,8 +30,8 @@ public class TraineeControllerImpl implements TraineeApi {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<UserCredentialsDTO> createTrainee(TraineeDTO traineeDTO) {
-        Trainee response = traineeService.createTrainee(traineeDTO);
+    public ResponseEntity<UserCredentialsDTO> createTrainee(CreateTraineeRequestDTO createTraineeRequestDTO) {
+        Trainee response = traineeService.createTrainee(createTraineeRequestDTO);
         UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO();
         userCredentialsDTO.setUsername(response.getUser().getUserName());
         userCredentialsDTO.setPassword(response.getUser().getPassword());
@@ -83,8 +85,8 @@ public class TraineeControllerImpl implements TraineeApi {
     }
 
     @Override
-    public ResponseEntity<Void> changeTraineeStatus(UserDTO userDTO) {
-        userService.changeUserStatus(userDTO.getUserName(), userDTO.getIsActive());
+    public ResponseEntity<Void> changeTraineeStatus(ChangeUserStatusRequestDTO changeUserStatusRequestDTO) {
+        userService.changeUserStatus(changeUserStatusRequestDTO.getUserName(), changeUserStatusRequestDTO.getIsActive());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -7,17 +7,20 @@ import lombok.Data;
 
 @Data
 public class UserDTO {
-//    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Schema(description = "User userName (optional)")
     private String userName;
 
     @NotEmpty
+    @Schema(description = "User firstName (required)")
     private String firstName;
 
     @NotEmpty
+    @Schema(description = "User lastName (required)")
     private String lastName;
 
-//    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Schema(description = "User isActive (optional)")
     private Boolean isActive;
+
 }

@@ -18,3 +18,14 @@ db:
   url: jdbc:postgresql://${DB_HOST:localhost}:5432/gym
   username: postgres
   password: postgres
+
+#springdoc:
+#  api-docs:
+#    version: openapi_3_1
+#  swagger-ui:
+#    display-request-duration: true
+#    groups-order: DESC
+#    operationsSorter: method
+#    disable-swagger-default-url: true
+#    use-root-path: true
+#  show-actuator: true
