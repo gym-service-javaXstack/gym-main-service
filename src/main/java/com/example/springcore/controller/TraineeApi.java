@@ -5,8 +5,6 @@ import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
-import com.example.springcore.dto.request.ChangeUserStatusRequestDTO;
-import com.example.springcore.dto.request.CreateTraineeRequestDTO;
 import com.example.springcore.dto.request.UpdateTraineesTrainersListRequestDTO;
 import com.example.springcore.exceptions.Error;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,30 +32,8 @@ import java.util.List;
 @RequestMapping("/api/v1/trainee")
 public interface TraineeApi {
 
-    @Operation(summary = "Create a new trainee", tags = {"Trainee service"},
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Trainee details", required = true,
-                    content = @Content(schema = @Schema(implementation = CreateTraineeRequestDTO.class))),
-            responses = {
-                    @ApiResponse(
-                            responseCode = "201",
-                            description = "Trainee created successfully",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = UserCredentialsDTO.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Specified wrong fields",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Error.class)
-                            )
-                    )
-            }
-    )
     @PostMapping
-    ResponseEntity<UserCredentialsDTO> createTrainee(@Valid @RequestBody CreateTraineeRequestDTO createTraineeRequestDTO);
+    ResponseEntity<UserCredentialsDTO> createTrainee(@Valid @RequestBody TraineeDTO traineeDTO);
 
     @Operation(summary = "Get trainee by username", tags = {"Trainee service"},
             description = "This can only be executed after authentication",
@@ -264,38 +240,7 @@ public interface TraineeApi {
             @RequestParam(required = false) String trainerUsername,
             @RequestParam(required = false) String trainingTypeName);
 
-    @Operation(summary = "Change trainee status", tags = {"Trainee service"},
-            description = "This can only be executed after authentication",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User details", required = true,
-                    content = @Content(schema = @Schema(implementation = ChangeUserStatusRequestDTO.class))),
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Trainee status changed successfully"),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Specified wrong fields",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Error.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "401",
-                            description = "Unauthorized",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Error.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "Trainee with this username doesnt found",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = Error.class)
-                            )
-                    )
-            }
-    )
+
     @PatchMapping
-    ResponseEntity<Void> changeTraineeStatus(@Valid @RequestBody ChangeUserStatusRequestDTO changeUserStatusRequestDTO);
+    ResponseEntity<Void> changeTraineeStatus(@RequestParam String username, @RequestParam boolean isActive);
 }

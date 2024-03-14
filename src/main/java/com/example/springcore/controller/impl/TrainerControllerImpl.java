@@ -5,7 +5,6 @@ import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWithTraineesDTO;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
-import com.example.springcore.dto.UserDTO;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.UserService;
@@ -53,8 +52,8 @@ public class TrainerControllerImpl implements TrainerApi {
     }
 
     @Override
-    public ResponseEntity<Void> changeTrainerStatus(UserDTO userDTO) {
-        userService.changeUserStatus(userDTO.getUserName(), userDTO.getIsActive());
+    public ResponseEntity<Void> changeTrainerStatus(String username, boolean isActive) {
+        userService.changeUserStatus(username, isActive);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

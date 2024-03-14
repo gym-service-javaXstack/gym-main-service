@@ -1,0 +1,832 @@
+openapi: 3.0.1
+info:
+  title: Gym Service
+  version: v0.1
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+tags:
+  - name: Trainer service
+    description: Trainer management API
+  - name: Trainee service
+    description: Trainee management API
+  - name: Authentication service
+    description: Authentication management API
+  - name: Training service
+    description: Training management API
+paths:
+  /api/v1/trainer:
+    get:
+      tags:
+        - Trainer service
+      summary: Get trainer by username
+      operationId: getTrainerByUsername
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainerWithTraineesDTO'
+    put:
+      tags:
+        - Trainer service
+      summary: Update trainer
+      operationId: updateTrainer
+      requestBody:
+        description: New trainer details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrainerDTO'
+        required: true
+      responses:
+        '200':
+          description: Trainer updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TrainerWithTraineesDTO'
+    post:
+      tags:
+        - Trainer service
+      summary: Create a new trainer
+      operationId: createTrainer
+      requestBody:
+        description: Trainer details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  description: Trainer firstName (required)
+                  type: string
+                  example: John
+                lastName:
+                  description: Trainer lastName (required)
+                  type: string
+                  example: Doe
+                specialization:
+                  description: Trainer specialization (required)
+                  type: object
+                  properties:
+                    trainingTypeName:
+                      description: Training type name
+                      type: string
+                      example: Test
+                  required:
+                    - trainingTypeName
+              required:
+                - firstName
+                - lastName
+                - specialization
+        required: true
+      responses:
+        '201':
+          description: Trainer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCredentialsDTO'
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+        - Trainer service
+      summary: Change trainer status
+      operationId: changeTrainerStatus
+      parameters:
+        - name: username
+          in: query
+          description: Trainer username
+          required: true
+          example: John.Doe
+          schema:
+            type: string
+        - name: isActive
+          in: query
+          description: Change isActive status for trainer
+          required: true
+          example: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Trainer status changed successfully
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainer with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/trainee:
+    get:
+      tags:
+        - Trainee service
+      summary: Get trainee by username
+      description: This can only be executed after authentication
+      operationId: getTraineeByUsername
+      parameters:
+        - name: username
+          in: query
+          description: The username that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TraineeWithTrainersDTO'
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainee with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Trainee service
+      summary: Update trainee
+      description: This can only be executed after authentication
+      operationId: updateTrainee
+      requestBody:
+        description: Details to update trainee
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TraineeDTO'
+        required: true
+      responses:
+        '200':
+          description: Trainee updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TraineeWithTrainersDTO'
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainee with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Trainee service
+      summary: Create a new trainee
+      operationId: createTrainee
+      requestBody:
+        description: Trainee details
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  description: Trainee firstName (required)
+                  type: string
+                  example: John
+                lastName:
+                  description: Trainee lastName (required)
+                  type: string
+                  example: Doe
+                dateOfBirth:
+                  description: Trainee dateOfBirth (optional)
+                  type: string
+                  example: 2024-03-12
+                address:
+                  description: Trainee address (optional)
+                  type: string
+                  example: Maple street
+              required:
+                - firstName
+                - lastName
+        required: true
+      responses:
+        '201':
+          description: Trainee created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCredentialsDTO'
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Trainee service
+      summary: Delete trainee
+      description: This can only be executed after authentication
+      operationId: deleteTrainee
+      parameters:
+        - name: username
+          in: query
+          description: The username that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Trainee deleted successfully
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainee with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      tags:
+        - Trainee service
+      summary: Change trainee status
+      description: This can only be executed after authentication
+      operationId: changeTraineeStatus
+      parameters:
+        - name: username
+          in: query
+          description: Trainee username
+          required: true
+          example: John.Doe
+          schema:
+            type: string
+        - name: isActive
+          in: query
+          description: Change isActive status for Trainee
+          required: true
+          example: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Trainee status changed successfully
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainee with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/trainee/trainers:
+    put:
+      tags:
+        - Trainee service
+      summary: Update trainee's trainers list
+      description: This can only be executed after authentication
+      operationId: updateTraineesTrainersList
+      requestBody:
+        description: Trainee with trainers details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTraineesTrainersListRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: Trainee's trainers list updated successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainerDTO'
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainee with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/login:
+    get:
+      tags:
+        - Authentication service
+      summary: Log in with credentials
+      operationId: loginUserWithCredentials
+      parameters:
+        - name: username
+          in: query
+          description: Username for login
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: Password for login
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Authentication service
+      summary: Change login with new password
+      description: This can only be executed after authentication
+      operationId: changeLoginWithNewPassword
+      requestBody:
+        description: New password details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPasswordRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/training:
+    post:
+      tags:
+        - Training service
+      summary: 'Create new training '
+      operationId: createTraining
+      requestBody:
+        description: Training to be created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrainingDTO'
+        required: true
+      responses:
+        '201':
+          description: Created
+  /api/v1/training/type:
+    get:
+      tags:
+        - Training service
+      summary: Get list of training types
+      operationId: getTrainingTypeList
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainingTypeDTO'
+  /api/v1/trainer/trainings:
+    get:
+      tags:
+        - Trainer service
+      summary: Get trainer trainings by criteria
+      operationId: getTrainerTrainingsByCriteria
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: traineeUsername
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainingDTO'
+  /api/v1/trainee/trainings:
+    get:
+      tags:
+        - Trainee service
+      summary: Get trainee trainings by criteria
+      operationId: getTraineeTrainingsByCriteria
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: trainerUsername
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: trainingTypeName
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainingDTO'
+  /api/v1/trainee/available-trainers:
+    get:
+      tags:
+        - Trainee service
+      summary: Get trainers not assigned to trainee
+      description: This can only be executed after authentication
+      operationId: getTrainersNotAssignedToTrainee
+      parameters:
+        - name: username
+          in: query
+          description: The username that needs to be fetched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainerDTO'
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainee with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    TrainerDTO:
+      required:
+        - firstName
+        - lastName
+        - specialization
+      type: object
+      properties:
+        userName:
+          type: string
+          description: User userName (optional)
+        firstName:
+          type: string
+          description: User firstName (required)
+        lastName:
+          type: string
+          description: User lastName (required)
+        isActive:
+          type: boolean
+          description: User isActive (optional)
+        specialization:
+          $ref: '#/components/schemas/TrainingTypeDTO'
+    TrainingTypeDTO:
+      required:
+        - trainingTypeName
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        trainingTypeName:
+          type: string
+          description: trainingTypeName (required)
+    TraineeDTO:
+      required:
+        - firstName
+        - lastName
+      type: object
+      properties:
+        userName:
+          type: string
+          description: User userName (optional)
+        firstName:
+          type: string
+          description: User firstName (required)
+        lastName:
+          type: string
+          description: User lastName (required)
+        isActive:
+          type: boolean
+          description: User isActive (optional)
+        address:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+    TrainerWithTraineesDTO:
+      required:
+        - firstName
+        - lastName
+        - specialization
+      type: object
+      properties:
+        userName:
+          type: string
+          description: User userName (optional)
+        firstName:
+          type: string
+          description: User firstName (required)
+        lastName:
+          type: string
+          description: User lastName (required)
+        isActive:
+          type: boolean
+          description: User isActive (optional)
+        specialization:
+          $ref: '#/components/schemas/TrainingTypeDTO'
+        trainees:
+          type: array
+          items:
+            $ref: '#/components/schemas/TraineeDTO'
+    TraineeWithTrainersDTO:
+      required:
+        - firstName
+        - lastName
+      type: object
+      properties:
+        userName:
+          type: string
+          description: User userName (optional)
+        firstName:
+          type: string
+          description: User firstName (required)
+        lastName:
+          type: string
+          description: User lastName (required)
+        isActive:
+          type: boolean
+          description: User isActive (optional)
+        address:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        trainers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainerDTO'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: message
+        errorType:
+          type: string
+          description: Error type
+          example: Type based on error
+          enum:
+            - VALIDATION_ERROR
+            - PROCESSING_ERROR
+            - DATABASE_ERROR
+            - FATAL_ERROR
+            - AUTHORIZATION_ERROR
+        timeStamp:
+          type: string
+          format: date-time
+    TrainerUsername:
+      required:
+        - userName
+      type: object
+      properties:
+        userName:
+          type: string
+          description: Trainer userName (required)
+      description: Trainee List of Trainers userNames that must be updated (required)
+    UpdateTraineesTrainersListRequestDTO:
+      required:
+        - trainers
+        - userName
+      type: object
+      properties:
+        userName:
+          type: string
+          description: Trainee userName (required)
+        trainers:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainerUsername'
+    NewPasswordRequestDTO:
+      required:
+        - newPassword
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        newPassword:
+          type: string
+    TrainingDTO:
+      required:
+        - duration
+        - traineeUserName
+        - trainerUserName
+        - trainingDate
+        - trainingName
+      type: object
+      properties:
+        traineeUserName:
+          type: string
+        trainerUserName:
+          type: string
+        trainingName:
+          type: string
+        trainingDate:
+          type: string
+          format: date
+        duration:
+          type: integer
+          format: int32
+        trainingTypeName:
+          type: string
+    UserCredentialsDTO:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    UserDTO:
+      required:
+        - firstName
+        - lastName
+      type: object
+      properties:
+        userName:
+          type: string
+          description: User userName (optional)
+        firstName:
+          type: string
+          description: User firstName (required)
+        lastName:
+          type: string
+          description: User lastName (required)
+        isActive:
+          type: boolean
+          description: User isActive (optional)
+    ChangeUserStatusRequestDTO:
+      required:
+        - isActive
+        - userName
+      type: object
+      properties:
+        userName:
+          type: string
+          description: User userName (required)
+        isActive:
+          type: boolean
+          description: User isActive to update (required)

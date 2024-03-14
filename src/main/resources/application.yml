@@ -19,13 +19,13 @@ db:
   username: postgres
   password: postgres
 
-#springdoc:
-#  api-docs:
-#    version: openapi_3_1
-#  swagger-ui:
-#    display-request-duration: true
-#    groups-order: DESC
-#    operationsSorter: method
-#    disable-swagger-default-url: true
-#    use-root-path: true
-#  show-actuator: true
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    url: /swagger-config.yml
+    #config-url: swagger-config.yml
+    #path: src/main/resources/swagger-config.yml
+  cache:
+    disabled: true

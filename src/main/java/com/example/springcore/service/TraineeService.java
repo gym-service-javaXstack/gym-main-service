@@ -4,7 +4,6 @@ import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainingDTO;
-import com.example.springcore.dto.request.CreateTraineeRequestDTO;
 import com.example.springcore.dto.request.UpdateTraineesTrainersListRequestDTO;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
 import com.example.springcore.mapper.TrainerMapper;
@@ -37,21 +36,21 @@ public class TraineeService {
     private final TrainingMapper trainingMapper;
 
     @Transactional
-    public Trainee createTrainee(CreateTraineeRequestDTO createTraineeRequestDTO) {
+    public Trainee createTrainee(TraineeDTO traineeDTO) {
         log.info("Enter TraineeService createTrainee traineeDTO");
 
         User user = User.builder()
-                .firstName(createTraineeRequestDTO.getFirstName())
-                .lastName(createTraineeRequestDTO.getLastName())
-                .userName(profileService.generateUsername(createTraineeRequestDTO.getFirstName(), createTraineeRequestDTO.getLastName()))
+                .firstName(traineeDTO.getFirstName())
+                .lastName(traineeDTO.getLastName())
+                .userName(profileService.generateUsername(traineeDTO.getFirstName(), traineeDTO.getLastName()))
                 .password(profileService.generatePassword())
                 .isActive(false)
                 .build();
 
         Trainee traineeToSave = Trainee.builder()
                 .user(user)
-                .address(createTraineeRequestDTO.getAddress())
-                .dateOfBirth(createTraineeRequestDTO.getDateOfBirth())
+                .address(traineeDTO.getAddress())
+                .dateOfBirth(traineeDTO.getDateOfBirth())
                 .trainers(new HashSet<>())
                 .build();
 
