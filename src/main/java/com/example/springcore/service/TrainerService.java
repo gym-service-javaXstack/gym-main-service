@@ -3,8 +3,9 @@ package com.example.springcore.service;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWithTraineesDTO;
 import com.example.springcore.dto.TrainingDTO;
+import com.example.springcore.mapper.TrainerTrainingMapper;
 import com.example.springcore.mapper.TrainerWithTraineesMapper;
-import com.example.springcore.mapper.TrainingMapper;
+import com.example.springcore.mapper.TraineeTrainingMapper;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
 import com.example.springcore.model.TrainingType;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class TrainerService {
     private final AuthenticationService authenticationService;
     private final TrainingTypeService trainingTypeService;
     private final TrainerWithTraineesMapper trainerWithTraineesMapper;
-    private final TrainingMapper trainingMapper;
+    private final TrainerTrainingMapper trainerTrainingMapper;
 
     @Transactional
     public Trainer createTrainer(TrainerDTO trainerDTO) {
@@ -62,7 +64,7 @@ public class TrainerService {
         authenticationService.isAuthenticated(trainerDTO.getUserName());
 
         Trainer trainer = trainerDao.getTrainerByUsername(trainerDTO.getUserName())
-                .orElseThrow(() -> new EntityNotFoundException(trainerDTO.getUserName()));
+                .orElseThrow(() -> new EntityNotFoundException("Trainer with username " + trainerDTO.getUserName() + " not found"));
 
         TrainingType trainingTypeByNameToUpdate = trainingTypeService.findTrainingTypeByName(trainerDTO.getSpecialization().getTrainingTypeName());
 
@@ -80,7 +82,8 @@ public class TrainerService {
         log.info("Enter TrainerService getTrainerByUsername trainer: {}", username);
 
         authenticationService.isAuthenticated(username);
-        Trainer trainer = trainerDao.getTrainerByUsername(username).orElseThrow(() -> new EntityNotFoundException(username));
+        Trainer trainer = trainerDao.getTrainerByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainer with username " + username + " not found"));
         log.info("Exit TrainerService getTrainerByUsername trainer: {}", username);
         return trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(trainer);
     }
@@ -92,7 +95,7 @@ public class TrainerService {
         authenticationService.isAuthenticated(username);
         List<Training> trainerTrainingsByCriteria = trainerDao.getTrainerTrainingsByCriteria(username, fromDate, toDate, traineeUserName);
         log.info("Exit TrainerService getTrainerTrainingsByCriteria method: {}", username);
-        return trainingMapper.fromTrainingListToTraineeTrainingListDTO(trainerTrainingsByCriteria);
+        return trainerTrainingMapper.fromTrainingListToTrainerTrainingListDTO(trainerTrainingsByCriteria);
     }
 
     @Transactional(readOnly = true)

@@ -2,11 +2,11 @@ package com.example.springcore.controller.impl;
 
 import com.example.springcore.controller.TraineeApi;
 import com.example.springcore.dto.TraineeDTO;
+import com.example.springcore.dto.TraineeWithTrainerListToUpdateRequestDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
-import com.example.springcore.dto.request.UpdateTraineesTrainersListRequestDTO;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.UserService;
@@ -65,8 +65,8 @@ public class TraineeControllerImpl implements TraineeApi {
     }
 
     @Override
-    public ResponseEntity<List<TrainerDTO>> updateTraineesTrainersList(UpdateTraineesTrainersListRequestDTO updateTraineesTrainersListRequestDTO) {
-        List<TrainerDTO> trainerDTOS = traineeService.updateTrainersListInTraineeByUsername(updateTraineesTrainersListRequestDTO);
+    public ResponseEntity<List<TrainerDTO>> updateTraineesTrainersList(TraineeWithTrainerListToUpdateRequestDTO traineeWithTrainerListToUpdateRequestDTO) {
+        List<TrainerDTO> trainerDTOS = traineeService.updateTrainersListInTraineeByUsername(traineeWithTrainerListToUpdateRequestDTO);
         return new ResponseEntity<>(trainerDTOS, HttpStatus.OK);
     }
 

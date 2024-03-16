@@ -1,6 +1,5 @@
-package com.example.springcore.dto.request;
+package com.example.springcore.dto;
 
-import com.example.springcore.dto.UserCredentialsDTO;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

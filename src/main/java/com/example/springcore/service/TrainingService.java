@@ -27,11 +27,10 @@ public class TrainingService {
         log.info("Enter TrainingService createTraining");
 
         Trainee traineeByUsername = traineeDao.getTraineeByUsername(trainingDTO.getTraineeUserName())
-                .orElseThrow(() -> new EntityNotFoundException(trainingDTO.getTraineeUserName()));
+                .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + trainingDTO.getTraineeUserName() + " not found"));
 
         Trainer trainerByUsername = trainerDao.getTrainerByUsername(trainingDTO.getTrainerUserName())
-                .orElseThrow(() -> new EntityNotFoundException(trainingDTO.getTrainerUserName()));
-
+                .orElseThrow(() -> new EntityNotFoundException("Trainer with username " + trainingDTO.getTrainerUserName() + " not found"));
 
         traineeService.linkTraineeAndTrainee(traineeByUsername, trainerByUsername);
 

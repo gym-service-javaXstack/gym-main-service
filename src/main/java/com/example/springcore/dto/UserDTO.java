@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class UserDTO {
+
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Schema(description = "User userName (optional)")
     private String userName;

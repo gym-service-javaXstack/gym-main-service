@@ -3,7 +3,6 @@ package com.example.springcore.handler;
 import com.example.springcore.exceptions.Error;
 import com.example.springcore.exceptions.ErrorType;
 import com.example.springcore.exceptions.UserNotAuthenticatedException;
-import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Hidden
 @RestControllerAdvice
 public class ErrorHandler {
 
@@ -53,7 +51,7 @@ public class ErrorHandler {
     public ResponseEntity<Error> handMethodArgumentNotValidException(MethodArgumentNotValidException ex, HandlerMethod hm) {
         log.error("handMethodArgumentNotValidException: message: {}, method: {}", ex.getStackTrace(), hm.getMethod().getName());
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
 
             String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();

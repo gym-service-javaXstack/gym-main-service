@@ -1,7 +1,7 @@
 package com.example.springcore.controller.impl;
 
 import com.example.springcore.controller.AuthenticationApi;
-import com.example.springcore.dto.request.NewPasswordRequestDTO;
+import com.example.springcore.dto.NewPasswordRequestDTO;
 import com.example.springcore.service.AuthenticationService;
 import com.example.springcore.service.UserService;
 import lombok.RequiredArgsConstructor;

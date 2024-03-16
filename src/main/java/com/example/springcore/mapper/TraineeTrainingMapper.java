@@ -8,20 +8,14 @@ import org.mapstruct.Mapping;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface TrainingMapper {
+public interface TraineeTrainingMapper {
 
-    @Mapping(source = "trainee.user.userName", target = "traineeUserName")
+    @Mapping(target = "traineeUserName", ignore = true)
     @Mapping(source = "trainer.user.userName", target = "trainerUserName")
     @Mapping(source = "trainingType.trainingTypeName", target = "trainingTypeName")
     @Mapping(source = "trainingDate", target = "trainingDate")
     @Mapping(source = "duration", target = "duration")
     TrainingDTO fromTrainingToTraineeTrainingDTO(Training training);
-
-    @Mapping(source = "traineeUserName", target = "trainee.user.userName")
-    @Mapping(source = "trainerUserName", target = "trainer.user.userName")
-    @Mapping(source = "trainingDate", target = "trainingDate")
-    @Mapping(source = "duration", target = "duration")
-    Training fromTrainingDTOtoTraining(TrainingDTO trainingDTO);
 
     @Mapping(source = "trainee.user.userName", target = "traineeUserName")
     @Mapping(source = "trainer.user.userName", target = "trainerUserName")

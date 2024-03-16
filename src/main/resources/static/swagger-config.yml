@@ -25,6 +25,7 @@ paths:
         - name: username
           in: query
           required: true
+          example: John.Trainer
           schema:
             type: string
       responses:
@@ -34,6 +35,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TrainerWithTraineesDTO'
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainer with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       tags:
         - Trainer service
@@ -44,15 +63,66 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TrainerDTO'
+              type: object
+              properties:
+                userName:
+                  description: Trainer username (required)
+                  type: string
+                  example: John.Trainer
+                firstName:
+                  description: Trainer firstName (required)
+                  type: string
+                  example: John
+                lastName:
+                  description: Trainer lastName (required)
+                  type: string
+                  example: Trainer
+                specialization:
+                  description: Trainer specialization (required)
+                  type: object
+                  properties:
+                    trainingTypeName:
+                      description: Training type name
+                      type: string
+                      example: Test
+                  required:
+                    - trainingTypeName
+                isActive:
+                  description: Trainer isActive status (required)
+                  type: boolean
+                  example: true
+              required:
+                - userName
+                - firstName
+                - lastName
+                - specialization
+                - isActive
         required: true
       responses:
         '200':
           description: Trainer updated successfully
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/TrainerWithTraineesDTO'
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainer with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       tags:
         - Trainer service
@@ -72,7 +142,7 @@ paths:
                 lastName:
                   description: Trainer lastName (required)
                   type: string
-                  example: Doe
+                  example: Trainer
                 specialization:
                   description: Trainer specialization (required)
                   type: object
@@ -111,7 +181,7 @@ paths:
           in: query
           description: Trainer username
           required: true
-          example: John.Doe
+          example: John.Trainer
           schema:
             type: string
         - name: isActive
@@ -154,6 +224,7 @@ paths:
           in: query
           description: The username that needs to be fetched
           required: true
+          example: Nick.Trainee
           schema:
             type: string
       responses:
@@ -192,7 +263,37 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TraineeDTO'
+              type: object
+              properties:
+                userName:
+                  description: Trainee username (required)
+                  type: string
+                  example: Nick.Trainee
+                firstName:
+                  description: Trainee firstName (required)
+                  type: string
+                  example: Nick
+                lastName:
+                  description: Trainee lastName (required)
+                  type: string
+                  example: Trainee
+                dateOfBirth:
+                  type: string
+                  format: date
+                  description: Trainee date of birth (optional)
+                  example: 2024-01-01
+                address:
+                  type: string
+                  description: Trainee address (optional)
+                isActive:
+                  description: Trainee isActive status (required)
+                  type: boolean
+                  example: true
+              required:
+                - userName
+                - firstName
+                - lastName
+                - isActive
         required: true
       responses:
         '200':
@@ -234,14 +335,15 @@ paths:
                 firstName:
                   description: Trainee firstName (required)
                   type: string
-                  example: John
+                  example: Nick
                 lastName:
                   description: Trainee lastName (required)
                   type: string
-                  example: Doe
+                  example: Trainee
                 dateOfBirth:
                   description: Trainee dateOfBirth (optional)
                   type: string
+                  format: date
                   example: 2024-03-12
                 address:
                   description: Trainee address (optional)
@@ -275,6 +377,7 @@ paths:
           in: query
           description: The username that needs to be fetched
           required: true
+          example: Nick.Trainee
           schema:
             type: string
       responses:
@@ -309,7 +412,7 @@ paths:
           in: query
           description: Trainee username
           required: true
-          example: John.Doe
+          example: Nick.Trainee
           schema:
             type: string
         - name: isActive
@@ -352,7 +455,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateTraineesTrainersListRequestDTO'
+              required:
+                - trainers
+                - userName
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: Trainee userName (required)
+                trainers:
+                  type: array
+                  items:
+                    required:
+                      - userName
+                    type: object
+                    properties:
+                      userName:
+                        type: string
+                        description: Trainer userName (required)
+                    description: Trainee List of Trainers userNames that must be updated (required)
         required: true
       responses:
         '200':
@@ -460,11 +581,52 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TrainingDTO'
+              type: object
+              properties:
+                traineeUserName:
+                  description: Trainee username (required)
+                  type: string
+                  example: Nick.Trainee
+                trainerUserName:
+                  description: Trainer username (required)
+                  type: string
+                  example: John.Trainer
+                trainingName:
+                  description: The name of created training (required)
+                  type: string
+                  example: Box Introduction
+                trainingDate:
+                  description: The date of the training (required)
+                  type: string
+                  format: date
+                  example: 2024-01-01
+                duration:
+                  description: The duration of the training in minutes (required)
+                  example: 60
+                  type: integer
+                  format: int32
+              required:
+                - traineeUserName
+                - trainerUserName
+                - trainingName
+                - trainingDate
+                - duration
         required: true
       responses:
         '201':
           description: Created
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Entity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/v1/training/type:
     get:
       tags:
@@ -485,82 +647,138 @@ paths:
       tags:
         - Trainer service
       summary: Get trainer trainings by criteria
+      description: This can only be executed after authentication
       operationId: getTrainerTrainingsByCriteria
       parameters:
         - name: username
           in: query
           required: true
+          example: John.Trainer
+          description: The trainer username to be provided
           schema:
             type: string
         - name: fromDate
           in: query
           required: false
+          example: 2024-01-01
+          description: The filtering criteria by date, starting from this specific date
           schema:
             type: string
             format: date
         - name: toDate
           in: query
           required: false
+          example: 2024-02-01
+          description: The filtering criteria by date, ending with this specific date
           schema:
             type: string
             format: date
         - name: traineeUsername
           in: query
           required: false
+          example: Nick.Trainee
+          description: The filtering criteria by trainee username
           schema:
             type: string
       responses:
         '200':
           description: Successful operation
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/TrainingDTO'
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainer with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/v1/trainee/trainings:
     get:
       tags:
         - Trainee service
       summary: Get trainee trainings by criteria
+      description: This can only be executed after authentication
       operationId: getTraineeTrainingsByCriteria
       parameters:
         - name: username
           in: query
           required: true
+          example: Nick.Trainee
+          description: The trainee username to be provided
           schema:
             type: string
         - name: fromDate
           in: query
           required: false
+          example: 2024-01-01
+          description: The filtering criteria by date, starting from this specific date
           schema:
             type: string
             format: date
         - name: toDate
           in: query
           required: false
+          example: 2024-02-01
+          description: The filtering criteria by date, ending with this specific date
           schema:
             type: string
             format: date
         - name: trainerUsername
           in: query
           required: false
+          example: John.Trainer
+          description: The filtering criteria by trainee username
           schema:
             type: string
         - name: trainingTypeName
           in: query
           required: false
+          example: Boxing
+          description: The filtering criteria by training type
           schema:
             type: string
       responses:
         '200':
           description: Successful operation
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/TrainingDTO'
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainee with this username doesnt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/v1/trainee/available-trainers:
     get:
       tags:
@@ -732,28 +950,6 @@ components:
         timeStamp:
           type: string
           format: date-time
-    TrainerUsername:
-      required:
-        - userName
-      type: object
-      properties:
-        userName:
-          type: string
-          description: Trainer userName (required)
-      description: Trainee List of Trainers userNames that must be updated (required)
-    UpdateTraineesTrainersListRequestDTO:
-      required:
-        - trainers
-        - userName
-      type: object
-      properties:
-        userName:
-          type: string
-          description: Trainee userName (required)
-        trainers:
-          type: array
-          items:
-            $ref: '#/components/schemas/TrainerUsername'
     NewPasswordRequestDTO:
       required:
         - newPassword
@@ -770,10 +966,9 @@ components:
     TrainingDTO:
       required:
         - duration
-        - traineeUserName
-        - trainerUserName
         - trainingDate
         - trainingName
+        - trainingTypeName
       type: object
       properties:
         traineeUserName:
@@ -800,21 +995,3 @@ components:
           type: string
         password:
           type: string
-    UserDTO:
-      required:
-        - firstName
-        - lastName
-      type: object
-      properties:
-        userName:
-          type: string
-          description: User userName (optional)
-        firstName:
-          type: string
-          description: User firstName (required)
-        lastName:
-          type: string
-          description: User lastName (required)
-        isActive:
-          type: boolean
-          description: User isActive (optional)

@@ -1,13 +1,13 @@
 package com.example.springcore.service;
 
 import com.example.springcore.dto.TraineeDTO;
+import com.example.springcore.dto.TraineeWithTrainerListToUpdateRequestDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainingDTO;
-import com.example.springcore.dto.request.UpdateTraineesTrainersListRequestDTO;
+import com.example.springcore.mapper.TraineeTrainingMapper;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
 import com.example.springcore.mapper.TrainerMapper;
-import com.example.springcore.mapper.TrainingMapper;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
@@ -33,7 +33,7 @@ public class TraineeService {
     private final AuthenticationService authenticationService;
     private final TrainerMapper trainerMapper;
     private final TraineeWithTrainersMapper traineeWithTrainersMapper;
-    private final TrainingMapper trainingMapper;
+    private final TraineeTrainingMapper traineeTrainingMapper;
 
     @Transactional
     public Trainee createTrainee(TraineeDTO traineeDTO) {
@@ -67,7 +67,7 @@ public class TraineeService {
         authenticationService.isAuthenticated(traineeDTO.getUserName());
 
         Trainee trainee = traineeDao.getTraineeByUsername(traineeDTO.getUserName())
-                .orElseThrow(() -> new EntityNotFoundException(traineeDTO.getUserName()));
+                .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + traineeDTO.getUserName() + " not found"));
 
         traineeWithTrainersMapper.updateTraineeFromDTO(traineeDTO, trainee);
 
@@ -96,7 +96,7 @@ public class TraineeService {
         authenticationService.isAuthenticated(username);
 
         Trainee trainee = traineeDao.getTraineeByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(username));
+                .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + username + " not found"));
 
         log.info("Exit TraineeService getTraineeByUsername trainee: {}", username);
         return traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(trainee);
@@ -111,16 +111,16 @@ public class TraineeService {
 
 
     @Transactional
-    public List<TrainerDTO> updateTrainersListInTraineeByUsername(UpdateTraineesTrainersListRequestDTO updateTraineesTrainersListRequestDTO) {
+    public List<TrainerDTO> updateTrainersListInTraineeByUsername(TraineeWithTrainerListToUpdateRequestDTO traineeWithTrainerListToUpdateRequestDTO) {
         log.info("Enter TraineeService updateTrainersListInTraineeByUsername");
 
-        authenticationService.isAuthenticated(updateTraineesTrainersListRequestDTO.getUserName());
+        authenticationService.isAuthenticated(traineeWithTrainerListToUpdateRequestDTO.getUserName());
 
-        Trainee trainee = traineeDao.getTraineeByUsername(updateTraineesTrainersListRequestDTO.getUserName())
-                .orElseThrow(() -> new EntityNotFoundException(updateTraineesTrainersListRequestDTO.getUserName()));
+        Trainee trainee = traineeDao.getTraineeByUsername(traineeWithTrainerListToUpdateRequestDTO.getUserName())
+                .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + traineeWithTrainerListToUpdateRequestDTO.getUserName() + " not found"));
 
         List<Trainer> trainersByUsernameList = trainerService.getTrainersByUsernameList(
-                updateTraineesTrainersListRequestDTO.getTrainers().stream()
+                traineeWithTrainerListToUpdateRequestDTO.getTrainers().stream()
                         .map(trainerDTO -> trainerDTO.getUserName())
                         .toList()
         );
@@ -154,6 +154,6 @@ public class TraineeService {
         List<Training> traineeTrainingsByCriteria = traineeDao.getTraineeTrainingsByCriteria(username, fromDate, toDate, trainerUsername, trainingTypeName);
 
         log.info("Exit TraineeService getTraineeTrainingsByCriteria method: {}", username);
-        return trainingMapper.fromTrainingListToTraineeTrainingListDTO(traineeTrainingsByCriteria);
+        return traineeTrainingMapper.fromTrainingListToTraineeTrainingListDTO(traineeTrainingsByCriteria);
     }
 }
