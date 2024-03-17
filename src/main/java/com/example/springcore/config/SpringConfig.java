@@ -1,6 +1,6 @@
 package com.example.springcore.config;
 
-import com.example.springcore.interceptor.RestDetailsLoggerInterceptor;
+import com.example.springcore.interceptor.LogInterceptor;
 import com.example.springcore.interceptor.TransactionLoggerInterceptor;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ import java.util.Properties;
 public class SpringConfig implements WebMvcConfigurer {
 
     private final TransactionLoggerInterceptor transactionLoggerInterceptor;
-    private final RestDetailsLoggerInterceptor restDetailsLoggerInterceptor;
+    private final LogInterceptor logInterceptor;
 
     @Value("${db.driver}")
     private String DRIVER;
@@ -92,12 +92,12 @@ public class SpringConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(transactionLoggerInterceptor).addPathPatterns("/api/**");
-        registry.addInterceptor(restDetailsLoggerInterceptor).addPathPatterns("/api/**");
+        //registry.addInterceptor(transactionLoggerInterceptor).addPathPatterns("/api/**");
+        registry.addInterceptor(logInterceptor).addPathPatterns("/api/**");
     }
 
     @Bean
-    SpringDocConfiguration springDocConfiguration(){
+    SpringDocConfiguration springDocConfiguration() {
         return new SpringDocConfiguration();
     }
 
@@ -107,12 +107,12 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    ObjectMapperProvider objectMapperProvider(SpringDocConfigProperties springDocConfigProperties){
+    ObjectMapperProvider objectMapperProvider(SpringDocConfigProperties springDocConfigProperties) {
         return new ObjectMapperProvider(springDocConfigProperties);
     }
 
     @Bean
-    SpringDocUIConfiguration SpringDocUIConfiguration(Optional<SwaggerUiConfigProperties> optionalSwaggerUiConfigProperties){
+    SpringDocUIConfiguration SpringDocUIConfiguration(Optional<SwaggerUiConfigProperties> optionalSwaggerUiConfigProperties) {
         return new SpringDocUIConfiguration(optionalSwaggerUiConfigProperties);
     }
 }

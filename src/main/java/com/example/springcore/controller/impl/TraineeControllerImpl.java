@@ -40,14 +40,14 @@ public class TraineeControllerImpl implements TraineeApi {
     @Override
     public ResponseEntity<TraineeWithTrainersDTO> getTraineeByUsername(@RequestParam(value = "username") String username) {
         TraineeWithTrainersDTO traineeByUsername = traineeService.getTraineeByUsername(username);
-        log.info("TraineeController getTraineeByUsername traineeByUsername : {}", traineeByUsername);
+        log.info("TraineeController getTraineeByUsername traineeByUsername");
         return new ResponseEntity<>(traineeByUsername, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<TraineeWithTrainersDTO> updateTrainee(TraineeDTO traineeDTO) {
         TraineeWithTrainersDTO traineeWithTrainersDTO = traineeService.updateTrainee(traineeDTO);
-        log.info("TraineeController updateTrainee traineeWithTrainersDTO : {}", traineeWithTrainersDTO);
+        log.info("TraineeController updateTrainee traineeWithTrainersDTO");
         return new ResponseEntity<>(traineeWithTrainersDTO, HttpStatus.OK);
     }
 
