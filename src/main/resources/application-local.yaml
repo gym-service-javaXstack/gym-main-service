@@ -1,7 +1,7 @@
 #LOGGING CONFIGURATION
 logging:
   level:
-    root: DEBUG
+    root: INFO
 
 #SPRING CONFIGURATION
 spring:
@@ -24,3 +24,10 @@ springdoc:
   swagger-ui:
     url: /swagger-config.yml
     enabled: true
+  show-actuator: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
