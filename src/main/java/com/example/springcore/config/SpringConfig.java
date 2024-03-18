@@ -1,7 +1,7 @@
 package com.example.springcore.config;
 
+import com.example.springcore.interceptor.CorrelationIdLoggerInterceptor;
 import com.example.springcore.interceptor.LogInterceptor;
-import com.example.springcore.interceptor.TransactionLoggerInterceptor;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.configuration.SpringDocConfiguration;
@@ -29,8 +29,8 @@ import java.util.Properties;
 @RequiredArgsConstructor
 public class SpringConfig implements WebMvcConfigurer {
 
-    private final TransactionLoggerInterceptor transactionLoggerInterceptor;
     private final LogInterceptor logInterceptor;
+    private final CorrelationIdLoggerInterceptor correlationIdLoggerInterceptor;
 
     @Value("${db.driver}")
     private String DRIVER;
@@ -92,7 +92,7 @@ public class SpringConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //registry.addInterceptor(transactionLoggerInterceptor).addPathPatterns("/api/**");
+        registry.addInterceptor(correlationIdLoggerInterceptor).addPathPatterns("/api/**");
         registry.addInterceptor(logInterceptor).addPathPatterns("/api/**");
     }
 

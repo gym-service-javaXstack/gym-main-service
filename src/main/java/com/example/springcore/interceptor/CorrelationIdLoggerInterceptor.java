@@ -9,21 +9,21 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import java.util.UUID;
 
 @Component
-public class TransactionLoggerInterceptor implements HandlerInterceptor {
+public class CorrelationIdLoggerInterceptor implements HandlerInterceptor {
     private static final String TRACE_HEADER = "X-Trace-Id";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String transactionId = request.getHeader(TRACE_HEADER);
-        if (transactionId == null || transactionId.isEmpty()) {
-            transactionId = UUID.randomUUID().toString();
+        String correlationId = request.getHeader(TRACE_HEADER);
+        if (correlationId == null || correlationId.isEmpty()) {
+            correlationId = UUID.randomUUID().toString();
         }
-        MDC.put("transactionId", transactionId);
+        MDC.put("correlationId", String.format("Correlation Id: [%s]", correlationId));
         return true;
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        MDC.remove("transactionId");
+        MDC.remove("correlationId");
     }
 }
