@@ -33,7 +33,7 @@ public class TransactionLoggingAspect {
             Session session = entityManager.unwrap(Session.class);
             session.doWork(connection -> {
                 try (Statement statement = connection.createStatement();
-                     ResultSet resultSet = statement.executeQuery("SELECT pg_backend_pid()")) {
+                     ResultSet resultSet = statement.executeQuery("SELECT txid_current()")) {
                     if (resultSet.next()) {
                         transactionId.set(String.valueOf(resultSet.getInt(1)));
                     }
