@@ -7,6 +7,7 @@ import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
 import com.example.springcore.repository.TrainingRepository;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,22 +66,25 @@ public class TrainingService {
         authenticationService.isAuthenticated(username);
 
         return trainerTrainingMapper.fromTrainingListToTrainerTrainingListDTO(trainingRepository.findAll(
-                        (root, query, cb) -> {
-                            List<Predicate> predicates = new ArrayList<>();
-                            predicates.add(cb.equal(root.get("trainer").get("user").get("userName"), username));
+                (root, query, cb) -> {
+                    root.fetch("trainer", JoinType.LEFT).fetch("user", JoinType.LEFT);
+                    root.fetch("trainee", JoinType.LEFT).fetch("user", JoinType.LEFT);
+                    root.fetch("trainingType", JoinType.LEFT);
 
-                            if (fromDate != null && toDate != null) {
-                                predicates.add(cb.between(root.get("trainingDate"), fromDate, toDate));
-                            }
-                            if (traineeUserName != null) {
-                                predicates.add(cb.equal(root.get("trainee").get("user").get("userName"), traineeUserName));
-                            }
+                    List<Predicate> predicates = new ArrayList<>();
+                    predicates.add(cb.equal(root.get("trainer").get("user").get("userName"), username));
 
-                            log.info("Exit TrainerService getTrainerTrainingsByCriteria method: {}", username);
-                            return cb.and(predicates.toArray(new Predicate[0]));
-                        }
-                )
-        );
+                    if (fromDate != null && toDate != null) {
+                        predicates.add(cb.between(root.get("trainingDate"), fromDate, toDate));
+                    }
+                    if (traineeUserName != null) {
+                        predicates.add(cb.equal(root.get("trainee").get("user").get("userName"), traineeUserName));
+                    }
+
+                    log.info("Exit TrainerService getTrainerTrainingsByCriteria method: {}", username);
+                    return cb.and(predicates.toArray(new Predicate[0]));
+                }
+        ));
     }
 
     @Transactional(readOnly = true)
@@ -97,6 +101,10 @@ public class TrainingService {
 
         return traineeTrainingMapper.fromTrainingListToTraineeTrainingListDTO(trainingRepository.findAll(
                 (root, query, cb) -> {
+                    root.fetch("trainee", JoinType.LEFT).fetch("user", JoinType.LEFT);
+                    root.fetch("trainer", JoinType.LEFT).fetch("user", JoinType.LEFT);
+                    root.fetch("trainingType", JoinType.LEFT);
+
                     List<Predicate> predicates = new ArrayList<>();
                     predicates.add(cb.equal(root.get("trainee").get("user").get("userName"), username));
 
