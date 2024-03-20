@@ -1,7 +1,7 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.User;
-import com.example.springcore.repository.UserDao;
+import com.example.springcore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,31 +15,31 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserDao<User> userDao;
     private final AuthenticationService authenticationService;
+    private final UserRepository userRepository;
 
     @Transactional
-    public void changeUserStatus(String username, boolean isActive) {
-        log.info("Enter UserService changeUserStatus username: {}, status: {}", username, isActive);
+    public void changeUserStatus(String userName, boolean isActive) {
+        log.info("Enter UserService changeUserStatus userName: {}, status: {}", userName, isActive);
 
-        authenticationService.isAuthenticated(username);
+        authenticationService.isAuthenticated(userName);
 
-        Optional<User> userByUsername = userDao.getUserByUsername(username);
+        Optional<User> userByUsername = userRepository.getUserByUserName(userName);
         userByUsername.ifPresent(user -> {
                     user.setIsActive(isActive);
-                    userDao.update(user);
+                    userRepository.save(user);
                 }
         );
-        log.info("Exit UserService changeUserStatus username: {}, status: {}", username, isActive);
+        log.info("Exit UserService changeUserStatus userName: {}, status: {}", userName, isActive);
     }
 
     @Transactional
-    public void changeUserPassword(String username, String oldPassword, String newPassword) {
-        log.info("Enter UserService changeUserPassword username");
+    public void changeUserPassword(String userName, String oldPassword, String newPassword) {
+        log.info("Enter UserService changeUserPassword userName");
 
-        authenticationService.isAuthenticated(username);
-        User user = userDao.getUserByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
+        authenticationService.isAuthenticated(userName);
+        User user = userRepository.getUserByUserName(userName)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + userName));
 
         if (!Objects.equals(user.getPassword(), oldPassword)) {
             throw new IllegalArgumentException("Old password is incorrect");
@@ -47,10 +47,10 @@ public class UserService {
 
         user.setPassword(newPassword);
 
-        userDao.update(user);
+        userRepository.save(user);
 
-        log.info("Exit UserService changeUserPassword username: {}, oldPassword: {}, newPassword: {}",
-                username,
+        log.info("Exit UserService changeUserPassword userName: {}, oldPassword: {}, newPassword: {}",
+                userName,
                 oldPassword,
                 newPassword
         );

@@ -7,6 +7,7 @@ import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.service.TrainerService;
+import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrainerControllerImpl implements TrainerApi {
     private final TrainerService trainerService;
+    private final TrainingService trainingService;
     private final UserService userService;
 
     @Override
@@ -34,8 +36,8 @@ public class TrainerControllerImpl implements TrainerApi {
     }
 
     @Override
-    public ResponseEntity<TrainerWithTraineesDTO> getTrainerByUsername(String username) {
-        TrainerWithTraineesDTO trainerByUsername = trainerService.getTrainerByUsername(username);
+    public ResponseEntity<TrainerWithTraineesDTO> getTrainerByUserName(String username) {
+        TrainerWithTraineesDTO trainerByUsername = trainerService.getTrainerDTOByUserName(username);
         return new ResponseEntity<>(trainerByUsername, HttpStatus.OK);
     }
 
@@ -47,7 +49,7 @@ public class TrainerControllerImpl implements TrainerApi {
 
     @Override
     public ResponseEntity<List<TrainingDTO>> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String traineeUsername) {
-        List<TrainingDTO> trainerTrainingsByCriteria = trainerService.getTrainerTrainingsByCriteria(username, fromDate, toDate, traineeUsername);
+        List<TrainingDTO> trainerTrainingsByCriteria = trainingService.getTrainerTrainingsByCriteria(username, fromDate, toDate, traineeUsername);
         return new ResponseEntity<>(trainerTrainingsByCriteria, HttpStatus.OK);
     }
 

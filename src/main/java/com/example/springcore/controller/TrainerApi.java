@@ -24,7 +24,7 @@ public interface TrainerApi {
     ResponseEntity<UserCredentialsDTO> createTrainer(@Valid @RequestBody TrainerDTO trainerDTO);
 
     @GetMapping
-    ResponseEntity<TrainerWithTraineesDTO> getTrainerByUsername(@RequestParam String username);
+    ResponseEntity<TrainerWithTraineesDTO> getTrainerByUserName(@RequestParam String username);
 
     @PutMapping
     ResponseEntity<TrainerWithTraineesDTO> updateTrainer(@Valid @RequestBody TrainerDTO trainerDTO);

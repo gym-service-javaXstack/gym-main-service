@@ -9,6 +9,7 @@ import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.service.TraineeService;
+import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TraineeControllerImpl implements TraineeApi {
     private final TraineeService traineeService;
+    private final TrainingService trainingService;
     private final UserService userService;
 
     @Override
@@ -33,28 +35,24 @@ public class TraineeControllerImpl implements TraineeApi {
         UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO();
         userCredentialsDTO.setUsername(response.getUser().getUserName());
         userCredentialsDTO.setPassword(response.getUser().getPassword());
-        log.info("TraineeController createTrainee userCredentialsDTO : {}", userCredentialsDTO);
         return new ResponseEntity<>(userCredentialsDTO, HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<TraineeWithTrainersDTO> getTraineeByUsername(@RequestParam(value = "username") String username) {
-        TraineeWithTrainersDTO traineeByUsername = traineeService.getTraineeByUsername(username);
-        log.info("TraineeController getTraineeByUsername traineeByUsername");
+        TraineeWithTrainersDTO traineeByUsername = traineeService.getTraineeDTOByUsername(username);
         return new ResponseEntity<>(traineeByUsername, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<TraineeWithTrainersDTO> updateTrainee(TraineeDTO traineeDTO) {
         TraineeWithTrainersDTO traineeWithTrainersDTO = traineeService.updateTrainee(traineeDTO);
-        log.info("TraineeController updateTrainee traineeWithTrainersDTO");
         return new ResponseEntity<>(traineeWithTrainersDTO, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteTrainee(String username) {
         traineeService.deleteTrainee(username);
-        log.info("TraineeController deleteTrainee username : {}", username);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -78,7 +76,7 @@ public class TraineeControllerImpl implements TraineeApi {
             String trainerUsername,
             String trainingTypeName
     ) {
-        List<TrainingDTO> traineeTrainingsByCriteria = traineeService.getTraineeTrainingsByCriteria(username, fromDate, toDate, trainerUsername, trainingTypeName);
+        List<TrainingDTO> traineeTrainingsByCriteria = trainingService.getTraineeTrainingsByCriteria(username, fromDate, toDate, trainerUsername, trainingTypeName);
         return new ResponseEntity<>(traineeTrainingsByCriteria, HttpStatus.OK);
     }
 

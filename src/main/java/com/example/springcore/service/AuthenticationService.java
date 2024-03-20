@@ -2,8 +2,9 @@ package com.example.springcore.service;
 
 import com.example.springcore.exceptions.UserNotAuthenticatedException;
 import com.example.springcore.model.User;
-import com.example.springcore.repository.UserDao;
+import com.example.springcore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,41 +15,42 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
-    private final UserDao<User> userDao;
+    private final UserRepository userRepository;
     private final Map<String, User> authenticatedUsers = new ConcurrentHashMap<>();
 
-    public AuthenticationService(UserDao<User> userDao) {
-        this.userDao = userDao;
-    }
 
     @Transactional(readOnly = true)
-    public boolean authenticationUser(String username, String password) {
-        log.info("Enter AuthenticationService authenticationUser username: {}", username);
+    public boolean authenticationUser(String userName, String password) {
+        log.info("Enter AuthenticationService authenticationUser userName: {}", userName);
 
-        User user = userDao.getUserByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
+        User user = userRepository.getUserByUserName(userName)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + userName));
+
         if (!user.getPassword().equals(password)) {
-            throw new IllegalArgumentException("Invalid password for user: " + username);
+            throw new IllegalArgumentException("Invalid password for user: " + userName);
         }
-        authenticatedUsers.put(username, user);
 
-        log.info("Exit AuthenticationService authenticationUser username: {}", username);
+        authenticatedUsers.put(userName, user);
+
+        log.info("Exit AuthenticationService authenticationUser userName: {}", userName);
         return true;
     }
 
-    public void isAuthenticated(String username) {
-        if (!authenticatedUsers.containsKey(username)) {
-            throw new UserNotAuthenticatedException("User not authenticated: " + username);
+    public void isAuthenticated(String userName) {
+        if (!authenticatedUsers.containsKey(userName)) {
+            throw new UserNotAuthenticatedException("User not authenticated: " + userName);
         }
     }
 
-    public void logout(String username) {
-        authenticatedUsers.remove(username);
+    public void logout(String userName) {
+        authenticatedUsers.remove(userName);
     }
 
     @Transactional(readOnly = true)
     public List<String> getUsernameByFirstNameAndLastName(String firstName, String lastName) {
-        return userDao.getUsernamesByFirstNameAndLastName(firstName, lastName);
+        String baseUserName = firstName + "." + lastName;
+        return userRepository.getUserNamesByFirstNameAndLastName(baseUserName);
     }
 }
