@@ -3,7 +3,6 @@ package com.example.springcore.config;
 import com.example.springcore.interceptor.CorrelationIdLoggerInterceptor;
 import com.example.springcore.interceptor.LogInterceptor;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.configuration.SpringDocUIConfiguration;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.properties.SwaggerUiConfigProperties;
@@ -27,11 +26,6 @@ public class SpringConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(correlationIdLoggerInterceptor).addPathPatterns("/api/**");
         registry.addInterceptor(logInterceptor).addPathPatterns("/api/**");
-    }
-
-    @Bean
-    SpringDocConfiguration springDocConfiguration() {
-        return new SpringDocConfiguration();
     }
 
     @Bean

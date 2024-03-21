@@ -22,8 +22,9 @@ public class CustomRequestBodyAdviceAdapter extends RequestBodyAdviceAdapter {
     }
 
     @Override
-    public boolean supports(MethodParameter methodParameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return true;
+    public boolean supports(MethodParameter methodParameter, Type targetType,
+                            Class<? extends HttpMessageConverter<?>> converterType) {
+        return httpServletRequest.getRequestURI().startsWith("/api/");
     }
 
     @Override

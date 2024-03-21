@@ -1,0 +1,27 @@
+#SPRING-DOC SWAGGER CONFIGURATION
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+#SPRING CONFIGURATION
+spring:
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        show_sql: false
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/gymDB-prod
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+#ACTUATOR CONFIGURATION
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'health'

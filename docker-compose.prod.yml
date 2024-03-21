@@ -1,13 +1,13 @@
 version: '3.8'
 services:
-  db:
+  postgresDB:
     image: postgres:latest
     environment:
-      POSTGRES_DB: gym
+      POSTGRES_DB: gymDB-prod
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      -  postgres_data_prod:/var/lib/postgresql/data/
     ports:
       - 5432:5432
 
@@ -16,20 +16,22 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: postgres
-    volumes:
-        - ./servers.json:/pgadmin4/servers.json
+    #    volumes:
+    #        - ./servers.json:/pgadmin4/servers.json
     ports:
       - 80:80
     depends_on:
-      - db
+      - postgresDB
 
   app:
     image: myapp
     environment:
-      DB_HOST: db
+      DB_HOST: postgresDB
+      SPRING_PROFILES_ACTIVE: prod
     depends_on:
-      - db
+      - postgresDB
     ports:
       - 8080:8080
+
 volumes:
-  postgres_data:
+  postgres_data_prod:

@@ -1,11 +1,11 @@
 {
   "Servers": {
     "1": {
-      "Name": "My Server",
+      "Name": "gymDB",
       "Group": "Servers",
-      "Host": "db",
+      "Host": "postgresDB",
       "Port": 5432,
-      "MaintenanceDB": "gym",
+      "MaintenanceDB": ["gymDB-dev", "gymDB-prod"],
       "Username": "postgres",
       "SSLMode": "prefer",
       "PassFile": "/pgpassfile"
