@@ -33,11 +33,7 @@ public class TrainingTypeService {
     public List<TrainingTypeDTO> getTrainingTypeList() {
         log.info("Entry TrainingTypeService getTrainingTypeList");
 
-        List<TrainingTypeDTO> trainingTypeDTOS = trainingTypeMapper.
-                fromTrainingTypeListToTrainingTypeDTOList(
-                        trainingTypeRepository.
-                                findAll()
-                );
+        List<TrainingTypeDTO> trainingTypeDTOS = trainingTypeMapper.fromTrainingTypeListToTrainingTypeDTOList(trainingTypeRepository.findAll());
 
         log.info("Exit TrainingTypeService getTrainingTypeList");
         return trainingTypeDTOS;

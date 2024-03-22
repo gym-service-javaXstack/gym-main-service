@@ -1,5 +1,6 @@
 package com.example.springcore.util;
 
+import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
@@ -17,7 +18,22 @@ public class TestUtil {
                 .password(password)
                 .firstName("firstName")
                 .lastName("lastName")
-                .isActive(true)
+                .isActive(false)
+                .build();
+    }
+
+    public static TraineeDTO createTraineeDTO() {
+        TraineeDTO traineeDTO = new TraineeDTO();
+        traineeDTO.setFirstName("John");
+        traineeDTO.setLastName("Doe");
+        traineeDTO.setAddress("Test address");
+        traineeDTO.setDateOfBirth(LocalDate.now());
+        return traineeDTO;
+    }
+
+    public static TrainingType createTrainingType(String trainingTypeName) {
+        return TrainingType.builder()
+                .trainingTypeName(trainingTypeName)
                 .build();
     }
 
@@ -31,7 +47,9 @@ public class TestUtil {
     public static Trainee createTrainee(User user, Trainer trainer) {
         Trainee trainee = Trainee.builder()
                 .user(user)
-                .trainers(new HashSet<>())
+                .address("address")
+                .dateOfBirth(LocalDate.now())
+                .trainers(new HashSet<>()) // инициализация списка тренеров
                 .build();
         if (trainer != null) {
             trainee.addTrainer(trainer);
@@ -47,12 +65,6 @@ public class TestUtil {
                 .trainingName("trainingName")
                 .trainingDate(LocalDate.now())
                 .duration(60)
-                .build();
-    }
-
-    public static TrainingType createTrainingType(String trainingTypeName) {
-        return TrainingType.builder()
-                .trainingTypeName(trainingTypeName)
                 .build();
     }
 }

@@ -20,3 +20,4 @@ For further reference, please consider the following sections:
     - password: **postgres**
 7) Then use password to registry server:
 ![img.png](img.png)
+8) Prometheus works after deploying docker-compose at  **http://localhost:9090/**

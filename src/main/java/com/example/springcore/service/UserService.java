@@ -38,6 +38,7 @@ public class UserService {
         log.info("Enter UserService changeUserPassword userName");
 
         authenticationService.isAuthenticated(userName);
+
         User user = userRepository.getUserByUserName(userName)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + userName));
 
