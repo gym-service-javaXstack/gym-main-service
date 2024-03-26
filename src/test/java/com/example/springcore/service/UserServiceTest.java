@@ -22,8 +22,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
-    @Mock
-    private AuthenticationService authenticationService;
 
     @Mock
     private UserRepository userRepository;
@@ -60,7 +58,7 @@ class UserServiceTest {
 
         assertThat(testUser.getPassword(), is("newPassword"));
 
-       // verify(authenticationService, times(1)).isAuthenticated("testUser");
+        // verify(authenticationService, times(1)).isAuthenticated("testUser");
         verify(userRepository, times(1)).getUserByUserName("testUser");
         verify(userRepository, times(1)).save(testUser);
     }
@@ -71,7 +69,7 @@ class UserServiceTest {
 
         assertThrows(EntityNotFoundException.class, () -> userService.changeUserPassword("testUser", "testPassword", "newPassword"));
 
-       // verify(authenticationService, times(1)).isAuthenticated("testUser");
+        // verify(authenticationService, times(1)).isAuthenticated("testUser");
         verify(userRepository, times(1)).getUserByUserName("testUser");
     }
 
@@ -81,7 +79,7 @@ class UserServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> userService.changeUserPassword("testUser", "wrongPassword", "newPassword"));
 
-      //  verify(authenticationService, times(1)).isAuthenticated("testUser");
+        //  verify(authenticationService, times(1)).isAuthenticated("testUser");
         verify(userRepository, times(1)).getUserByUserName("testUser");
     }
 }

@@ -2,7 +2,6 @@ package com.example.springcore.service;
 
 import com.example.springcore.model.User;
 import com.example.springcore.repository.UserRepository;
-import com.example.springcore.util.CustomUserDetails;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +66,6 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userByUserName = userRepository.getUserByUserName(username);
         return userByUserName
-                .map(CustomUserDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
     }
 }

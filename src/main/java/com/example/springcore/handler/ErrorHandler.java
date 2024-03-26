@@ -3,6 +3,7 @@ package com.example.springcore.handler;
 import com.example.springcore.exceptions.Error;
 import com.example.springcore.exceptions.ErrorType;
 import com.example.springcore.exceptions.UserNotAuthenticatedException;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,14 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<Error> handUserNotAuthenticatedException(UserNotAuthenticatedException ex) {
         log.error("handUserNotAuthenticatedException: message: {}", ex.getMessage(), ex);
+        Error error = new Error(ex.getMessage(), ErrorType.AUTHORIZATION_ERROR, LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<Error> handUserExpiredJwtException(ExpiredJwtException ex) {
+        log.error("handUserExpiredJwtException: message: {}", ex.getMessage(), ex);
         Error error = new Error(ex.getMessage(), ErrorType.AUTHORIZATION_ERROR, LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }

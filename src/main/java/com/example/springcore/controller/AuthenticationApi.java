@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface AuthenticationApi {
 
     @PostMapping
-    ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody UserCredentialsDTO authenticationRequest) throws BadCredentialsException;
+    ResponseEntity<AuthenticationResponse> login(@RequestBody UserCredentialsDTO authenticationRequest) throws BadCredentialsException;
 
     @PutMapping
     ResponseEntity<Void> changeLoginWithNewPassword(@Valid @RequestBody NewPasswordRequestDTO newPasswordRequestDTORequest);

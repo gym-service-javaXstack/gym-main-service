@@ -1,32 +1,25 @@
 package com.example.springcore.service;
 
 import com.example.springcore.dto.TraineeDTO;
-import com.example.springcore.dto.TraineeWithTrainerListToUpdateRequestDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
-import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
 import com.example.springcore.mapper.TrainerMapper;
 import com.example.springcore.model.Trainee;
-import com.example.springcore.model.Trainer;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TraineeRepository;
 import com.example.springcore.util.TestUtil;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -44,8 +37,6 @@ class TraineeServiceTest {
     @Mock
     private ProfileService profileService;
 
-    @Mock
-    private AuthenticationService authenticationService;
 
     @Mock
     private TrainerMapper trainerMapper;

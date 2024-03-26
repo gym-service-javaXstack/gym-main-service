@@ -25,7 +25,6 @@ public class TrainerService {
     private final TrainerRepository trainerRepository;
 
     private final ProfileService profileService;
-   // private final AuthenticationService authenticationService;
     private final TrainingTypeService trainingTypeService;
 
     private final TrainerWithTraineesMapper trainerWithTraineesMapper;
@@ -55,18 +54,16 @@ public class TrainerService {
         trainerRepository.save(trainerToSave);
 
         UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO();
-        userCredentialsDTO.setUsername(user.getUserName());
+        userCredentialsDTO.setUsername(user.getUsername());
         userCredentialsDTO.setPassword(generatedPassword);
 
-        log.info("Exit TrainerService createTrainer Trainer: {}", user.getUserName());
+        log.info("Exit TrainerService createTrainer Trainer: {}", user.getUsername());
         return userCredentialsDTO;
     }
 
     @Transactional
     public TrainerWithTraineesDTO updateTrainer(TrainerDTO trainerDTO) {
         log.info("Enter TrainerService updateTrainer trainer: {}", trainerDTO.getUserName());
-
-      //  authenticationService.isAuthenticated(trainerDTO.getUserName());
 
         Trainer trainer = trainerRepository.getTrainerByUser_UserName(trainerDTO.getUserName())
                 .orElseThrow(() -> new EntityNotFoundException("Trainer with username " + trainerDTO.getUserName() + " not found"));
@@ -85,8 +82,6 @@ public class TrainerService {
     @Transactional(readOnly = true)
     public TrainerWithTraineesDTO getTrainerDTOByUserName(String userName) {
         log.info("Enter TrainerService getTrainerDTOByUserName trainer: {}", userName);
-
-      //  authenticationService.isAuthenticated(userName);
 
         Trainer trainer = trainerRepository.getTrainerByUser_UserName(userName)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer with userName " + userName + " not found"));

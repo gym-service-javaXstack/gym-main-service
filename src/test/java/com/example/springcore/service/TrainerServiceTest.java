@@ -37,8 +37,6 @@ class TrainerServiceTest {
     @Mock
     private ProfileService profileService;
 
-    @Mock
-    private AuthenticationService authenticationService;
 
     @Mock
     private TrainingTypeService trainingTypeService;

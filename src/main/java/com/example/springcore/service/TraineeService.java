@@ -29,7 +29,6 @@ public class TraineeService {
 
     private final TrainerService trainerService;
     private final ProfileService profileService;
-    //private final AuthenticationService authenticationService;
 
     private final TrainerMapper trainerMapper;
     private final TraineeWithTrainersMapper traineeWithTrainersMapper;
@@ -59,18 +58,16 @@ public class TraineeService {
         traineeRepository.save(traineeToSave);
 
         UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO();
-        userCredentialsDTO.setUsername(user.getUserName());
+        userCredentialsDTO.setUsername(user.getUsername());
         userCredentialsDTO.setPassword(generatedPassword);
 
-        log.info("Exit TraineeService createTrainee traineeDTO: {}", user.getUserName());
+        log.info("Exit TraineeService createTrainee traineeDTO: {}", user.getUsername());
         return userCredentialsDTO;
     }
 
     @Transactional
     public TraineeWithTrainersDTO updateTrainee(TraineeDTO traineeDTO) {
         log.info("Enter TraineeService updateTrainee");
-
-       // authenticationService.isAuthenticated(traineeDTO.getUserName());
 
         Trainee trainee = traineeRepository.getTraineeByUser_UserName(traineeDTO.getUserName())
                 .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + traineeDTO.getUserName() + " not found"));
@@ -87,8 +84,6 @@ public class TraineeService {
     public void deleteTrainee(String username) {
         log.info("Enter TraineeService deleteTrainee trainee: {}", username);
 
-       // authenticationService.isAuthenticated(username);
-
         Trainee trainee = traineeRepository.getTraineeByUser_UserName(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + username + " not found"));
 
@@ -99,7 +94,6 @@ public class TraineeService {
     @Transactional(readOnly = true)
     public TraineeWithTrainersDTO getTraineeDTOByUsername(String username) {
         log.info("Enter TraineeService  getTraineeDTOByUsername trainee: {}", username);
-       // authenticationService.isAuthenticated(username);
 
         Trainee trainee = traineeRepository.getTraineeByUser_UserName(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + username + " not found"));
@@ -135,8 +129,6 @@ public class TraineeService {
     public List<TrainerDTO> updateTrainersListInTraineeByUsername(TraineeWithTrainerListToUpdateRequestDTO traineeWithTrainerListToUpdateRequestDTO) {
         log.info("Enter TraineeService updateTrainersListInTraineeByUsername");
 
-       // authenticationService.isAuthenticated(traineeWithTrainerListToUpdateRequestDTO.getUserName());
-
         Trainee trainee = traineeRepository.getTraineeByUser_UserName(traineeWithTrainerListToUpdateRequestDTO.getUserName())
                 .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + traineeWithTrainerListToUpdateRequestDTO.getUserName() + " not found"));
 
@@ -157,8 +149,6 @@ public class TraineeService {
     @Transactional(readOnly = true)
     public List<TrainerDTO> getTrainersNotAssignedToTrainee(String username) {
         log.info("Enter TraineeService getTrainersNotAssignedToTrainee method: {}", username);
-
-        //authenticationService.isAuthenticated(username);
 
         List<Trainer> trainersNotAssignedToTrainee = traineeRepository.getTrainersNotAssignedToTrainee(username);
 
