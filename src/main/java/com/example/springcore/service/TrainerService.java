@@ -2,6 +2,7 @@ package com.example.springcore.service;
 
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWithTraineesDTO;
+import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TrainerWithTraineesMapper;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.TrainingType;
@@ -10,6 +11,7 @@ import com.example.springcore.repository.TrainerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,20 +25,24 @@ public class TrainerService {
     private final TrainerRepository trainerRepository;
 
     private final ProfileService profileService;
-    private final AuthenticationService authenticationService;
+   // private final AuthenticationService authenticationService;
     private final TrainingTypeService trainingTypeService;
 
     private final TrainerWithTraineesMapper trainerWithTraineesMapper;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Transactional
-    public Trainer createTrainer(TrainerDTO trainerDTO) {
+    public UserCredentialsDTO createTrainer(TrainerDTO trainerDTO) {
         log.info("Entry TrainerService createTrainer ");
+
+        String generatedPassword = profileService.generatePassword();
 
         User user = User.builder()
                 .firstName(trainerDTO.getFirstName())
                 .lastName(trainerDTO.getLastName())
                 .userName(profileService.generateUsername(trainerDTO.getFirstName(), trainerDTO.getLastName()))
-                .password(profileService.generatePassword())
+                .password(passwordEncoder.encode(generatedPassword))
                 .isActive(false)
                 .build();
 
@@ -46,16 +52,21 @@ public class TrainerService {
                 .trainees(new HashSet<>())
                 .build();
 
-        Trainer saved = trainerRepository.save(trainerToSave);
-        log.info("Exit TrainerService createTrainer Trainer: {}", trainerToSave.getUser().getId());
-        return saved;
+        trainerRepository.save(trainerToSave);
+
+        UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO();
+        userCredentialsDTO.setUsername(user.getUserName());
+        userCredentialsDTO.setPassword(generatedPassword);
+
+        log.info("Exit TrainerService createTrainer Trainer: {}", user.getUserName());
+        return userCredentialsDTO;
     }
 
     @Transactional
     public TrainerWithTraineesDTO updateTrainer(TrainerDTO trainerDTO) {
         log.info("Enter TrainerService updateTrainer trainer: {}", trainerDTO.getUserName());
 
-        authenticationService.isAuthenticated(trainerDTO.getUserName());
+      //  authenticationService.isAuthenticated(trainerDTO.getUserName());
 
         Trainer trainer = trainerRepository.getTrainerByUser_UserName(trainerDTO.getUserName())
                 .orElseThrow(() -> new EntityNotFoundException("Trainer with username " + trainerDTO.getUserName() + " not found"));
@@ -75,7 +86,7 @@ public class TrainerService {
     public TrainerWithTraineesDTO getTrainerDTOByUserName(String userName) {
         log.info("Enter TrainerService getTrainerDTOByUserName trainer: {}", userName);
 
-        authenticationService.isAuthenticated(userName);
+      //  authenticationService.isAuthenticated(userName);
 
         Trainer trainer = trainerRepository.getTrainerByUser_UserName(userName)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer with userName " + userName + " not found"));

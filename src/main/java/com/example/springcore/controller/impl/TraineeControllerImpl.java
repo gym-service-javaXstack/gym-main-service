@@ -7,7 +7,6 @@ import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
-import com.example.springcore.model.Trainee;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
@@ -31,11 +30,7 @@ public class TraineeControllerImpl implements TraineeApi {
 
     @Override
     public ResponseEntity<UserCredentialsDTO> createTrainee(TraineeDTO traineeDTO) {
-        Trainee response = traineeService.createTrainee(traineeDTO);
-        UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO();
-        userCredentialsDTO.setUsername(response.getUser().getUserName());
-        userCredentialsDTO.setPassword(response.getUser().getPassword());
-        return new ResponseEntity<>(userCredentialsDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(traineeService.createTrainee(traineeDTO), HttpStatus.CREATED);
     }
 
     @Override

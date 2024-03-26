@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,32 +25,40 @@ public class ErrorHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Error> handleEntityNotFoundException(EntityNotFoundException ex, HandlerMethod hm) {
-        log.error("handleEntityNotFoundException: message: {}, method: {}", ex.getStackTrace(), hm.getMethod().getName());
+    public ResponseEntity<Error> handleEntityNotFoundException(EntityNotFoundException ex) {
+        log.error("handleEntityNotFoundException: message: {}", ex.getMessage(), ex);
         Error error = new Error(ex.getMessage(), ErrorType.DATABASE_ERROR, LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Error> handleIllegalArgumentException(IllegalArgumentException ex, HandlerMethod hm) {
-        log.error("handleIllegalArgumentException: message: {}, method: {}", ex.getStackTrace(), hm.getMethod().getName());
+    public ResponseEntity<Error> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("handleIllegalArgumentException: message: {}", ex.getMessage(), ex);
         Error error = new Error(ex.getMessage(), ErrorType.PROCESSING_ERROR, LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Error> handleBadCredentialsException(BadCredentialsException ex) {
+        log.error("handleBadCredentialsException: message: {}", ex.getMessage(), ex);
+        Error error = new Error(ex.getMessage(), ErrorType.AUTHORIZATION_ERROR, LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserNotAuthenticatedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<Error> handUserNotAuthenticatedException(UserNotAuthenticatedException ex, HandlerMethod hm) {
-        log.error("handUserNotAuthenticatedException: message: {}, method: {}", ex.getStackTrace(), hm.getMethod().getName());
+    public ResponseEntity<Error> handUserNotAuthenticatedException(UserNotAuthenticatedException ex) {
+        log.error("handUserNotAuthenticatedException: message: {}", ex.getMessage(), ex);
         Error error = new Error(ex.getMessage(), ErrorType.AUTHORIZATION_ERROR, LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Error> handMethodArgumentNotValidException(MethodArgumentNotValidException ex, HandlerMethod hm) {
-        log.error("handMethodArgumentNotValidException: message: {}, method: {}", ex.getStackTrace(), hm.getMethod().getName());
+    public ResponseEntity<Error> handMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        log.error("handMethodArgumentNotValidException: message: {}", ex.getMessage(), ex);
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
 
@@ -63,8 +72,8 @@ public class ErrorHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<Error> handleException(Exception ex, HandlerMethod hm) {
-        log.error("handleException: message {}, method {}", ex.getMessage(), hm.getMethod().getName(), ex);
+    public ResponseEntity<Error> handleException(Exception ex) {
+        log.error("handleException: message {}", ex.getMessage(), ex);
         Error error = new Error(ex.getMessage(), ErrorType.FATAL_ERROR, LocalDateTime.now());
         return ResponseEntity.internalServerError().body(error);
     }

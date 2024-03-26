@@ -27,7 +27,6 @@ public class TrainingService {
 
     private final TraineeService traineeService;
     private final TrainerService trainerService;
-    private final AuthenticationService authenticationService;
 
     private final TrainerTrainingMapper trainerTrainingMapper;
     private final TraineeTrainingMapper traineeTrainingMapper;
@@ -38,14 +37,12 @@ public class TrainingService {
     public TrainingService(TrainingRepository trainingRepository,
                            TraineeService traineeService,
                            TrainerService trainerService,
-                           AuthenticationService authenticationService,
                            TrainerTrainingMapper trainerTrainingMapper,
                            TraineeTrainingMapper traineeTrainingMapper,
                            MeterRegistry meterRegistry) {
         this.trainingRepository = trainingRepository;
         this.traineeService = traineeService;
         this.trainerService = trainerService;
-        this.authenticationService = authenticationService;
         this.trainerTrainingMapper = trainerTrainingMapper;
         this.traineeTrainingMapper = traineeTrainingMapper;
 
@@ -99,7 +96,6 @@ public class TrainingService {
     ) {
         log.info("Enter TrainerService getTrainerTrainingsByCriteria method: {}", username);
 
-        authenticationService.isAuthenticated(username);
 
         return trainerTrainingMapper.fromTrainingListToTrainerTrainingListDTO(trainingRepository.findAll(
                 (root, query, cb) -> {
@@ -132,8 +128,6 @@ public class TrainingService {
             String trainingTypeName
     ) {
         log.info("Enter TraineeService getTraineeTrainingsByCriteria method: {}", username);
-
-        authenticationService.isAuthenticated(username);
 
         return traineeTrainingMapper.fromTrainingListToTraineeTrainingListDTO(trainingRepository.findAll(
                 (root, query, cb) -> {

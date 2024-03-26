@@ -1,5 +1,6 @@
 package com.example.springcore.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -8,19 +9,17 @@ import java.util.Random;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProfileService {
     private final Random random = new Random();
     private final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    private final AuthenticationService authenticationService;
+    private final UserService userService;
 
-    public ProfileService(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
 
     public String generateUsername(String firstName, String lastName) {
         String baseUsername = firstName + "." + lastName;
-        List<String> existingUsernames = authenticationService.getUsernameByFirstNameAndLastName(firstName, lastName);
+        List<String> existingUsernames = userService.getUsernameByFirstNameAndLastName(firstName, lastName);
 
         boolean isContains = existingUsernames.contains(baseUsername);
 

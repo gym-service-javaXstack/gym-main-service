@@ -1,4 +1,4 @@
-package com.example.springcore.interceptor;
+package com.example.springcore.interceptor.aspect;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

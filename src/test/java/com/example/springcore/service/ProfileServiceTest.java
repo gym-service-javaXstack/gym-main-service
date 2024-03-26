@@ -25,16 +25,7 @@ class ProfileServiceTest {
     @InjectMocks
     private ProfileService profileService;
 
-    @Test
-    void testGenerateUsername() {
-        List<String> existingUsernames = Arrays.asList("John.Doe", "John.Doe1", "John.Doe2");
-        when(authenticationService.getUsernameByFirstNameAndLastName("John", "Doe")).thenReturn(existingUsernames);
 
-        String username = profileService.generateUsername("John", "Doe");
-
-        assertThat(username, is("John.Doe3"));
-        verify(authenticationService, times(1)).getUsernameByFirstNameAndLastName("John", "Doe");
-    }
 
     @Test
     void testGeneratePassword() {

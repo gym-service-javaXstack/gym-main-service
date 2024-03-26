@@ -5,7 +5,6 @@ import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWithTraineesDTO;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
-import com.example.springcore.model.Trainer;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
@@ -28,11 +27,7 @@ public class TrainerControllerImpl implements TrainerApi {
 
     @Override
     public ResponseEntity<UserCredentialsDTO> createTrainer(TrainerDTO trainerDTO) {
-        Trainer trainer = trainerService.createTrainer(trainerDTO);
-        UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO();
-        userCredentialsDTO.setUsername(trainer.getUser().getUserName());
-        userCredentialsDTO.setPassword(trainer.getUser().getPassword());
-        return new ResponseEntity<>(userCredentialsDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(trainerService.createTrainer(trainerDTO), HttpStatus.CREATED);
     }
 
     @Override

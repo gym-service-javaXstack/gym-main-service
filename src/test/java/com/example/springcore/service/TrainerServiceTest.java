@@ -3,6 +3,7 @@ package com.example.springcore.service;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWithTraineesDTO;
 import com.example.springcore.dto.TrainingTypeDTO;
+import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TrainerWithTraineesMapper;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.TrainingType;
@@ -18,7 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -64,9 +66,9 @@ class TrainerServiceTest {
         Trainer trainerToReturn = new Trainer();
         when(trainerRepository.save(any(Trainer.class))).thenReturn(trainerToReturn);
 
-        Trainer result = trainerService.createTrainer(trainerDTO);
+        UserCredentialsDTO trainerCredenitals = trainerService.createTrainer(trainerDTO);
 
-        assertNotNull(result);
+        assertNotNull(trainerCredenitals);
         verify(trainerRepository, times(1)).save(any(Trainer.class));
     }
 

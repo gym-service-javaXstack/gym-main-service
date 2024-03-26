@@ -4,6 +4,7 @@ import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.dto.TraineeWithTrainerListToUpdateRequestDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
+import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
 import com.example.springcore.mapper.TrainerMapper;
 import com.example.springcore.model.Trainee;
@@ -66,9 +67,9 @@ class TraineeServiceTest {
         Trainee traineeToReturn = TestUtil.createTrainee(user, null);
         when(traineeRepository.save(any(Trainee.class))).thenReturn(traineeToReturn);
 
-        Trainee result = traineeService.createTrainee(traineeDTO);
+        UserCredentialsDTO traineeCredentials = traineeService.createTrainee(traineeDTO);
 
-        assertNotNull(result);
+        assertNotNull(traineeCredentials);
         verify(traineeRepository, times(1)).save(any(Trainee.class));
     }
 
