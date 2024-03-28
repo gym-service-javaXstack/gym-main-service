@@ -21,7 +21,7 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
 
     @Override
     public ResponseEntity<AuthenticationResponse> login(UserCredentialsDTO authenticationRequest) {
-        AuthenticationResponse authenticationResponse = authenticationService.logIn(authenticationRequest);
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
         return new ResponseEntity<>(authenticationResponse, HttpStatus.OK);
     }
 
@@ -32,6 +32,12 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
                 newPasswordRequestDTORequest.getPassword(),
                 newPasswordRequestDTORequest.getNewPassword()
         );
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> logout(String authHeader) {
+        authenticationService.logout(authHeader);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

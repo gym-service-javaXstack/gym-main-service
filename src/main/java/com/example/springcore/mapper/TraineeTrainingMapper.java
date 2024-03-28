@@ -11,7 +11,7 @@ import java.util.List;
 public interface TraineeTrainingMapper {
 
     @Mapping(target = "traineeUserName", ignore = true)
-    @Mapping(source = "trainer.user.userName", target = "trainerUserName")
+    @Mapping(source = "trainer.user.username", target = "trainerUserName")
     @Mapping(source = "trainingType.trainingTypeName", target = "trainingTypeName")
     @Mapping(source = "trainingDate", target = "trainingDate")
     @Mapping(source = "duration", target = "duration")

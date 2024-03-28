@@ -2,6 +2,7 @@ package com.example.springcore.util;
 
 import com.example.springcore.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -67,11 +68,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     context.setAuthentication(authToken);
                     SecurityContextHolder.setContext(context);
+                } else {
+                    throw new JwtException("JWT token not valid");
                 }
             }
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             log.error("JWT expired", e);
+            handlerExceptionResolver.resolveException(request, response, null, e);
+        }
+        catch (JwtException e) {
+            log.error("JWT is not valid", e);
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
     }

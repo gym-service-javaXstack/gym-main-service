@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 public interface TraineeMapper {
     Trainee fromTraineeDTOToTrainee(TraineeDTO traineeDTO);
 
-    @Mapping(source = "user.userName", target = "userName")
+    @Mapping(source = "user.username", target = "userName")
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(target = "address", ignore = true)

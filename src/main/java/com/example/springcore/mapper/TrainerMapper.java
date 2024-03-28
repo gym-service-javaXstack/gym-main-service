@@ -9,15 +9,13 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = UserMapper.class)
 public interface TrainerMapper {
-    Trainer fromTrainerDTOToTrainer(TrainerDTO trainerDTO);
-
-    @Mapping(source = "user.userName", target = "userName")
+    @Mapping(source = "user.username", target = "userName")
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(target = "specialization.id",ignore = true)
     TrainerDTO fromTrainerToTrainerDTO(Trainer trainer);
 
-    @Mapping(source = "user.userName", target = "userName")
+    @Mapping(source = "user.username", target = "userName")
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(target = "specialization.id",ignore = true)

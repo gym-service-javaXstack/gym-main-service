@@ -4,6 +4,7 @@ import com.example.springcore.exceptions.Error;
 import com.example.springcore.exceptions.ErrorType;
 import com.example.springcore.exceptions.UserNotAuthenticatedException;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,30 +45,38 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Error> handleBadCredentialsException(BadCredentialsException ex) {
         log.error("handleBadCredentialsException: message: {}", ex.getMessage(), ex);
-        Error error = new Error(ex.getMessage(), ErrorType.AUTHORIZATION_ERROR, LocalDateTime.now());
+        Error error = new Error(ex.getMessage(), ErrorType.VALIDATION_ERROR, LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserNotAuthenticatedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<Error> handUserNotAuthenticatedException(UserNotAuthenticatedException ex) {
-        log.error("handUserNotAuthenticatedException: message: {}", ex.getMessage(), ex);
+    public ResponseEntity<Error> handleUserNotAuthenticatedException(UserNotAuthenticatedException ex) {
+        log.error("handleUserNotAuthenticatedException: message: {}", ex.getMessage(), ex);
         Error error = new Error(ex.getMessage(), ErrorType.AUTHORIZATION_ERROR, LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<Error> handUserExpiredJwtException(ExpiredJwtException ex) {
-        log.error("handUserExpiredJwtException: message: {}", ex.getMessage(), ex);
+    public ResponseEntity<Error> handleExpiredJwtException(ExpiredJwtException ex) {
+        log.error("handleExpiredJwtException: message: {}", ex.getMessage(), ex);
+        Error error = new Error(ex.getMessage(), ErrorType.AUTHORIZATION_ERROR, LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<Error> handleJwtException(JwtException ex) {
+        log.error("handleJwtException: message: {}", ex.getMessage(), ex);
         Error error = new Error(ex.getMessage(), ErrorType.AUTHORIZATION_ERROR, LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Error> handMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.error("handMethodArgumentNotValidException: message: {}", ex.getMessage(), ex);
+    public ResponseEntity<Error> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        log.error("handleMethodArgumentNotValidException: message: {}", ex.getMessage(), ex);
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
 

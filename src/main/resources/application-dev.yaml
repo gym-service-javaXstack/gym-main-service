@@ -20,6 +20,9 @@ spring:
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      url: redis://redis:6379
 
 #SPRING-DOC SWAGGER CONFIGURATION
 springdoc:
@@ -36,7 +39,6 @@ management:
     web:
       exposure:
         include: '*'
-
 
 #JWT
 token:

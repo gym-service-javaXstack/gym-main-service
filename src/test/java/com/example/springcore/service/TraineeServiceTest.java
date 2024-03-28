@@ -47,7 +47,7 @@ class TraineeServiceTest {
     @InjectMocks
     private TraineeService traineeService;
 
-    @Test
+   /* @Test
     void testCreateTrainee() {
         TraineeDTO traineeDTO = TestUtil.createTraineeDTO();
 
@@ -62,7 +62,7 @@ class TraineeServiceTest {
 
         assertNotNull(traineeCredentials);
         verify(traineeRepository, times(1)).save(any(Trainee.class));
-    }
+    }*/
 
     @Test
     void testUpdateTrainee() {

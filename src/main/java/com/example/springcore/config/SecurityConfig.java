@@ -38,7 +38,7 @@ public class SecurityConfig {
                     var corsConfiguration = new CorsConfiguration();
                     corsConfiguration.setAllowedOriginPatterns(List.of("*"));
                     corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    corsConfiguration.setAllowedHeaders(List.of("*"));
+                    corsConfiguration.setAllowedHeaders(List.of("Content-Type", "Authorization"));;
                     corsConfiguration.setAllowCredentials(true);
                     return corsConfiguration;
                 }))
@@ -51,10 +51,6 @@ public class SecurityConfig {
 
                                         .requestMatchers("/**").authenticated()
                         )
-                .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
-                        .logoutUrl("/api/v1/logout")
-                        .logoutSuccessUrl("/api/v1/login?logout")
-                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)

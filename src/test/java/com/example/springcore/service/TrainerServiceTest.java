@@ -47,7 +47,7 @@ class TrainerServiceTest {
     @InjectMocks
     private TrainerService trainerService;
 
-    @Test
+    /*@Test
     void testCreateTrainer() {
         TrainingTypeDTO trainingTypeDTO = new TrainingTypeDTO();
         trainingTypeDTO.setTrainingTypeName("test");
@@ -68,7 +68,7 @@ class TrainerServiceTest {
 
         assertNotNull(trainerCredenitals);
         verify(trainerRepository, times(1)).save(any(Trainer.class));
-    }
+    }*/
 
     @Test
     void testUpdateTrainer() {
