@@ -6,6 +6,7 @@ import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.service.AuthenticationService;
 import com.example.springcore.service.UserService;
 import com.example.springcore.util.AuthenticationResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,8 +21,8 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
     private final AuthenticationService authenticationService;
 
     @Override
-    public ResponseEntity<AuthenticationResponse> login(UserCredentialsDTO authenticationRequest) {
-        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
+    public ResponseEntity<AuthenticationResponse> login(UserCredentialsDTO authenticationRequest, HttpServletRequest httpRequest) {
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest, httpRequest);
         return new ResponseEntity<>(authenticationResponse, HttpStatus.OK);
     }
 

@@ -2,10 +2,13 @@ package com.example.springcore.service;
 
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.util.AuthenticationResponse;
+import com.example.springcore.util.BruteForceProtectorService;
 import com.example.springcore.util.JwtTokenService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +19,32 @@ public class AuthenticationService {
     private final UserService userService;
     private final JwtTokenService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final BruteForceProtectorService bruteForceProtector;
 
-    public AuthenticationResponse login(UserCredentialsDTO request) {
+    public AuthenticationResponse login(UserCredentialsDTO request, HttpServletRequest httpRequest) {
         log.info("Enter AuthenticationService login method: {}", request);
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getUsername(),
-                request.getPassword()
-        ));
+        String ipAddress = getClientIpAddress(httpRequest);
+
+        if (bruteForceProtector.isBlocked(ipAddress)) {
+            throw new BadCredentialsException("Too many failed login attempts. Please try again later.");
+        }
+
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    request.getUsername(),
+                    request.getPassword()
+            ));
+        } catch (BadCredentialsException e) {
+            bruteForceProtector.registerFailedAttempt(ipAddress); // регистрируйте неудачную попытку
+            throw e;
+        }
 
         var user = userService.loadUserByUsername(request.getUsername());
 
         var jwt = jwtService.generateToken(user);
         log.info("Exit AuthenticationService login method: {}", jwt);
+
+        bruteForceProtector.resetAttempts(ipAddress);
         return new AuthenticationResponse(jwt);
     }
 
@@ -41,5 +58,13 @@ public class AuthenticationService {
         } else {
             throw new IllegalArgumentException("Invalid token");
         }
+    }
+
+    private String getClientIpAddress(HttpServletRequest request) {
+        String ipAddress = request.getHeader("X-Forwarded-For");
+        if (ipAddress == null) {
+            ipAddress = request.getRemoteAddr();
+        }
+        return ipAddress;
     }
 }
