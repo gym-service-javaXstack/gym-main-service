@@ -1,6 +1,7 @@
 package com.example.springcore.service;
 
 import com.example.springcore.dto.UserCredentialsDTO;
+import com.example.springcore.exceptions.BruteForceProtectorException;
 import com.example.springcore.util.AuthenticationResponse;
 import com.example.springcore.util.BruteForceProtectorService;
 import com.example.springcore.util.JwtTokenService;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -21,12 +23,13 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final BruteForceProtectorService bruteForceProtector;
 
+    @Transactional
     public AuthenticationResponse login(UserCredentialsDTO request, HttpServletRequest httpRequest) {
         log.info("Enter AuthenticationService login method: {}", request);
         String ipAddress = getClientIpAddress(httpRequest);
 
         if (bruteForceProtector.isBlocked(ipAddress)) {
-            throw new BadCredentialsException("Too many failed login attempts. Please try again later.");
+            throw new BruteForceProtectorException();
         }
 
         try {
@@ -35,7 +38,7 @@ public class AuthenticationService {
                     request.getPassword()
             ));
         } catch (BadCredentialsException e) {
-            bruteForceProtector.registerFailedAttempt(ipAddress); // регистрируйте неудачную попытку
+            bruteForceProtector.registerFailedAttempt(ipAddress);
             throw e;
         }
 
@@ -48,6 +51,7 @@ public class AuthenticationService {
         return new AuthenticationResponse(jwt);
     }
 
+    @Transactional
     public void logout(String authHeader) {
         log.info("Enter AuthenticationService logout method: {}", authHeader);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {

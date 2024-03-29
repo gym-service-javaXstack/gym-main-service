@@ -23,6 +23,8 @@ spring:
   data:
     redis:
       url: redis://redis:6379
+      username: default
+      password: redis
 
 #SPRING-DOC SWAGGER CONFIGURATION
 springdoc:
@@ -44,3 +46,8 @@ management:
 token:
   signing:
     key: thisIsASecretKeyWith64CharactersthisIsASecretKeyWith64Characters
+
+##BRUTEFORCE
+bruteforce:
+  max-attempts: 3
+  block-duration-minutes: 5

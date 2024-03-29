@@ -1,5 +1,6 @@
 package com.example.springcore.handler;
 
+import com.example.springcore.exceptions.BruteForceProtectorException;
 import com.example.springcore.exceptions.Error;
 import com.example.springcore.exceptions.ErrorType;
 import com.example.springcore.exceptions.UserNotAuthenticatedException;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.HandlerMethod;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -71,6 +71,14 @@ public class ErrorHandler {
         log.error("handleJwtException: message: {}", ex.getMessage(), ex);
         Error error = new Error(ex.getMessage(), ErrorType.AUTHORIZATION_ERROR, LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(BruteForceProtectorException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ResponseEntity<Error> handleBruteForceProtectorException(BruteForceProtectorException ex) {
+        log.error("handleBruteForceProtectorException: message: {}", ex.getMessage(), ex);
+        Error error = new Error(ex.getMessage(), ErrorType.PROCESSING_ERROR, LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.TOO_MANY_REQUESTS);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

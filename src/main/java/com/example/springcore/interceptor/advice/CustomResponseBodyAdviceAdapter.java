@@ -20,7 +20,11 @@ public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Objec
     public boolean supports(MethodParameter methodParameter,
                             Class<? extends HttpMessageConverter<?>> aClass) {
         RestController classAnnotation = methodParameter.getContainingClass().getAnnotation(RestController.class);
-        return classAnnotation != null;
+        if (classAnnotation != null) {
+            String packageName = methodParameter.getContainingClass().getPackage().getName();
+            return packageName.contains(".controller.");
+        }
+        return false;
     }
 
     @Override

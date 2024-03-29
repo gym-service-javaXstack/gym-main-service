@@ -4,6 +4,7 @@ import com.example.springcore.redis.model.LoginAttemptModel;
 import com.example.springcore.redis.service.RedisLoginAttemptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,8 +13,12 @@ import java.time.LocalDateTime;
 @Slf4j
 @RequiredArgsConstructor
 public class BruteForceProtectorService {
-    private static final int MAX_ATTEMPTS = 3;
-    private static final int BLOCK_DURATION_MINUTES = 5;
+
+    @Value("${bruteforce.max-attempts:3}")
+    private int MAX_ATTEMPTS;
+
+    @Value("${bruteforce.block-duration-minutes:5}")
+    private int BLOCK_DURATION_MINUTES;
 
     private final RedisLoginAttemptService redisLoginAttemptService;
 

@@ -18,6 +18,11 @@ spring:
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      url: redis://redis:6379
+      username: default
+      password: redis
 
 #SPRING-DOC SWAGGER CONFIGURATION
 springdoc:
