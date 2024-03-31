@@ -1,7 +1,7 @@
 package com.example.springcore.config;
 
-import com.example.springcore.interceptor.CorrelationIdLoggerInterceptor;
-import com.example.springcore.interceptor.LogInterceptor;
+import com.example.springcore.handler.interceptor.CorrelationIdLoggerInterceptor;
+import com.example.springcore.handler.interceptor.LogInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.configuration.SpringDocUIConfiguration;
 import org.springdoc.core.properties.SpringDocConfigProperties;

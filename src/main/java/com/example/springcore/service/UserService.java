@@ -63,6 +63,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
+    //TODO map to user without impelement User -X-> UserDetails
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userByUserName = userRepository.getUserByUserName(username);
         return userByUserName

@@ -1,27 +1,28 @@
 package com.example.springcore.redis.service;
 
-import com.example.springcore.redis.model.LoginAttemptModel;
-import com.example.springcore.redis.repository.RedisRepository;
+import com.example.springcore.redis.model.RedisLoginAttemptModel;
+import com.example.springcore.redis.repository.RedisLoginAttemptRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class RedisLoginAttemptService {
-    private final RedisRepository redisRepository;
+    private final RedisLoginAttemptRepository redisRepository;
 
-    public void saveLoginAttempt(String ipAddress, LoginAttemptModel loginAttemptModel) {
-        redisRepository.saveLoginAttempt(ipAddress, loginAttemptModel);
+    public void saveLoginAttempt(String ipAddress, RedisLoginAttemptModel redisLoginAttemptModel) {
+        redisRepository.saveLoginAttempt(ipAddress, redisLoginAttemptModel);
     }
 
-
-    public LoginAttemptModel findLoginAttemptByIpAddress(String ipAddress) {
+    public Optional<RedisLoginAttemptModel> findLoginAttemptByIpAddress(String ipAddress) {
         return redisRepository.findLoginAttemptByIpAddress(ipAddress);
     }
 
 
-    public void updateLoginAttempt(String ipAddress, LoginAttemptModel loginAttemptModel) {
-        redisRepository.updateLoginAttempt(ipAddress, loginAttemptModel);
+    public void updateLoginAttempt(String ipAddress, RedisLoginAttemptModel redisLoginAttemptModel) {
+        redisRepository.updateLoginAttempt(ipAddress, redisLoginAttemptModel);
     }
 
     public void deleteLoginAttempt(String ipAddress) {

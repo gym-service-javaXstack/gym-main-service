@@ -1,4 +1,4 @@
-package com.example.springcore.interceptor.advice;
+package com.example.springcore.handler.advice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

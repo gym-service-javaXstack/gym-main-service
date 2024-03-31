@@ -17,6 +17,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Slf4j
@@ -63,13 +64,14 @@ public class JwtTokenService {
     public boolean validateToken(String token, UserDetails userDetails) {
         log.info("Enter JwtTokenService validateToken method");
         final String username = extractUsername(token);
-        RedisTokenModel redisTokenModel = redisTokenService.findUserTokenByUsername(username);
-        if (redisTokenModel == null) {
-            log.info("Exit JwtTokenService validateToken method");
-            return false;
-        }
+        Optional<RedisTokenModel> optionalRedisTokenModel = redisTokenService.findUserTokenByUsername(username);
+
+        boolean isValid = optionalRedisTokenModel
+                .map(redisTokenModel -> username.equals(userDetails.getUsername()) && !isTokenExpired(token) && token.equals(redisTokenModel.getToken()))
+                .orElse(false);
+
         log.info("Exit JwtTokenService validateToken method");
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token) && token.equals(redisTokenModel.getToken()));
+        return isValid;
     }
 
     public String extractUsername(String token) {

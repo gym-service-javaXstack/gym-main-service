@@ -3,7 +3,7 @@ package com.example.springcore.controller;
 
 import com.example.springcore.dto.NewPasswordRequestDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
-import com.example.springcore.util.AuthenticationResponse;
+import com.example.springcore.dto.AuthenticationResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface AuthenticationApi {
 
     @PostMapping("/login")
-    ResponseEntity<AuthenticationResponse> login(@RequestBody UserCredentialsDTO authenticationRequest, HttpServletRequest httpRequest) throws BadCredentialsException;
+    ResponseEntity<AuthenticationResponseDTO> login(@RequestBody UserCredentialsDTO authenticationRequest, HttpServletRequest httpRequest) throws BadCredentialsException;
 
 
     @PutMapping("/login")

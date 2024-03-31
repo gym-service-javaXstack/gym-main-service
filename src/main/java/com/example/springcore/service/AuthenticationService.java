@@ -2,7 +2,7 @@ package com.example.springcore.service;
 
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.exceptions.BruteForceProtectorException;
-import com.example.springcore.util.AuthenticationResponse;
+import com.example.springcore.dto.AuthenticationResponseDTO;
 import com.example.springcore.util.BruteForceProtectorService;
 import com.example.springcore.util.JwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class AuthenticationService {
     private final BruteForceProtectorService bruteForceProtector;
 
     @Transactional
-    public AuthenticationResponse login(UserCredentialsDTO request, HttpServletRequest httpRequest) {
+    public AuthenticationResponseDTO login(UserCredentialsDTO request, HttpServletRequest httpRequest) {
         log.info("Enter AuthenticationService login method: {}", request);
         String ipAddress = getClientIpAddress(httpRequest);
 
@@ -48,7 +48,7 @@ public class AuthenticationService {
         log.info("Exit AuthenticationService login method: {}", jwt);
 
         bruteForceProtector.resetAttempts(ipAddress);
-        return new AuthenticationResponse(jwt);
+        return new AuthenticationResponseDTO(jwt);
     }
 
     @Transactional

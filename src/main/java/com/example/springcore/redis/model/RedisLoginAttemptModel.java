@@ -8,9 +8,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@RedisHash("LoginAttemptModel")
+@RedisHash("RedisLoginAttemptModel")
 @AllArgsConstructor
-public class LoginAttemptModel implements Serializable {
+public class RedisLoginAttemptModel implements Serializable {
     private int attempts;
     private LocalDateTime lastAttempt;
 }

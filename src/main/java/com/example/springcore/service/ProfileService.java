@@ -16,7 +16,6 @@ public class ProfileService {
 
     private final UserService userService;
 
-
     public String generateUsername(String firstName, String lastName) {
         String baseUsername = firstName + "." + lastName;
         List<String> existingUsernames = userService.getUsernameByFirstNameAndLastName(firstName, lastName);

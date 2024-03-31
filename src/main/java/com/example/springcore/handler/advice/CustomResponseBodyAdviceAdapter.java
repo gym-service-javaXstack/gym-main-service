@@ -1,4 +1,4 @@
-package com.example.springcore.interceptor.advice;
+package com.example.springcore.handler.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
