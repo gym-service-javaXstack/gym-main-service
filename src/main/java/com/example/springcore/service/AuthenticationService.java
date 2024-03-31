@@ -1,8 +1,8 @@
 package com.example.springcore.service;
 
+import com.example.springcore.dto.AuthenticationResponseDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.exceptions.BruteForceProtectorException;
-import com.example.springcore.dto.AuthenticationResponseDTO;
 import com.example.springcore.util.BruteForceProtectorService;
 import com.example.springcore.util.JwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final UserService userService;
     private final JwtTokenService jwtService;
     private final AuthenticationManager authenticationManager;
     private final BruteForceProtectorService bruteForceProtector;
+    private final UserDetailsService userDetailsService;
 
     @Transactional
     public AuthenticationResponseDTO login(UserCredentialsDTO request, HttpServletRequest httpRequest) {
@@ -42,7 +43,7 @@ public class AuthenticationService {
             throw e;
         }
 
-        var user = userService.loadUserByUsername(request.getUsername());
+        var user = userDetailsService.loadUserByUsername(request.getUsername());
 
         var jwt = jwtService.generateToken(user);
         log.info("Exit AuthenticationService login method: {}", jwt);

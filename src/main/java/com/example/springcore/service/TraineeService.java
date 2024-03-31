@@ -58,10 +58,10 @@ public class TraineeService {
         traineeRepository.save(traineeToSave);
 
         UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO();
-        userCredentialsDTO.setUsername(user.getUsername());
+        userCredentialsDTO.setUsername(user.getUserName());
         userCredentialsDTO.setPassword(generatedPassword);
 
-        log.info("Exit TraineeService createTrainee traineeDTO: {}", user.getUsername());
+        log.info("Exit TraineeService createTrainee traineeDTO: {}", user.getUserName());
         return userCredentialsDTO;
     }
 

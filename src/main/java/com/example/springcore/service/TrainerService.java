@@ -54,10 +54,10 @@ public class TrainerService {
         trainerRepository.save(trainerToSave);
 
         UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO();
-        userCredentialsDTO.setUsername(user.getUsername());
+        userCredentialsDTO.setUsername(user.getUserName());
         userCredentialsDTO.setPassword(generatedPassword);
 
-        log.info("Exit TrainerService createTrainer Trainer: {}", user.getUsername());
+        log.info("Exit TrainerService createTrainer Trainer: {}", user.getUserName());
         return userCredentialsDTO;
     }
 

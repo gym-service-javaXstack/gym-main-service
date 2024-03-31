@@ -1,6 +1,5 @@
 package com.example.springcore.util;
 
-import com.example.springcore.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -15,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -29,8 +29,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     public static final String BEARER_PREFIX = "Bearer ";
     public static final String HEADER_NAME = "Authorization";
     private final JwtTokenService jwtTokenService;
-    private final UserService userService;
     private final HandlerExceptionResolver handlerExceptionResolver;
+    private final UserDetailsService userDetailsService;
 
 
     @Override
@@ -53,7 +53,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             var username = jwtTokenService.extractUsername(jwt);
 
             if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userService.loadUserByUsername(username);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 // If toke valid, then auth the user
                 if (jwtTokenService.validateToken(jwt, userDetails)) {
@@ -76,8 +76,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) {
             log.error("JWT expired", e);
             handlerExceptionResolver.resolveException(request, response, null, e);
-        }
-        catch (JwtException e) {
+        } catch (JwtException e) {
             log.error("JWT is not valid", e);
             handlerExceptionResolver.resolveException(request, response, null, e);
         }

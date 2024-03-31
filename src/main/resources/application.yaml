@@ -41,3 +41,5 @@ management:
 token:
   signing:
     key: thisIsASecretKeyWith64CharactersthisIsASecretKeyWith64Characters
+  expiration:
+    minutes: 30

@@ -1,16 +1,18 @@
 package com.example.springcore.util;
 
 
-import com.example.springcore.model.User;
 import com.example.springcore.redis.model.RedisTokenModel;
 import com.example.springcore.redis.service.RedisTokenService;
+import com.example.springcore.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -22,26 +24,30 @@ import java.util.function.Function;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class JwtTokenService {
 
     @Value("${token.signing.key}")
     private String jwtSigningKey;
 
-    private final RedisTokenService redisTokenService;
+    @Value("${token.expiration.minutes:15}")
+    private int tokenExpirationMinutes;
 
-    public JwtTokenService(RedisTokenService redisTokenService) {
-        this.redisTokenService = redisTokenService;
-    }
+    private final RedisTokenService redisTokenService;
+    private final UserService userService;
 
     public String generateToken(UserDetails userDetails) {
         log.info("Enter JwtTokenService generateToken method: {}", userDetails);
+        HashMap<String, Object> claims = userService.getUserByUserName(userDetails.getUsername())
+                .map(user -> {
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("id", user.getId());
+                    map.put("firstName", user.getFirstName());
+                    map.put("lastName", user.getLastName());
+                    return map;
+                })
+                .orElseThrow(() -> new UsernameNotFoundException(userDetails.getUsername() + " not found"));
 
-        Map<String, Object> claims = new HashMap<>();
-        if (userDetails instanceof User customUserDetails) {
-            claims.put("id", customUserDetails.getId());
-            claims.put("firstName", customUserDetails.getFirstName());
-            claims.put("lastName", customUserDetails.getLastName());
-        }
         String token = generateToken(claims, userDetails);
         RedisTokenModel redisTokenModel = new RedisTokenModel(token);
 
@@ -56,7 +62,7 @@ public class JwtTokenService {
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * tokenExpirationMinutes))
                 .signWith(getSecretKey(), Jwts.SIG.HS256)
                 .compact();
     }

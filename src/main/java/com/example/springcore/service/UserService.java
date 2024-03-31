@@ -5,9 +5,6 @@ import com.example.springcore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +15,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
@@ -62,11 +59,9 @@ public class UserService implements UserDetailsService {
         return userRepository.getUserNamesByFirstNameAndLastName(baseUserName);
     }
 
-    @Override
-    //TODO map to user without impelement User -X-> UserDetails
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> userByUserName = userRepository.getUserByUserName(username);
-        return userByUserName
-                .orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
+    @Transactional(readOnly = true)
+    public Optional<User> getUserByUserName(String username) {
+        return userRepository.getUserByUserName(username);
     }
+
 }
