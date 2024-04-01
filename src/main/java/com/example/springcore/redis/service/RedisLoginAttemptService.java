@@ -10,22 +10,22 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RedisLoginAttemptService {
-    private final RedisLoginAttemptRepository redisRepository;
+    private final RedisLoginAttemptRepository redisLoginAttemptRepository;
 
     public void saveLoginAttempt(String ipAddress, RedisLoginAttemptModel redisLoginAttemptModel) {
-        redisRepository.saveLoginAttempt(ipAddress, redisLoginAttemptModel);
+        redisLoginAttemptRepository.saveLoginAttempt(ipAddress, redisLoginAttemptModel);
     }
 
     public Optional<RedisLoginAttemptModel> findLoginAttemptByIpAddress(String ipAddress) {
-        return redisRepository.findLoginAttemptByIpAddress(ipAddress);
+        return redisLoginAttemptRepository.findLoginAttemptByIpAddress(ipAddress);
     }
 
 
     public void updateLoginAttempt(String ipAddress, RedisLoginAttemptModel redisLoginAttemptModel) {
-        redisRepository.updateLoginAttempt(ipAddress, redisLoginAttemptModel);
+        redisLoginAttemptRepository.updateLoginAttempt(ipAddress, redisLoginAttemptModel);
     }
 
     public void deleteLoginAttempt(String ipAddress) {
-        redisRepository.deleteLoginAttempt(ipAddress);
+        redisLoginAttemptRepository.deleteLoginAttempt(ipAddress);
     }
 }

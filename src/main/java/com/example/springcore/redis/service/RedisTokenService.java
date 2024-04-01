@@ -10,21 +10,21 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RedisTokenService {
-    private final RedisTokenRepository redisRepository;
+    private final RedisTokenRepository redisTokenRepository;
 
     public void saveUserToken(String username, RedisTokenModel redisTokenModel) {
-        redisRepository.saveUserToken(username, redisTokenModel);
+        redisTokenRepository.saveUserToken(username, redisTokenModel);
     }
 
     public Optional<RedisTokenModel> findUserTokenByUsername(String username) {
-        return redisRepository.findUserTokenByUsername(username);
+        return redisTokenRepository.findUserTokenByUsername(username);
     }
 
     public void updateUserToken(String username, RedisTokenModel redisTokenModel) {
-        redisRepository.updateUserToken(username, redisTokenModel);
+        redisTokenRepository.updateUserToken(username, redisTokenModel);
     }
 
     public void deleteUserToken(String username) {
-        redisRepository.deleteUserToken(username);
+        redisTokenRepository.deleteUserToken(username);
     }
 }

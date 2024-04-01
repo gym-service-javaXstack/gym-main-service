@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface TrainerTrainingMapper {
 
-    @Mapping(source = "trainee.user.userName",target = "traineeUserName")
+    @Mapping(source = "trainee.user.userName", target = "traineeUserName")
     @Mapping(target = "trainerUserName", ignore = true)
     @Mapping(source = "trainingType.trainingTypeName", target = "trainingTypeName")
     @Mapping(source = "trainingDate", target = "trainingDate")

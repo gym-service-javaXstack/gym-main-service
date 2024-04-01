@@ -2,6 +2,7 @@ package com.example.springcore.config;
 
 import com.example.springcore.handler.interceptor.CorrelationIdLoggerInterceptor;
 import com.example.springcore.handler.interceptor.LogInterceptor;
+import io.micrometer.core.aop.CountedAspect;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,7 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     /*
+    Prometheus
     TimedAspect bean in our Spring context.
     This will allow Micrometer to add a timer to custom methods.
     Then, find the method that you want to time, and add the @Timed annotation to it.
@@ -54,5 +56,10 @@ public class SpringConfig implements WebMvcConfigurer {
     @Bean
     public TimedAspect timedAspect(MeterRegistry registry) {
         return new TimedAspect(registry);
+    }
+
+    @Bean
+    public CountedAspect countedAspect(MeterRegistry registry) {
+        return new CountedAspect(registry);
     }
 }

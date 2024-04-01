@@ -6,6 +6,7 @@ import com.example.springcore.dto.NewPasswordRequestDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.service.AuthenticationService;
 import com.example.springcore.service.UserService;
+import io.micrometer.core.annotation.Counted;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
     private final UserService userService;
     private final AuthenticationService authenticationService;
 
+    @Counted(value = "login.count", description = "Count which shows how many times the login method was called")
     @Override
     public ResponseEntity<AuthenticationResponseDTO> login(UserCredentialsDTO authenticationRequest, HttpServletRequest httpRequest) {
         AuthenticationResponseDTO authenticationResponseDTO = authenticationService.login(authenticationRequest, httpRequest);
