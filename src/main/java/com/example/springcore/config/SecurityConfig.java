@@ -53,6 +53,8 @@ public class SecurityConfig {
                                         .requestMatchers("/v3/api-docs/**").permitAll()
                                         .requestMatchers("/swagger-config.yml").permitAll()
 
+                                        .requestMatchers("/actuator/**").permitAll()
+
                                         .requestMatchers("/**").authenticated()
                         )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -10,11 +10,9 @@ import com.example.springcore.repository.TrainingRepository;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingService;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +21,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class TrainingServiceImpl implements TrainingService {
     private final TrainingRepository trainingRepository;
 
@@ -34,36 +33,10 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainerTrainingMapper trainerTrainingMapper;
     private final TraineeTrainingMapper traineeTrainingMapper;
 
-    private final Counter trainingCounter;
-    private final Timer trainingCreationTimer;
-
-    public TrainingServiceImpl(TrainingRepository trainingRepository,
-                               TraineeService traineeService,
-                               TrainerService trainerService,
-                               TrainerTrainingMapper trainerTrainingMapper,
-                               TraineeTrainingMapper traineeTrainingMapper,
-                               MeterRegistry meterRegistry) {
-        this.trainingRepository = trainingRepository;
-        this.traineeService = traineeService;
-        this.trainerService = trainerService;
-        this.trainerTrainingMapper = trainerTrainingMapper;
-        this.traineeTrainingMapper = traineeTrainingMapper;
-
-        this.trainingCounter = Counter.builder("training.creation.count")
-                .description("The counter that counts the number of calls to the createTraining method")
-                .register(meterRegistry);
-        this.trainingCreationTimer = Timer.builder("training.creation.time")
-                .description("The timer describing the time of creating a training")
-                .register(meterRegistry);
-    }
-
     @Override
     @Transactional
     public void createTraining(TrainingDTO trainingDTO) {
         log.info("Enter TrainingServiceImpl createTraining");
-
-        // Prometheus Start the timer
-        Timer.Sample sample = Timer.start();
 
         Trainee traineeByUsername = traineeService.getTraineeByUsername(trainingDTO.getTraineeUserName());
 
@@ -81,12 +54,6 @@ public class TrainingServiceImpl implements TrainingService {
                 .build();
 
         trainingRepository.save(training);
-
-        // Prometheus Increment the counter
-        trainingCounter.increment();
-
-        // Prometheus Stop the timer and record the time
-        sample.stop(trainingCreationTimer);
 
         log.info("Exit TrainingServiceImpl createTraining: {}", training);
     }
