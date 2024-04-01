@@ -10,6 +10,7 @@ import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ public class TraineeControllerImpl implements TraineeApi {
     private final TrainingService trainingService;
     private final UserService userService;
 
+    @Timed(value = "create.trainee.time", description = "Time taken to create trainee")
     @Override
     public ResponseEntity<UserCredentialsDTO> createTrainee(TraineeDTO traineeDTO) {
         return new ResponseEntity<>(traineeService.createTrainee(traineeDTO), HttpStatus.CREATED);

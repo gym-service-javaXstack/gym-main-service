@@ -2,6 +2,8 @@ package com.example.springcore.config;
 
 import com.example.springcore.handler.interceptor.CorrelationIdLoggerInterceptor;
 import com.example.springcore.handler.interceptor.LogInterceptor;
+import io.micrometer.core.aop.TimedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.configuration.SpringDocUIConfiguration;
 import org.springdoc.core.properties.SpringDocConfigProperties;
@@ -41,5 +43,16 @@ public class SpringConfig implements WebMvcConfigurer {
     @Bean
     SpringDocUIConfiguration SpringDocUIConfiguration(Optional<SwaggerUiConfigProperties> optionalSwaggerUiConfigProperties) {
         return new SpringDocUIConfiguration(optionalSwaggerUiConfigProperties);
+    }
+
+    /*
+    TimedAspect bean in our Spring context.
+    This will allow Micrometer to add a timer to custom methods.
+    Then, find the method that you want to time, and add the @Timed annotation to it.
+    Use the value attribute to give the metric a name.
+    */
+    @Bean
+    public TimedAspect timedAspect(MeterRegistry registry) {
+        return new TimedAspect(registry);
     }
 }

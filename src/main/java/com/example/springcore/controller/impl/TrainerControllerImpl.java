@@ -8,6 +8,7 @@ import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class TrainerControllerImpl implements TrainerApi {
     private final TrainingService trainingService;
     private final UserService userService;
 
+    @Timed(value = "create.trainer.time", description = "Time taken to create trainer")
     @Override
     public ResponseEntity<UserCredentialsDTO> createTrainer(TrainerDTO trainerDTO) {
         return new ResponseEntity<>(trainerService.createTrainer(trainerDTO), HttpStatus.CREATED);
