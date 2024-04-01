@@ -2,12 +2,14 @@ package com.example.springcore.service;
 
 import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
-import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
 import com.example.springcore.mapper.TrainerMapper;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TraineeRepository;
+import com.example.springcore.service.impl.ProfileServiceImpl;
+import com.example.springcore.service.impl.TraineeServiceImpl;
+import com.example.springcore.service.impl.TrainerServiceImpl;
 import com.example.springcore.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,16 +28,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TraineeServiceTest {
+class TraineeServiceImplTest {
 
     @Mock
     private TraineeRepository traineeRepository;
 
     @Mock
-    private TrainerService trainerService;
+    private TrainerServiceImpl trainerServiceImpl;
 
     @Mock
-    private ProfileService profileService;
+    private ProfileServiceImpl profileServiceImpl;
 
 
     @Mock
@@ -45,7 +47,7 @@ class TraineeServiceTest {
     private TraineeWithTrainersMapper traineeWithTrainersMapper;
 
     @InjectMocks
-    private TraineeService traineeService;
+    private TraineeServiceImpl traineeServiceImpl;
 
    /* @Test
     void testCreateTrainee() {
@@ -78,7 +80,7 @@ class TraineeServiceTest {
         TraineeWithTrainersDTO traineeWithTrainersDTO = new TraineeWithTrainersDTO();
         when(traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(any(Trainee.class))).thenReturn(traineeWithTrainersDTO);
 
-        TraineeWithTrainersDTO result = traineeService.updateTrainee(traineeDTO);
+        TraineeWithTrainersDTO result = traineeServiceImpl.updateTrainee(traineeDTO);
 
         assertNotNull(result);
         verify(traineeRepository, times(1)).save(any(Trainee.class));
@@ -93,7 +95,7 @@ class TraineeServiceTest {
 
         when(traineeRepository.getTraineeByUser_UserName(anyString())).thenReturn(Optional.of(trainee));
 
-        traineeService.deleteTrainee(username);
+        traineeServiceImpl.deleteTrainee(username);
 
         verify(traineeRepository, times(1)).delete(any(Trainee.class));
     }
@@ -110,7 +112,7 @@ class TraineeServiceTest {
         TraineeWithTrainersDTO traineeWithTrainersDTO = new TraineeWithTrainersDTO();
         when(traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(any(Trainee.class))).thenReturn(traineeWithTrainersDTO);
 
-        TraineeWithTrainersDTO result = traineeService.getTraineeDTOByUsername(username);
+        TraineeWithTrainersDTO result = traineeServiceImpl.getTraineeDTOByUsername(username);
 
         assertNotNull(result);
     }
@@ -124,7 +126,7 @@ class TraineeServiceTest {
 
         when(traineeRepository.getTraineeByUser_UserName(anyString())).thenReturn(Optional.of(trainee));
 
-        Trainee result = traineeService.getTraineeByUsername(username);
+        Trainee result = traineeServiceImpl.getTraineeByUsername(username);
 
         assertNotNull(result);
         assertEquals(trainee, result);

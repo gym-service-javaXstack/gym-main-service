@@ -3,12 +3,14 @@ package com.example.springcore.service;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWithTraineesDTO;
 import com.example.springcore.dto.TrainingTypeDTO;
-import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TrainerWithTraineesMapper;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TrainerRepository;
+import com.example.springcore.service.impl.ProfileServiceImpl;
+import com.example.springcore.service.impl.TrainerServiceImpl;
+import com.example.springcore.service.impl.TrainingTypeServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,28 +26,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TrainerServiceTest {
+class TrainerServiceImplTest {
 
     @Mock
     private TrainerRepository trainerRepository;
 
     @Mock
-    private ProfileService profileService;
+    private ProfileServiceImpl profileServiceImpl;
 
 
     @Mock
-    private TrainingTypeService trainingTypeService;
+    private TrainingTypeServiceImpl trainingTypeServiceImpl;
 
     @Mock
     private TrainerWithTraineesMapper trainerWithTraineesMapper;
 
     @InjectMocks
-    private TrainerService trainerService;
+    private TrainerServiceImpl trainerServiceImpl;
 
     /*@Test
     void testCreateTrainer() {
@@ -83,13 +84,13 @@ class TrainerServiceTest {
         trainer.setUser(new User());
 
         when(trainerRepository.getTrainerByUser_UserName(anyString())).thenReturn(Optional.of(trainer));
-        when(trainingTypeService.findTrainingTypeByName(anyString())).thenReturn(new TrainingType());
+        when(trainingTypeServiceImpl.findTrainingTypeByName(anyString())).thenReturn(new TrainingType());
         when(trainerRepository.save(any(Trainer.class))).thenReturn(trainer);
 
         TrainerWithTraineesDTO trainerWithTraineesDTO = new TrainerWithTraineesDTO();
         when(trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(any(Trainer.class))).thenReturn(trainerWithTraineesDTO);
 
-        TrainerWithTraineesDTO result = trainerService.updateTrainer(trainerDTO);
+        TrainerWithTraineesDTO result = trainerServiceImpl.updateTrainer(trainerDTO);
 
         assertNotNull(result);
         verify(trainerRepository).save(any(Trainer.class));
@@ -107,7 +108,7 @@ class TrainerServiceTest {
         TrainerWithTraineesDTO trainerWithTraineesDTO = new TrainerWithTraineesDTO();
         when(trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(any(Trainer.class))).thenReturn(trainerWithTraineesDTO);
 
-        TrainerWithTraineesDTO result = trainerService.getTrainerDTOByUserName(userName);
+        TrainerWithTraineesDTO result = trainerServiceImpl.getTrainerDTOByUserName(userName);
 
         assertNotNull(result);
     }
@@ -121,7 +122,7 @@ class TrainerServiceTest {
 
         when(trainerRepository.getTrainerByUser_UserName(anyString())).thenReturn(Optional.of(trainer));
 
-        Trainer result = trainerService.getTrainerByUserName(userName);
+        Trainer result = trainerServiceImpl.getTrainerByUserName(userName);
 
         assertNotNull(result);
     }
@@ -136,7 +137,7 @@ class TrainerServiceTest {
 
         when(trainerRepository.getTrainersByUser_UserNameIn(anyList())).thenReturn(trainers);
 
-        List<Trainer> result = trainerService.getTrainersByUsernameList(usernames);
+        List<Trainer> result = trainerServiceImpl.getTrainersByUsernameList(usernames);
 
         assertNotNull(result);
         assertEquals(2, result.size());

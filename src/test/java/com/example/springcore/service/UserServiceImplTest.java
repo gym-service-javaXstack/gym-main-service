@@ -2,6 +2,7 @@ package com.example.springcore.service;
 
 import com.example.springcore.model.User;
 import com.example.springcore.repository.UserRepository;
+import com.example.springcore.service.impl.UserServiceImpl;
 import com.example.springcore.util.TestUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,13 +22,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     private User testUser;
 
@@ -40,7 +41,7 @@ class UserServiceTest {
     void testChangeUserStatus() {
         when(userRepository.getUserByUserName("testUser")).thenReturn(Optional.of(testUser));
 
-        userService.changeUserStatus("testUser", true);
+        userServiceImpl.changeUserStatus("testUser", true);
 
 
         assertThat(testUser.getIsActive(), is(true));
@@ -54,7 +55,7 @@ class UserServiceTest {
     void testChangeUserPassword() {
         when(userRepository.getUserByUserName("testUser")).thenReturn(Optional.of(testUser));
 
-        userService.changeUserPassword("testUser", "testPassword", "newPassword");
+        userServiceImpl.changeUserPassword("testUser", "testPassword", "newPassword");
 
         assertThat(testUser.getPassword(), is("newPassword"));
 
@@ -67,7 +68,7 @@ class UserServiceTest {
     void testChangeUserPasswordThrowsEntityNotFoundException() {
         when(userRepository.getUserByUserName("testUser")).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> userService.changeUserPassword("testUser", "testPassword", "newPassword"));
+        assertThrows(EntityNotFoundException.class, () -> userServiceImpl.changeUserPassword("testUser", "testPassword", "newPassword"));
 
         // verify(authenticationService, times(1)).isAuthenticated("testUser");
         verify(userRepository, times(1)).getUserByUserName("testUser");
@@ -77,7 +78,7 @@ class UserServiceTest {
     void testChangeUserPasswordThrowsIllegalArgumentException() {
         when(userRepository.getUserByUserName("testUser")).thenReturn(Optional.of(testUser));
 
-        assertThrows(IllegalArgumentException.class, () -> userService.changeUserPassword("testUser", "wrongPassword", "newPassword"));
+        assertThrows(IllegalArgumentException.class, () -> userServiceImpl.changeUserPassword("testUser", "wrongPassword", "newPassword"));
 
         //  verify(authenticationService, times(1)).isAuthenticated("testUser");
         verify(userRepository, times(1)).getUserByUserName("testUser");

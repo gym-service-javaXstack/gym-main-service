@@ -1,11 +1,11 @@
 package com.example.springcore.controller.impl;
 
 import com.example.springcore.controller.AuthenticationApi;
+import com.example.springcore.dto.AuthenticationResponseDTO;
 import com.example.springcore.dto.NewPasswordRequestDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.service.AuthenticationService;
 import com.example.springcore.service.UserService;
-import com.example.springcore.dto.AuthenticationResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

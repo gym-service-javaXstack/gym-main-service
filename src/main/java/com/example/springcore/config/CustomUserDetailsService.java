@@ -1,7 +1,7 @@
 package com.example.springcore.config;
 
 
-import com.example.springcore.service.UserService;
+import com.example.springcore.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userService.getUserByUserName(username)
+        return userServiceImpl.getUserByUserName(username)
                 .map(user -> User.builder()
                         .username(user.getUserName())
                         .password(user.getPassword())

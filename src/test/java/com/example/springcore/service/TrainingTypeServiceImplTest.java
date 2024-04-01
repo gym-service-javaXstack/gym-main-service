@@ -4,6 +4,7 @@ import com.example.springcore.dto.TrainingTypeDTO;
 import com.example.springcore.mapper.TrainingTypeMapper;
 import com.example.springcore.model.TrainingType;
 import com.example.springcore.repository.TrainingTypeRepository;
+import com.example.springcore.service.impl.TrainingTypeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TrainingTypeServiceTest {
+class TrainingTypeServiceImplTest {
     @Mock
     private TrainingTypeRepository trainingTypeRepository;
 
@@ -29,7 +30,7 @@ class TrainingTypeServiceTest {
     private TrainingTypeMapper trainingTypeMapper;
 
     @InjectMocks
-    private TrainingTypeService trainingTypeService;
+    private TrainingTypeServiceImpl trainingTypeServiceImpl;
 
     private TrainingType testTrainingType;
     private TrainingTypeDTO testTrainingTypeDTO;
@@ -47,7 +48,7 @@ class TrainingTypeServiceTest {
     void testFindTrainingTypeByName() {
         when(trainingTypeRepository.findTrainingTypeByTrainingTypeName("testTrainingType")).thenReturn(testTrainingType);
 
-        TrainingType trainingType = trainingTypeService.findTrainingTypeByName("testTrainingType");
+        TrainingType trainingType = trainingTypeServiceImpl.findTrainingTypeByName("testTrainingType");
 
         assertThat(trainingType, is(testTrainingType));
 
@@ -62,7 +63,7 @@ class TrainingTypeServiceTest {
         List<TrainingTypeDTO> trainingTypeDTOs = Arrays.asList(testTrainingTypeDTO);
         when(trainingTypeMapper.fromTrainingTypeListToTrainingTypeDTOList(trainingTypes)).thenReturn(trainingTypeDTOs);
 
-        List<TrainingTypeDTO> result = trainingTypeService.getTrainingTypeList();
+        List<TrainingTypeDTO> result = trainingTypeServiceImpl.getTrainingTypeList();
 
         assertThat(result, is(trainingTypeDTOs));
 
