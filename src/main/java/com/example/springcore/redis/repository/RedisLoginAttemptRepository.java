@@ -4,6 +4,7 @@ import com.example.springcore.redis.model.RedisLoginAttemptModel;
 
 import java.util.Optional;
 
+
 public interface RedisLoginAttemptRepository {
     void saveLoginAttempt(String ipAddress, RedisLoginAttemptModel redisLoginAttemptModel);
 
