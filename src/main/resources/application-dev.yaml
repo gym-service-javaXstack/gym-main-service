@@ -7,11 +7,15 @@ logging:
 
 #SPRING CONFIGURATION
 spring:
+  sql:
+    init:
+      mode: always # This setting tells Spring Boot to execute SQL scripts every time the application starts, regardless of whether tables exist or not.
   jpa:
+    defer-datasource-initialization: true # This is useful when you need to execute data.sql after creating tables using schema.sql or Hibernate.ddl
     properties:
       hibernate:
         hbm2ddl:
-          auto: create
+          auto: update
         format_sql: true
         use_sql_comments: true
         show_sql: true
@@ -25,6 +29,8 @@ spring:
       url: redis://redis:6379
       username: default
       password: redis
+      repositories:
+        enabled: false
 
 #SPRING-DOC SWAGGER CONFIGURATION
 springdoc:

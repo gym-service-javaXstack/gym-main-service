@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -46,7 +47,7 @@ class TrainingTypeServiceImplTest {
 
     @Test
     void testFindTrainingTypeByName() {
-        when(trainingTypeRepository.findTrainingTypeByTrainingTypeName("testTrainingType")).thenReturn(testTrainingType);
+        when(trainingTypeRepository.findTrainingTypeByTrainingTypeName("testTrainingType")).thenReturn(Optional.ofNullable(testTrainingType));
 
         TrainingType trainingType = trainingTypeServiceImpl.findTrainingTypeByName("testTrainingType");
 

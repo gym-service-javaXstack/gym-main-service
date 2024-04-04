@@ -5,12 +5,14 @@ import com.example.springcore.mapper.TrainingTypeMapper;
 import com.example.springcore.model.TrainingType;
 import com.example.springcore.repository.TrainingTypeRepository;
 import com.example.springcore.service.TrainingTypeService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,7 +26,8 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
     public TrainingType findTrainingTypeByName(String name) {
         log.info("Enter TrainingTypeServiceImpl findTrainingTypeByName: {}", name);
 
-        TrainingType trainingTypeByName = trainingTypeRepository.findTrainingTypeByTrainingTypeName(name);
+        TrainingType trainingTypeByName = trainingTypeRepository.findTrainingTypeByTrainingTypeName(name)
+                .orElseThrow(() -> new EntityNotFoundException("Training type with name " + name + " not found"));
 
         log.info("Exit TrainingTypeServiceImpl findTrainingTypeByName: {}", name);
         return trainingTypeByName;
