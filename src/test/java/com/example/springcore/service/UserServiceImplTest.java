@@ -3,7 +3,7 @@ package com.example.springcore.service;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.UserRepository;
 import com.example.springcore.service.impl.UserServiceImpl;
-import com.example.springcore.util.TestUtil;
+import com.example.springcore.service.util.TestUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

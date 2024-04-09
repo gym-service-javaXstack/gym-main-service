@@ -1,4 +1,4 @@
-package com.example.springcore.util;
+package com.example.springcore.service.util;
 
 import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.model.Trainee;

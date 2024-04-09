@@ -2,6 +2,8 @@
 logging:
   level:
     root: INFO
+  file:
+    path: ./logs/gym-service/default
 
 #SPRING CONFIGURATION
 spring:

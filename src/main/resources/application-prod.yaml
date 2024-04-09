@@ -1,3 +1,8 @@
+#LOGGING CONFIGURATION
+logging:
+  file:
+    path: ./logs/gym-service/prod
+
 #SPRING-DOC SWAGGER CONFIGURATION
 springdoc:
   api-docs:

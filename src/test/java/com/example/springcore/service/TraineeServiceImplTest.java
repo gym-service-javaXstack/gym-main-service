@@ -10,7 +10,7 @@ import com.example.springcore.repository.TraineeRepository;
 import com.example.springcore.service.impl.ProfileServiceImpl;
 import com.example.springcore.service.impl.TraineeServiceImpl;
 import com.example.springcore.service.impl.TrainerServiceImpl;
-import com.example.springcore.util.TestUtil;
+import com.example.springcore.service.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
