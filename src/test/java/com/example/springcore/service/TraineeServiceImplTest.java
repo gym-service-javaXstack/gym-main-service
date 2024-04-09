@@ -2,20 +2,20 @@ package com.example.springcore.service;
 
 import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
+import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
-import com.example.springcore.mapper.TrainerMapper;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TraineeRepository;
 import com.example.springcore.service.impl.ProfileServiceImpl;
 import com.example.springcore.service.impl.TraineeServiceImpl;
-import com.example.springcore.service.impl.TrainerServiceImpl;
 import com.example.springcore.service.util.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -34,14 +34,10 @@ class TraineeServiceImplTest {
     private TraineeRepository traineeRepository;
 
     @Mock
-    private TrainerServiceImpl trainerServiceImpl;
-
-    @Mock
     private ProfileServiceImpl profileServiceImpl;
 
-
     @Mock
-    private TrainerMapper trainerMapper;
+    private PasswordEncoder passwordEncoder;
 
     @Mock
     private TraineeWithTrainersMapper traineeWithTrainersMapper;
@@ -49,22 +45,31 @@ class TraineeServiceImplTest {
     @InjectMocks
     private TraineeServiceImpl traineeServiceImpl;
 
-   /* @Test
+    @Test
     void testCreateTrainee() {
+        // Arrange
         TraineeDTO traineeDTO = TestUtil.createTraineeDTO();
 
-        when(profileService.generateUsername(anyString(), anyString())).thenReturn("username");
-        when(profileService.generatePassword()).thenReturn("password");
+        String expectedUsername = "username";
+        String expectedRawPassword = "password";
+        String expectedEncodedPassword = "encodedPassword";
 
-        User user = TestUtil.createUser("username", "password");
-        Trainee traineeToReturn = TestUtil.createTrainee(user, null);
+        when(profileServiceImpl.generateUsername(anyString(), anyString())).thenReturn(expectedUsername);
+        when(profileServiceImpl.generatePassword()).thenReturn(expectedRawPassword);
+        when(passwordEncoder.encode(expectedRawPassword)).thenReturn(expectedEncodedPassword);
+
+        Trainee traineeToReturn = TestUtil.createTrainee(TestUtil.createUser(expectedUsername, expectedEncodedPassword), null);
         when(traineeRepository.save(any(Trainee.class))).thenReturn(traineeToReturn);
 
-        UserCredentialsDTO traineeCredentials = traineeService.createTrainee(traineeDTO);
+        // Act
+        UserCredentialsDTO traineeCredentials = traineeServiceImpl.createTrainee(traineeDTO);
 
+        // Assert
         assertNotNull(traineeCredentials);
+        assertEquals(expectedUsername, traineeCredentials.getUsername());
+        assertEquals(expectedRawPassword, traineeCredentials.getPassword());
         verify(traineeRepository, times(1)).save(any(Trainee.class));
-    }*/
+    }
 
     @Test
     void testUpdateTrainee() {

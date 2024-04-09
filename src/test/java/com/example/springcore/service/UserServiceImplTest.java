@@ -46,7 +46,6 @@ class UserServiceImplTest {
 
         assertThat(testUser.getIsActive(), is(true));
 
-        //verify(authenticationService, times(1)).isAuthenticated("testUser");
         verify(userRepository, times(1)).getUserByUserName("testUser");
         verify(userRepository, times(1)).save(testUser);
     }
@@ -59,7 +58,6 @@ class UserServiceImplTest {
 
         assertThat(testUser.getPassword(), is("newPassword"));
 
-        // verify(authenticationService, times(1)).isAuthenticated("testUser");
         verify(userRepository, times(1)).getUserByUserName("testUser");
         verify(userRepository, times(1)).save(testUser);
     }
@@ -70,7 +68,6 @@ class UserServiceImplTest {
 
         assertThrows(EntityNotFoundException.class, () -> userServiceImpl.changeUserPassword("testUser", "testPassword", "newPassword"));
 
-        // verify(authenticationService, times(1)).isAuthenticated("testUser");
         verify(userRepository, times(1)).getUserByUserName("testUser");
     }
 
@@ -80,7 +77,6 @@ class UserServiceImplTest {
 
         assertThrows(IllegalArgumentException.class, () -> userServiceImpl.changeUserPassword("testUser", "wrongPassword", "newPassword"));
 
-        //  verify(authenticationService, times(1)).isAuthenticated("testUser");
         verify(userRepository, times(1)).getUserByUserName("testUser");
     }
 }

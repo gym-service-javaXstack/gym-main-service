@@ -3,6 +3,7 @@ package com.example.springcore.service;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWithTraineesDTO;
 import com.example.springcore.dto.TrainingTypeDTO;
+import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TrainerWithTraineesMapper;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.TrainingType;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,18 +41,21 @@ class TrainerServiceImplTest {
     @Mock
     private ProfileServiceImpl profileServiceImpl;
 
-
     @Mock
     private TrainingTypeServiceImpl trainingTypeServiceImpl;
 
     @Mock
     private TrainerWithTraineesMapper trainerWithTraineesMapper;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private TrainerServiceImpl trainerServiceImpl;
 
-    /*@Test
+    @Test
     void testCreateTrainer() {
+        // Arrange
         TrainingTypeDTO trainingTypeDTO = new TrainingTypeDTO();
         trainingTypeDTO.setTrainingTypeName("test");
 
@@ -58,18 +64,26 @@ class TrainerServiceImplTest {
         trainerDTO.setLastName("Doe");
         trainerDTO.setSpecialization(trainingTypeDTO);
 
-        when(profileService.generateUsername(anyString(), anyString())).thenReturn("username");
-        when(profileService.generatePassword()).thenReturn("password");
-        when(trainingTypeService.findTrainingTypeByName(anyString())).thenReturn(new TrainingType());
+        String expectedUsername = "username";
+        String expectedPassword = "password";
+        when(profileServiceImpl.generateUsername(anyString(), anyString())).thenReturn(expectedUsername);
+        when(profileServiceImpl.generatePassword()).thenReturn(expectedPassword);
+        when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
+
+        when(trainingTypeServiceImpl.findTrainingTypeByName(anyString())).thenReturn(new TrainingType());
 
         Trainer trainerToReturn = new Trainer();
         when(trainerRepository.save(any(Trainer.class))).thenReturn(trainerToReturn);
 
-        UserCredentialsDTO trainerCredenitals = trainerService.createTrainer(trainerDTO);
+        // Act
+        UserCredentialsDTO trainerCredentials = trainerServiceImpl.createTrainer(trainerDTO);
 
-        assertNotNull(trainerCredenitals);
+        // Assert
+        assertNotNull(trainerCredentials);
+        assertEquals(expectedUsername, trainerCredentials.getUsername());
+        assertEquals(expectedPassword, trainerCredentials.getPassword());
         verify(trainerRepository, times(1)).save(any(Trainer.class));
-    }*/
+    }
 
     @Test
     void testUpdateTrainer() {

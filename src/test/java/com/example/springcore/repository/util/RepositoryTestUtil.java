@@ -4,6 +4,7 @@ import com.example.springcore.model.User;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 public class RepositoryTestUtil {
+
     public static User createUserAndPersist(TestEntityManager entityManager, String userName, boolean isActive, String firstName, String lastName, String password) {
         User user = createUser(userName, isActive, firstName, lastName, password);
         persistUser(entityManager, user);
