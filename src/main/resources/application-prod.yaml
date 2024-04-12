@@ -1,0 +1,46 @@
+#LOGGING CONFIGURATION
+logging:
+  file:
+    path: ./logs/gym-service/prod
+
+#SPRING-DOC SWAGGER CONFIGURATION
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+#SPRING CONFIGURATION
+spring:
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        show_sql: false
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/gymDB-prod
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      url: redis://redis:6379
+      username: default
+      password: redis
+      repositories:
+        enabled: false
+
+#ACTUATOR CONFIGURATION
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'health'
+
+#JWT
+token:
+  signing:
+    key: thisIsASecretKeyWith64CharactersthisIsASecretKeyWith64Characters
+  expiration:
+    minutes: 30
