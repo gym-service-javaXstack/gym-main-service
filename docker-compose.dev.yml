@@ -21,8 +21,8 @@ services:
     depends_on:
       - postgresDB
 
-  app:
-    image: myapp
+  gym-main:
+    image: gym-main
     environment:
       DB_HOST: postgresDB
       SPRING_PROFILES_ACTIVE: dev
@@ -41,7 +41,7 @@ services:
     ports:
       - 9090:9090
     depends_on:
-      - app
+      - gym-main
 
   redis:
     image: redis:latest

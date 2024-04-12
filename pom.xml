@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>SpringCore</artifactId>
+    <artifactId>gym-main-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>SpringCore</name>
-    <description>SpringCore</description>
+    <name>gym-main-service</name>
+    <description>gym-main-service</description>
     <properties>
         <java.version>17</java.version>
     </properties>
