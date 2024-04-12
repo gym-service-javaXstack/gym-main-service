@@ -17,6 +17,8 @@ tags:
 paths:
   /api/v1/trainer:
     get:
+      security:
+        - JwtBearerAuth: []
       tags:
         - Trainer service
       summary: Get trainer by username
@@ -54,6 +56,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     put:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Trainer service
       summary: Update trainer
@@ -172,6 +176,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     patch:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Trainer service
       summary: Change trainer status
@@ -214,6 +220,8 @@ paths:
                 $ref: '#/components/schemas/Error'
   /api/v1/trainee:
     get:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Trainee service
       summary: Get trainee by username
@@ -253,6 +261,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     put:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Trainee service
       summary: Update trainee
@@ -367,6 +377,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     delete:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Trainee service
       summary: Delete trainee
@@ -402,6 +414,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     patch:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Trainee service
       summary: Change trainee status
@@ -445,6 +459,8 @@ paths:
                 $ref: '#/components/schemas/Error'
   /api/v1/trainee/trainers:
     put:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Trainee service
       summary: Update trainee's trainers list
@@ -503,40 +519,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   /api/v1/login:
-    get:
+    post:
       tags:
         - Authentication service
       summary: Log in with credentials
       operationId: loginUserWithCredentials
-      parameters:
-        - name: username
-          in: query
-          description: Username for login
-          required: true
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: Password for login
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentialsDTO'
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponseDTO'
         '400':
           description: Bad credentials
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
     put:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Authentication service
       summary: Change login with new password
@@ -570,8 +579,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/v1/logout:
+    post:
+      security:
+        - JwtBearerAuth: [ ]
+      tags:
+        - Authentication service
+      summary: Log out a user
+      operationId: logoutUser
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/v1/training:
     post:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Training service
       summary: 'Create new training '
@@ -629,6 +657,8 @@ paths:
                 $ref: '#/components/schemas/Error'
   /api/v1/training/type:
     get:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Training service
       summary: Get list of training types
@@ -644,6 +674,8 @@ paths:
                   $ref: '#/components/schemas/TrainingTypeDTO'
   /api/v1/trainer/trainings:
     get:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Trainer service
       summary: Get trainer trainings by criteria
@@ -709,6 +741,8 @@ paths:
                 $ref: '#/components/schemas/Error'
   /api/v1/trainee/trainings:
     get:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Trainee service
       summary: Get trainee trainings by criteria
@@ -781,6 +815,8 @@ paths:
                 $ref: '#/components/schemas/Error'
   /api/v1/trainee/available-trainers:
     get:
+      security:
+        - JwtBearerAuth: [ ]
       tags:
         - Trainee service
       summary: Get trainers not assigned to trainee
@@ -821,6 +857,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 components:
+  securitySchemes:
+    JwtBearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     TrainerDTO:
       required:
@@ -995,3 +1036,10 @@ components:
           type: string
         password:
           type: string
+    AuthenticationResponseDTO:
+      type: object
+      properties:
+        jwt:
+          type: string
+      required:
+        - jwt
