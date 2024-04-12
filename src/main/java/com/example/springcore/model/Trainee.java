@@ -59,6 +59,7 @@ public class Trainee {
             joinColumns = @JoinColumn(name = "trainee_id"),
             inverseJoinColumns = @JoinColumn(name = "trainer_id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"trainee_id", "trainer_id"}))
+    @Builder.Default
     private Set<Trainer> trainers = new HashSet<>();
 
     @OneToMany(mappedBy = "trainee", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

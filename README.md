@@ -13,9 +13,11 @@ For further reference, please consider the following sections:
 
 1) Use "**mvn clean install -DskipTests**" in root folder for creating .jar
 2) Use "**docker build -t myapp .**" to create image from .jar
-3) Use "**docker-compose up -d**" to up containers
-4) Optional: if u want to check db, use pgAdmin via this link: **http://localhost:8080/**
+4) Use "**docker-compose -f docker-compose_file_name up -d**" to up containers
+5) To open swagger use http://localhost:8080/swagger-ui/index.html#/
+6) Optional: if u want to check db, use pgAdmin via this link: **http://localhost:80/**
     - user: **pgadmin4@pgadmin.org**
     - password: **postgres**
-5) Then use password to registry server:
+7) Then use password to registry server:
 ![img.png](img.png)
+8) Prometheus works after deploying docker-compose at  **http://localhost:9090/**

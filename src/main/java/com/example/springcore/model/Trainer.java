@@ -46,6 +46,7 @@ public class Trainer {
     private User user;
 
     @ManyToMany(mappedBy = "trainers", fetch = FetchType.LAZY)
+    @Builder.Default
     private Set<Trainee> trainees = new HashSet<>();
 
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)

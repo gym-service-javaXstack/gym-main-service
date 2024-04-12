@@ -1,38 +1,14 @@
 package com.example.springcore.service;
 
-import com.example.springcore.model.Trainee;
-import com.example.springcore.model.Trainer;
-import com.example.springcore.model.Training;
-import com.example.springcore.model.TrainingType;
-import com.example.springcore.repository.TrainingDao;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.example.springcore.dto.TrainingDTO;
 
 import java.time.LocalDate;
+import java.util.List;
 
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class TrainingService {
-    private final TrainingDao trainingDao;
-    private final TraineeService traineeService;
+public interface TrainingService {
+    void createTraining(TrainingDTO trainingDTO);
 
-    @Transactional
-    public void createTraining(Trainee trainee, Trainer trainer, String trainingName, TrainingType trainingType, LocalDate trainingDate, Integer duration) {
-        traineeService.updateTraineesTrainersList(trainee, trainer);
+    List<TrainingDTO> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String traineeUserName);
 
-        Training training = Training.builder()
-                .trainee(trainee)
-                .trainer(trainer)
-                .trainingName(trainingName)
-                .trainingType(trainingType)
-                .trainingDate(trainingDate)
-                .duration(duration)
-                .build();
-
-        trainingDao.save(training);
-        log.info("Created training: {}", training);
-    }
+    List<TrainingDTO> getTraineeTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String trainerUsername, String trainingTypeName);
 }

@@ -1,39 +1,16 @@
 package com.example.springcore.service;
 
 import com.example.springcore.model.User;
-import com.example.springcore.repository.UserDao;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
+import java.util.List;
+import java.util.Optional;
 
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class UserService {
-    private final UserDao<User> userDao;
-    private final AuthenticationService authenticationService;
+public interface UserService {
+    void changeUserStatus(String userName, boolean isActive);
 
-    @Transactional
-    public void changeUserStatus(User user, boolean isActive) {
-        authenticationService.isAuthenticated(user.getUserName());
-        user.setIsActive(isActive);
-        userDao.update(user);
-    }
+    void changeUserPassword(String userName, String oldPassword, String newPassword);
 
-    @Transactional
-    public User changeUserPassword(User user, String oldPassword, String newPassword) {
-        authenticationService.isAuthenticated(user.getUserName());
-        if (!Objects.equals(user.getPassword(), oldPassword)) {
-            throw new RuntimeException("Old password is incorrect");
-        }
-        user.setPassword(newPassword);
+    List<String> getUsernameByFirstNameAndLastName(String firstName, String lastName);
 
-        userDao.update(user);
-
-        log.info("Updated trainer password: {}", user.getUserName());
-        return user;
-    }
+    Optional<User> getUserByUserName(String username);
 }
