@@ -7,6 +7,8 @@ logging:
 
 #SPRING CONFIGURATION
 spring:
+  application:
+    name: gym-main
   jpa:
     properties:
       hibernate:
@@ -27,6 +29,14 @@ spring:
       password: redis
       repositories:
         enabled: false
+
+#EUREKA CLIENT DISCOVERY CONFIGURATION
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
 
 #SPRING-DOC SWAGGER CONFIGURATION
 springdoc:

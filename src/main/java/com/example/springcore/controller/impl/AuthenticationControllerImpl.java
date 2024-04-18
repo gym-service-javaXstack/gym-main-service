@@ -43,4 +43,9 @@ public class AuthenticationControllerImpl implements AuthenticationApi {
         authenticationService.logout(authHeader);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<Void> validateToken() {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

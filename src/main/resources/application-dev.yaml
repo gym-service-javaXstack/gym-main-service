@@ -55,7 +55,7 @@ token:
   signing:
     key: thisIsASecretKeyWith64CharactersthisIsASecretKeyWith64Characters
   expiration:
-    minutes: 30
+    minutes: 2
 
 ##BRUTEFORCE
 bruteforce:

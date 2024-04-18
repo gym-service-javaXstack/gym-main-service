@@ -32,7 +32,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final UserDetailsService userDetailsService;
 
-
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -55,7 +54,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                // If toke valid, then auth the user
+                // If token valid, then auth the user
                 if (jwtTokenService.validateToken(jwt, userDetails)) {
                     SecurityContext context = SecurityContextHolder.createEmptyContext();
 
