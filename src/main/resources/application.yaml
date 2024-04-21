@@ -1,3 +1,5 @@
+server:
+  port: 0
 #LOGGING CONFIGURATION
 logging:
   level:
