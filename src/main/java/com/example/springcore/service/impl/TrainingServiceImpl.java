@@ -1,6 +1,9 @@
 package com.example.springcore.service.impl;
 
+import com.example.springcore.dto.ActionType;
+import com.example.springcore.dto.TrainerWorkLoadRequest;
 import com.example.springcore.dto.TrainingDTO;
+import com.example.springcore.feign.GymReportsClient;
 import com.example.springcore.mapper.TraineeTrainingMapper;
 import com.example.springcore.mapper.TrainerTrainingMapper;
 import com.example.springcore.model.Trainee;
@@ -30,6 +33,8 @@ public class TrainingServiceImpl implements TrainingService {
     private final TraineeService traineeService;
     private final TrainerService trainerService;
 
+    private final GymReportsClient gymReportsClient;
+
     private final TrainerTrainingMapper trainerTrainingMapper;
     private final TraineeTrainingMapper traineeTrainingMapper;
 
@@ -54,8 +59,23 @@ public class TrainingServiceImpl implements TrainingService {
                 .build();
 
         trainingRepository.save(training);
-
+        TrainerWorkLoadRequest trainerWorkLoadRequest = mapFromTrainingDTOAndTrainer(trainingDTO, trainerByUsername);
+        log.info("TrainerWorkLoadRequest {}", trainerWorkLoadRequest);
+        gymReportsClient.processTrainerWorkload(trainerWorkLoadRequest);
         log.info("Exit TrainingServiceImpl createTraining: {}", training);
+    }
+
+    private TrainerWorkLoadRequest mapFromTrainingDTOAndTrainer(TrainingDTO trainingDTO, Trainer trainer){
+        return TrainerWorkLoadRequest
+                .builder()
+                .actionType(ActionType.ADD)
+                .firstName(trainer.getUser().getFirstName())
+                .lastName(trainer.getUser().getLastName())
+                .isActive(trainer.getUser().getIsActive())
+                .username(trainingDTO.getTrainerUserName())
+                .trainingDate(trainingDTO.getTrainingDate())
+                .trainingDuration(trainingDTO.getDuration())
+                .build();
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
 import io.micrometer.core.annotation.Timed;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -54,5 +55,11 @@ public class TrainerControllerImpl implements TrainerApi {
     public ResponseEntity<Void> changeTrainerStatus(String username, boolean isActive) {
         userService.changeUserStatus(username, isActive);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Integer> getTrainerSummaryByUsername(String username, int year, int monthValue, String authHeader) {
+        Integer trainerSummaryByUsername = trainerService.getTrainerSummaryByUsername(username, year, monthValue, authHeader);
+        return new ResponseEntity<>(trainerSummaryByUsername, HttpStatus.OK);
     }
 }
