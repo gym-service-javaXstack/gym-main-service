@@ -31,6 +31,18 @@ spring:
       password: redis
       repositories:
         enabled: false
+  #CIRCUIT BREAKER
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: false
+        alphanumeric-ids:
+          enabled: true
+      client:
+        config:
+          gym-main:
+            read-timeout: 2000
+            connect-timeout: 1000
 
 #EUREKA CLIENT DISCOVERY CONFIGURATION
 eureka:
@@ -48,6 +60,12 @@ springdoc:
 
 #ACTUATOR CONFIGURATION
 management:
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
   endpoints:
     web:
       exposure:
@@ -59,3 +77,20 @@ token:
     key: thisIsASecretKeyWith64CharactersthisIsASecretKeyWith64Characters
   expiration:
     minutes: 30
+
+#CIRCUIT BREAKER
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+    instances:
+      gym-report:
+        minimumNumberOfCalls: 6
+        failureRateThreshold: 50
+        ignore-exceptions:
+          - feign.FeignException
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 5s
