@@ -3,12 +3,12 @@ package com.example.springcore.service.impl;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWithTraineesDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
-import com.example.springcore.feign.GymReportsClient;
 import com.example.springcore.mapper.TrainerWithTraineesMapper;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TrainerRepository;
+import com.example.springcore.service.GymReportsService;
 import com.example.springcore.service.ProfileService;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingTypeService;
@@ -33,7 +33,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerWithTraineesMapper trainerWithTraineesMapper;
 
-    private final GymReportsClient gymReportsClient;
+    private final GymReportsService gymReportsService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -126,7 +126,7 @@ public class TrainerServiceImpl implements TrainerService {
     public Integer getTrainerSummaryByUsername(String username, int year, int monthValue, String authHeader) {
         log.info("Entry TrainerServiceImpl getTrainerSummaryByUsername method");
 
-        Integer trainerSummaryByUsername = gymReportsClient.getTrainerSummaryByUsername(username, year, monthValue, authHeader);
+        Integer trainerSummaryByUsername = gymReportsService.getTrainerSummaryByUsername(username, year, monthValue, authHeader);
 
         log.info("Entry TrainerServiceImpl getTrainerSummaryByUsername method");
         return trainerSummaryByUsername;

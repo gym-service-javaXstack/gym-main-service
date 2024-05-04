@@ -1,14 +1,13 @@
 package com.example.springcore;
 
+import com.example.springcore.config.FeignConfig;
+import com.example.springcore.config.JmsConfig;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.cloud.openfeign.FeignAutoConfiguration;
+import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@EnableFeignClients
-@ImportAutoConfiguration({FeignAutoConfiguration.class})
+@Import({FeignConfig.class, JmsConfig.class})
 public class SpringCoreApplication {
 
     public static void main(String[] args) {

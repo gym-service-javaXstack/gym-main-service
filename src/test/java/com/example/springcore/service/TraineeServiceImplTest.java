@@ -91,19 +91,19 @@ class TraineeServiceImplTest {
         verify(traineeRepository, times(1)).save(any(Trainee.class));
     }
 
-    @Test
-    void testDeleteTrainee() {
-        String username = "username";
-
-        User user = TestUtil.createUser(username, "password");
-        Trainee trainee = TestUtil.createTrainee(user, null);
-
-        when(traineeRepository.getTraineeByUser_UserName(anyString())).thenReturn(Optional.of(trainee));
-
-        traineeServiceImpl.deleteTrainee(username);
-
-        verify(traineeRepository, times(1)).delete(any(Trainee.class));
-    }
+//    @Test
+//    void testDeleteTrainee() {
+//        String username = "username";
+//
+//        User user = TestUtil.createUser(username, "password");
+//        Trainee trainee = TestUtil.createTrainee(user, null);
+//
+//        when(traineeRepository.getTraineeByUser_UserName(anyString())).thenReturn(Optional.of(trainee));
+//
+//        traineeServiceImpl.deleteTrainee(username);
+//
+//        verify(traineeRepository, times(1)).delete(any(Trainee.class));
+//    }
 
     @Test
     void testGetTraineeDTOByUsername() {

@@ -3,13 +3,13 @@ package com.example.springcore.service.impl;
 import com.example.springcore.dto.ActionType;
 import com.example.springcore.dto.TrainerWorkLoadRequest;
 import com.example.springcore.dto.TrainingDTO;
-import com.example.springcore.feign.GymReportsClient;
 import com.example.springcore.mapper.TraineeTrainingMapper;
 import com.example.springcore.mapper.TrainerTrainingMapper;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
 import com.example.springcore.repository.TrainingRepository;
+import com.example.springcore.service.GymReportsService;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingService;
@@ -33,10 +33,11 @@ public class TrainingServiceImpl implements TrainingService {
     private final TraineeService traineeService;
     private final TrainerService trainerService;
 
-    private final GymReportsClient gymReportsClient;
+    private final GymReportsService gymReportsService;
 
     private final TrainerTrainingMapper trainerTrainingMapper;
     private final TraineeTrainingMapper traineeTrainingMapper;
+
 
     @Override
     @Transactional
@@ -60,12 +61,12 @@ public class TrainingServiceImpl implements TrainingService {
 
         trainingRepository.save(training);
         TrainerWorkLoadRequest trainerWorkLoadRequest = mapFromTrainingDTOAndTrainer(trainingDTO, trainerByUsername);
-        log.info("TrainerWorkLoadRequest {}", trainerWorkLoadRequest);
-        gymReportsClient.processTrainerWorkload(trainerWorkLoadRequest);
+        log.info("TrainingServiceImpl createTraining TrainerWorkLoadRequest {}", trainerWorkLoadRequest);
+        gymReportsService.processTrainerWorkload(trainerWorkLoadRequest);
         log.info("Exit TrainingServiceImpl createTraining: {}", training);
     }
 
-    private TrainerWorkLoadRequest mapFromTrainingDTOAndTrainer(TrainingDTO trainingDTO, Trainer trainer){
+    private TrainerWorkLoadRequest mapFromTrainingDTOAndTrainer(TrainingDTO trainingDTO, Trainer trainer) {
         return TrainerWorkLoadRequest
                 .builder()
                 .actionType(ActionType.ADD)

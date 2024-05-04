@@ -7,7 +7,6 @@ import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWorkLoadRequest;
 import com.example.springcore.dto.UserCredentialsDTO;
-import com.example.springcore.feign.GymReportsClient;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
 import com.example.springcore.mapper.TrainerMapper;
 import com.example.springcore.model.Trainee;
@@ -15,6 +14,7 @@ import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TraineeRepository;
+import com.example.springcore.service.GymReportsService;
 import com.example.springcore.service.ProfileService;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainerService;
@@ -41,7 +41,7 @@ public class TraineeServiceImpl implements TraineeService {
     private final TrainerMapper trainerMapper;
     private final TraineeWithTrainersMapper traineeWithTrainersMapper;
 
-    private final GymReportsClient gymReportsClient;
+    private final GymReportsService gymReportsService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -124,7 +124,7 @@ public class TraineeServiceImpl implements TraineeService {
                             .build())
                     .toList();
 
-            gymReportsClient.processListTrainerWorkload(trainerWorkLoadRequests);
+            trainerWorkLoadRequests.forEach(gymReportsService::processTrainerWorkload);
         }
     }
 
