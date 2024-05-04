@@ -14,11 +14,14 @@ public class CorrelationIdLoggerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String correlationId = request.getHeader(TRACE_HEADER);
+        String correlationId = MDC.get("correlationId");
         if (correlationId == null || correlationId.isEmpty()) {
-            correlationId = UUID.randomUUID().toString();
+            correlationId = request.getHeader(TRACE_HEADER);
+            if (correlationId == null || correlationId.isEmpty()) {
+                correlationId = UUID.randomUUID().toString();
+            }
+            MDC.put("correlationId", String.format("Correlation Id: [%s]", correlationId));
         }
-        MDC.put("correlationId", String.format("Correlation Id: [%s]", correlationId));
         return true;
     }
 

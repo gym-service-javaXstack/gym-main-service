@@ -9,7 +9,6 @@ import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
 import io.micrometer.core.annotation.Timed;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

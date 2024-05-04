@@ -11,7 +11,7 @@ public class ServiceException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final ErrorType errorType = ErrorType.FATAL_ERROR;
+    private ErrorType errorType = ErrorType.FATAL_ERROR;
 
     public ServiceException(String message) {
         super(message);
