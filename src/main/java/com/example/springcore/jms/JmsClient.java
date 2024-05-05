@@ -17,16 +17,18 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class JmsClient implements GymReportsService {
+    private static final String CORRELATION_ID_KEY = "correlationId";
 
     private final JmsTemplate jmsTemplate;
+
 
     @Override
     @CircuitBreaker(name = "gym-report")
     public ResponseEntity<Void> processTrainerWorkload(TrainerWorkLoadRequest request) {
         log.info("Entry JmsClient processTrainerWorkload");
-        jmsTemplate.convertAndSend("trainerWorkloadQueue", request, message -> {
+        jmsTemplate.convertAndSend("${application.messaging.queue.workload}", request, message -> {
             message.setStringProperty("_type", "TrainerWorkLoadRequest");
-            message.setStringProperty("X_Trace_Id", MDC.get("correlationId"));
+            message.setStringProperty("X_Trace_Id", MDC.get(CORRELATION_ID_KEY));
             return message;
         });
         log.info("Exit JmsClient processTrainerWorkload");
@@ -37,28 +39,25 @@ public class JmsClient implements GymReportsService {
     @CircuitBreaker(name = "gym-report")
     public Integer getTrainerSummaryByUsername(String username, int year, int monthValue, String authHeader) {
         log.info("Entry JmsClient getTrainerSummaryByUsername");
-        jmsTemplate.send("trainerSummaryRequestQueue", session -> {
+        jmsTemplate.send("${application.messaging.queue.trainer-summary.request}", session -> {
             Message message = session.createMessage();
             message.setStringProperty("username", username);
             message.setIntProperty("year", year);
             message.setIntProperty("monthValue", monthValue);
             message.setStringProperty("authHeader", authHeader);
 
-            message.setStringProperty("X_Trace_Id", MDC.get("correlationId"));
-            message.setJMSCorrelationID(MDC.get("correlationId"));
+            message.setStringProperty("X_Trace_Id", MDC.get(CORRELATION_ID_KEY));
+            message.setJMSCorrelationID(MDC.get(CORRELATION_ID_KEY));
             return message;
         });
 
-
         Integer response = (Integer) jmsTemplate
                 .receiveSelectedAndConvert(
-                        "trainerSummaryResponseQueue",
-                        String.format("JMSCorrelationID = '%s'", MDC.get("correlationId"))
+                        "${application.messaging.queue.trainer-summary.response}",
+                        String.format("JMSCorrelationID = '%s'", MDC.get(CORRELATION_ID_KEY))
                 );
 
         log.info("Exit JmsClient getTrainerSummaryByUsername");
-        return response != null
-                ? response
-                : 100000;
+        return response;
     }
 }
