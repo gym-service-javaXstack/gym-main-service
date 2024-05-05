@@ -7,6 +7,7 @@ import jakarta.jms.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
@@ -21,12 +22,20 @@ public class JmsClient implements GymReportsService {
 
     private final JmsTemplate jmsTemplate;
 
+    @Value(value = "${application.messaging.queue.workload}")
+    private String trainerWorkLoadQueue;
+
+    @Value(value = "${application.messaging.queue.trainer-summary.request}")
+    private String trainerSummaryRequestQueue;
+
+    @Value(value = "${application.messaging.queue.trainer-summary.response}")
+    private String trainerSummaryResponseQueue;
 
     @Override
     @CircuitBreaker(name = "gym-report")
     public ResponseEntity<Void> processTrainerWorkload(TrainerWorkLoadRequest request) {
         log.info("Entry JmsClient processTrainerWorkload");
-        jmsTemplate.convertAndSend("${application.messaging.queue.workload}", request, message -> {
+        jmsTemplate.convertAndSend(trainerWorkLoadQueue, request, message -> {
             message.setStringProperty("_type", "TrainerWorkLoadRequest");
             message.setStringProperty("X_Trace_Id", MDC.get(CORRELATION_ID_KEY));
             return message;
@@ -39,7 +48,7 @@ public class JmsClient implements GymReportsService {
     @CircuitBreaker(name = "gym-report")
     public Integer getTrainerSummaryByUsername(String username, int year, int monthValue, String authHeader) {
         log.info("Entry JmsClient getTrainerSummaryByUsername");
-        jmsTemplate.send("${application.messaging.queue.trainer-summary.request}", session -> {
+        jmsTemplate.send(trainerSummaryRequestQueue, session -> {
             Message message = session.createMessage();
             message.setStringProperty("username", username);
             message.setIntProperty("year", year);
@@ -53,7 +62,7 @@ public class JmsClient implements GymReportsService {
 
         Integer response = (Integer) jmsTemplate
                 .receiveSelectedAndConvert(
-                        "${application.messaging.queue.trainer-summary.response}",
+                        trainerSummaryResponseQueue,
                         String.format("JMSCorrelationID = '%s'", MDC.get(CORRELATION_ID_KEY))
                 );
 

@@ -49,6 +49,7 @@ spring:
   artemis:
     user: activemq
     password: activemq
+    broker-url: tcp://${ACTIVEMQ_URI:localhost}:61616
   jms:
     template:
       receive-timeout: 10000
