@@ -17,4 +17,11 @@ public interface TrainerService {
     Trainer getTrainerByUserName(String userName);
 
     List<Trainer> getTrainersByUsernameList(List<String> trainerUsernames);
+
+    Integer getTrainerSummaryByUsername(
+            String username,
+            int year,
+            int monthValue,
+            String authHeader
+    );
 }

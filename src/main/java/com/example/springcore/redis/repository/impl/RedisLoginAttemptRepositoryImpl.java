@@ -12,11 +12,9 @@ import java.util.Optional;
 public class RedisLoginAttemptRepositoryImpl implements RedisLoginAttemptRepository {
     private static final String LOGIN_ATTEMPT_MODEL_KEY = "RedisLoginAttemptModel";
 
-    private RedisTemplate<String, Object> redisTemplate;
-    private HashOperations<String, String, RedisLoginAttemptModel> loginAttemptHashOperations;
+    private final HashOperations<String, String, RedisLoginAttemptModel> loginAttemptHashOperations;
 
     public RedisLoginAttemptRepositoryImpl(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
         this.loginAttemptHashOperations = redisTemplate.opsForHash();
     }
 

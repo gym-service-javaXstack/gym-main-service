@@ -218,6 +218,61 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/v1/trainer/workload:
+    get:
+      security:
+        - JwtBearerAuth: [ ]
+      tags:
+        - Trainer service
+      summary: Get trainer workload summary from gym-report service
+      operationId: getTrainerSummaryByUsername
+      parameters:
+        - name: username
+          in: query
+          required: true
+          example: John.Trainer
+          schema:
+            type: string
+        - name: year
+          in: query
+          required: true
+          example: 2022
+          schema:
+            type: integer
+        - name: month
+          in: query
+          required: true
+          example: 1
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+        '400':
+          description: Specified wrong fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Trainer with this username not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/v1/trainee:
     get:
       security:

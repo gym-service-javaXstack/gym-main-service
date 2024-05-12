@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -21,6 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -31,7 +33,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtTokenService jwtTokenService;
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final UserDetailsService userDetailsService;
-
 
     @Override
     protected void doFilterInternal(
@@ -50,12 +51,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // Cutting prefix and get username from token
         var jwt = authHeader.substring(BEARER_PREFIX.length());
         try {
+            // Set correlationId in MDC
+            String correlationId = request.getHeader("X-Trace-Id");
+            if (correlationId == null || correlationId.isEmpty()) {
+                correlationId = UUID.randomUUID().toString();
+            }
+            MDC.put("correlationId", String.format("Correlation Id: [%s]", correlationId));
+
             var username = jwtTokenService.extractUsername(jwt);
 
             if (StringUtils.isNotEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                // If toke valid, then auth the user
+                // If token valid, then auth the user
                 if (jwtTokenService.validateToken(jwt, userDetails)) {
                     SecurityContext context = SecurityContextHolder.createEmptyContext();
 

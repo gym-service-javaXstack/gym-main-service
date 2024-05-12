@@ -8,6 +8,7 @@ import com.example.springcore.model.Trainer;
 import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TrainerRepository;
+import com.example.springcore.service.GymReportsService;
 import com.example.springcore.service.ProfileService;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingTypeService;
@@ -31,6 +32,8 @@ public class TrainerServiceImpl implements TrainerService {
     private final TrainingTypeService trainingTypeService;
 
     private final TrainerWithTraineesMapper trainerWithTraineesMapper;
+
+    private final GymReportsService gymReportsService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -117,5 +120,15 @@ public class TrainerServiceImpl implements TrainerService {
 
         log.info("Exit TrainerServiceImpl getTrainersByUsernameList method: {}", trainerUsernames);
         return trainersByUsernameList;
+    }
+
+    @Override
+    public Integer getTrainerSummaryByUsername(String username, int year, int monthValue, String authHeader) {
+        log.info("Entry TrainerServiceImpl getTrainerSummaryByUsername method");
+
+        Integer trainerSummaryByUsername = gymReportsService.getTrainerSummaryByUsername(username, year, monthValue, authHeader);
+
+        log.info("Entry TrainerServiceImpl getTrainerSummaryByUsername method");
+        return trainerSummaryByUsername;
     }
 }

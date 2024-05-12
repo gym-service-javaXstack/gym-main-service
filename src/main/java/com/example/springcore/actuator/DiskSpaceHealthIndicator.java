@@ -8,7 +8,6 @@ import java.io.File;
 
 @Component
 public class DiskSpaceHealthIndicator implements HealthIndicator {
-
     private static final File FILE = new File(".");
 
     @Override
