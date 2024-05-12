@@ -8,6 +8,7 @@ import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class TestUtil {
@@ -50,6 +51,7 @@ public class TestUtil {
                 .address("address")
                 .dateOfBirth(LocalDate.now())
                 .trainers(new HashSet<>()) // инициализация списка тренеров
+                .trainings(new ArrayList<>()) // инициализация списка тренировок
                 .build();
         if (trainer != null) {
             trainee.addTrainer(trainer);

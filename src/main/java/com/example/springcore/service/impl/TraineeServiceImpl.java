@@ -1,16 +1,20 @@
 package com.example.springcore.service.impl;
 
+import com.example.springcore.dto.ActionType;
 import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.dto.TraineeWithTrainerListToUpdateRequestDTO;
 import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
+import com.example.springcore.dto.TrainerWorkLoadRequest;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
 import com.example.springcore.mapper.TrainerMapper;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
+import com.example.springcore.model.Training;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TraineeRepository;
+import com.example.springcore.service.GymReportsService;
 import com.example.springcore.service.ProfileService;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainerService;
@@ -21,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
@@ -35,6 +40,8 @@ public class TraineeServiceImpl implements TraineeService {
 
     private final TrainerMapper trainerMapper;
     private final TraineeWithTrainersMapper traineeWithTrainersMapper;
+
+    private final GymReportsService gymReportsService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -94,7 +101,31 @@ public class TraineeServiceImpl implements TraineeService {
                 .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + username + " not found"));
 
         traineeRepository.delete(trainee);
+
+        processGymReportRequest(trainee);
         log.info("Exit TraineeServiceImpl deleteTrainee trainee: {}", username);
+    }
+
+    private void processGymReportRequest(Trainee trainee) {
+        List<Training> trainings = trainee.getTrainings();
+
+        if (!trainings.isEmpty()) {
+            List<TrainerWorkLoadRequest> trainerWorkLoadRequests = trainings
+                    .stream()
+                    .filter(training -> training.getTrainingDate().isAfter(LocalDate.now()))
+                    .map(training -> TrainerWorkLoadRequest.builder()
+                            .username(training.getTrainer().getUser().getUserName())
+                            .firstName(training.getTrainer().getUser().getFirstName())
+                            .lastName(training.getTrainer().getUser().getLastName())
+                            .isActive(training.getTrainer().getUser().getIsActive())
+                            .trainingDate(training.getTrainingDate())
+                            .trainingDuration(training.getDuration())
+                            .actionType(ActionType.DELETE)
+                            .build())
+                    .toList();
+
+            trainerWorkLoadRequests.forEach(gymReportsService::processTrainerWorkload);
+        }
     }
 
     @Override

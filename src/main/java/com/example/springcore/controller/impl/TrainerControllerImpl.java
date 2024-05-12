@@ -55,4 +55,10 @@ public class TrainerControllerImpl implements TrainerApi {
         userService.changeUserStatus(username, isActive);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<Integer> getTrainerSummaryByUsername(String username, int year, int monthValue, String authHeader) {
+        Integer trainerSummaryByUsername = trainerService.getTrainerSummaryByUsername(username, year, monthValue, authHeader);
+        return new ResponseEntity<>(trainerSummaryByUsername, HttpStatus.OK);
+    }
 }

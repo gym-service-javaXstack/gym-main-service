@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,4 +28,7 @@ public interface AuthenticationApi {
 
     @PostMapping("/logout")
     ResponseEntity<Void> logout(@NotNull @RequestHeader("Authorization") String authHeader);
+
+    @GetMapping("/token")
+    ResponseEntity<Void> validateToken();
 }

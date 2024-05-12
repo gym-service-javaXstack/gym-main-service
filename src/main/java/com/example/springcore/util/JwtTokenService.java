@@ -76,7 +76,7 @@ public class JwtTokenService {
                 .map(redisTokenModel -> username.equals(userDetails.getUsername()) && !isTokenExpired(token) && token.equals(redisTokenModel.getToken()))
                 .orElse(false);
 
-        log.info("Exit JwtTokenService validateToken method");
+        log.info("Exit JwtTokenService validateToken method, isValid = {}", isValid);
         return isValid;
     }
 

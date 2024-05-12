@@ -12,11 +12,9 @@ import java.util.Optional;
 public class RedisTokenRepositoryImpl implements RedisTokenRepository {
     private static final String REDIS_TOKEN_MODEL_KEY = "RedisTokenModel";
 
-    private RedisTemplate<String, Object> redisTemplate;
-    private HashOperations<String, String, RedisTokenModel> tokenHashOperations;
+    private final HashOperations<String, String, RedisTokenModel> tokenHashOperations;
 
     public RedisTokenRepositoryImpl(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
         this.tokenHashOperations = redisTemplate.opsForHash();
     }
 

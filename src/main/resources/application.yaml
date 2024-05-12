@@ -1,12 +1,29 @@
+#SELECT COMMUNICATION BETWEEN SERVICES
+INTERACTION_BETWEEN_MICROSERVICES: feign
+application:
+  #MESSAGING QUEUE'S CONFIGURATION
+  messaging:
+    queue:
+      workload: trainerWorkloadQueue
+      trainer-summary:
+        response: trainerSummaryResponseQueue
+        request: trainerSummaryRequestQueue
+
+#SERVICE PORT 0=RANDOM PORT
+server:
+  port: 0
+
 #LOGGING CONFIGURATION
 logging:
   level:
     root: INFO
   file:
-    path: ./logs/gym-service/default
+    path: ${user.dir}/logs/gym-service/default
 
 #SPRING CONFIGURATION
 spring:
+  application:
+    name: gym-main
   jpa:
     properties:
       hibernate:
@@ -22,11 +39,42 @@ spring:
     driver-class-name: org.postgresql.Driver
   data:
     redis:
-      url: redis://redis:6379
+      host: ${REDIS_HOST:localhost}
+      port: 6379
       username: default
       password: redis
       repositories:
         enabled: false
+  #ACTIVEMQ
+  artemis:
+    user: activemq
+    password: activemq
+    broker-url: tcp://${ACTIVEMQ_URI:localhost}:61616
+  jms:
+    template:
+      receive-timeout: 10000
+
+
+  #CIRCUIT BREAKER
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: false
+        alphanumeric-ids:
+          enabled: true
+      client:
+        config:
+          gym-main:
+            read-timeout: 2000
+            connect-timeout: 1000
+
+#EUREKA CLIENT DISCOVERY CONFIGURATION
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_URI:localhost}:8761/eureka
+  instance:
+    preferIpAddress: true
 
 #SPRING-DOC SWAGGER CONFIGURATION
 springdoc:
@@ -36,6 +84,12 @@ springdoc:
 
 #ACTUATOR CONFIGURATION
 management:
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
   endpoints:
     web:
       exposure:
@@ -47,3 +101,20 @@ token:
     key: thisIsASecretKeyWith64CharactersthisIsASecretKeyWith64Characters
   expiration:
     minutes: 30
+
+#CIRCUIT BREAKER
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+    instances:
+      gym-report:
+        minimumNumberOfCalls: 6
+        failureRateThreshold: 50
+        ignore-exceptions:
+          - feign.FeignException
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 5s

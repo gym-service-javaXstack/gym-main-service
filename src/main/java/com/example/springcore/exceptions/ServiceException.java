@@ -13,7 +13,7 @@ public class ServiceException extends RuntimeException {
 
     private ErrorType errorType = ErrorType.FATAL_ERROR;
 
-    ServiceException(String message) {
+    public ServiceException(String message) {
         super(message);
     }
 }
