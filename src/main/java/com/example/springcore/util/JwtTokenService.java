@@ -3,7 +3,7 @@ package com.example.springcore.util;
 
 import com.example.springcore.redis.model.RedisTokenModel;
 import com.example.springcore.redis.service.RedisTokenService;
-import com.example.springcore.service.impl.UserServiceImpl;
+import com.example.springcore.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -34,11 +34,11 @@ public class JwtTokenService {
     private int tokenExpirationMinutes;
 
     private final RedisTokenService redisTokenService;
-    private final UserServiceImpl userServiceImpl;
+    private final UserRepository userRepository;
 
     public String generateToken(UserDetails userDetails) {
         log.info("Enter JwtTokenService generateToken method: {}", userDetails);
-        HashMap<String, Object> claims = userServiceImpl.getUserByUserName(userDetails.getUsername())
+        HashMap<String, Object> claims = userRepository.getUserByUserName(userDetails.getUsername())
                 .map(user -> {
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("id", user.getId());
