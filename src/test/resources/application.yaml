@@ -1,3 +1,13 @@
+#SELECT COMMUNICATION BETWEEN SERVICES
+INTERACTION_BETWEEN_MICROSERVICES: activemq
+application:
+  #MESSAGING QUEUE'S CONFIGURATION
+  messaging:
+    queue:
+      workload: trainerWorkloadQueue
+      trainer-summary:
+        response: trainerSummaryResponseQueue
+        request: trainerSummaryRequestQueue
 spring:
   sql:
     init:

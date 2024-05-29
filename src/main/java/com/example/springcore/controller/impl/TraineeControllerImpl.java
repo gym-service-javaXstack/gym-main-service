@@ -7,6 +7,7 @@ import com.example.springcore.dto.TraineeWithTrainersDTO;
 import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
+import com.example.springcore.mapper.TraineeTrainingMapper;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
@@ -28,6 +29,8 @@ public class TraineeControllerImpl implements TraineeApi {
     private final TraineeService traineeService;
     private final TrainingService trainingService;
     private final UserService userService;
+
+    private final TraineeTrainingMapper traineeTrainingMapper;
 
     @Timed(value = "create.trainee.time", description = "Time taken to create trainee")
     @Override
@@ -73,7 +76,16 @@ public class TraineeControllerImpl implements TraineeApi {
             String trainerUsername,
             String trainingTypeName
     ) {
-        List<TrainingDTO> traineeTrainingsByCriteria = trainingService.getTraineeTrainingsByCriteria(username, fromDate, toDate, trainerUsername, trainingTypeName);
+        List<TrainingDTO> traineeTrainingsByCriteria = traineeTrainingMapper.
+                fromTrainingListToTraineeTrainingListDTO(
+                        trainingService.getTraineeTrainingsByCriteria(
+                                username,
+                                fromDate,
+                                toDate,
+                                trainerUsername,
+                                trainingTypeName
+                        )
+                );
         return new ResponseEntity<>(traineeTrainingsByCriteria, HttpStatus.OK);
     }
 

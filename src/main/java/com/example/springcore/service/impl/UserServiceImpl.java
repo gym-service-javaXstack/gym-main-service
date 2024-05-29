@@ -17,6 +17,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    public static final String OLD_PASSWORD_IS_INCORRECT = "Old password is incorrect";
+    public static final String USER_NOT_FOUND = "User not found: ";
+
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
@@ -40,12 +43,7 @@ public class UserServiceImpl implements UserService {
     public void changeUserPassword(String username, String oldPassword, String newPassword) {
         log.info("Enter UserServiceImpl changeUserPassword username");
 
-        User user = userRepository.getUserByUserName(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
-
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new IllegalArgumentException("Old password is incorrect");
-        }
+        User user = checkPassword(username, oldPassword);
 
         user.setPassword(passwordEncoder.encode(newPassword));
 
@@ -58,16 +56,20 @@ public class UserServiceImpl implements UserService {
         );
     }
 
+    private User checkPassword(String username, String oldPassword) {
+        User user = userRepository.getUserByUserName(username)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + username));
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new IllegalArgumentException(OLD_PASSWORD_IS_INCORRECT);
+        }
+        return user;
+    }
+
     @Override
     @Transactional(readOnly = true)
     public List<String> getUsernameByFirstNameAndLastName(String firstName, String lastName) {
         String baseUserName = firstName + "." + lastName;
         return userRepository.getUserNamesByFirstNameAndLastName(baseUserName);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<User> getUserByUserName(String username) {
-        return userRepository.getUserByUserName(username);
     }
 }

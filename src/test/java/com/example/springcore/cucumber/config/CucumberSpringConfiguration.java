@@ -19,7 +19,7 @@ public class CucumberSpringConfiguration {
             .withCommand("redis-server --requirepass redis");
 
     protected static final GenericContainer<?> ACTIVE_MQ = new GenericContainer<>("apache/activemq-artemis:latest")
-            .withExposedPorts(61616)
+            .withExposedPorts(61616, 8161)
             .withEnv("ARTEMIS_USER", "activemq")
             .withEnv("ARTEMIS_PASSWORD", "activemq");
 

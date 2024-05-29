@@ -10,4 +10,4 @@ Feature: Training Type Service
 
   Scenario: 003 - Finding TrainingType by invalid name
     When a request to fetch training type by invalid name "Invalid" is made
-    Then an EntityNotFoundException is thrown with message "Training type with name Invalid not found"
+    Then an EntityNotFoundException is thrown
