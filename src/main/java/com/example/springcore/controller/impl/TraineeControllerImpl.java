@@ -8,6 +8,8 @@ import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TraineeTrainingMapper;
+import com.example.springcore.mapper.TraineeWithTrainersMapper;
+import com.example.springcore.mapper.TrainerMapper;
 import com.example.springcore.service.TraineeService;
 import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
@@ -30,7 +32,9 @@ public class TraineeControllerImpl implements TraineeApi {
     private final TrainingService trainingService;
     private final UserService userService;
 
+    private final TraineeWithTrainersMapper traineeWithTrainersMapper;
     private final TraineeTrainingMapper traineeTrainingMapper;
+    private final TrainerMapper trainerMapper;
 
     @Timed(value = "create.trainee.time", description = "Time taken to create trainee")
     @Override
@@ -40,13 +44,13 @@ public class TraineeControllerImpl implements TraineeApi {
 
     @Override
     public ResponseEntity<TraineeWithTrainersDTO> getTraineeByUsername(@RequestParam(value = "username") String username) {
-        TraineeWithTrainersDTO traineeByUsername = traineeService.getTraineeDTOByUsername(username);
+        TraineeWithTrainersDTO traineeByUsername = traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(traineeService.getTraineeByUsername(username));
         return new ResponseEntity<>(traineeByUsername, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<TraineeWithTrainersDTO> updateTrainee(TraineeDTO traineeDTO) {
-        TraineeWithTrainersDTO traineeWithTrainersDTO = traineeService.updateTrainee(traineeDTO);
+        TraineeWithTrainersDTO traineeWithTrainersDTO = traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(traineeService.updateTrainee(traineeDTO));
         return new ResponseEntity<>(traineeWithTrainersDTO, HttpStatus.OK);
     }
 
@@ -58,13 +62,13 @@ public class TraineeControllerImpl implements TraineeApi {
 
     @Override
     public ResponseEntity<List<TrainerDTO>> getTrainersNotAssignedToTrainee(String username) {
-        List<TrainerDTO> trainersNotAssignedToTrainee = traineeService.getTrainersNotAssignedToTrainee(username);
+        List<TrainerDTO> trainersNotAssignedToTrainee = trainerMapper.fromTrainerListToTrainerListDTO(traineeService.getTrainersNotAssignedToTrainee(username));
         return new ResponseEntity<>(trainersNotAssignedToTrainee, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<TrainerDTO>> updateTraineesTrainersList(TraineeWithTrainerListToUpdateRequestDTO traineeWithTrainerListToUpdateRequestDTO) {
-        List<TrainerDTO> trainerDTOS = traineeService.updateTrainersListInTraineeByUsername(traineeWithTrainerListToUpdateRequestDTO);
+        List<TrainerDTO> trainerDTOS = trainerMapper.fromTrainerListToTrainerListDTO(traineeService.updateTrainersListInTraineeByUsername(traineeWithTrainerListToUpdateRequestDTO));
         return new ResponseEntity<>(trainerDTOS, HttpStatus.OK);
     }
 

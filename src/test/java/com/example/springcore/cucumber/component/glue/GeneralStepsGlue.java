@@ -13,7 +13,7 @@ public class GeneralStepsGlue {
     @Autowired
     private CucumberComponentContext context;
 
-    //Errors
+    //Exceptions
     @Then("an EntityNotFoundException is thrown")
     public void an_EntityNotFoundException_is_thrown() {
         assertNotNull(context.getException());
