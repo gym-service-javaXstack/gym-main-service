@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GeneralStepsGlue {
+public class GeneralComponentStepsGlue {
 
     @Autowired
     private CucumberComponentContext context;
