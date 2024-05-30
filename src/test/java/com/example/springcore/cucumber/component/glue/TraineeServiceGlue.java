@@ -2,6 +2,7 @@ package com.example.springcore.cucumber.component.glue;
 
 import com.example.springcore.cucumber.component.CucumberComponentContext;
 import com.example.springcore.dto.TraineeDTO;
+import com.example.springcore.dto.TraineeWithTrainerListToUpdateRequestDTO;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.service.TraineeService;
@@ -12,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -155,5 +157,39 @@ public class TraineeServiceGlue {
         assertNotNull(context.getException());
         assertTrue(context.getException() instanceof EntityNotFoundException);
         assertEquals("Trainee with username " + username + " not found", context.getException().getMessage());
+    }
+
+    // 009 - Update trainers list for a trainee
+    @Given("the trainee with username {string} exists")
+    public void the_trainee_with_username_exists(String username) {
+        context.setTraineeUsername(username);
+    }
+
+    @When("update the trainers list for {string} with trainers {string}")
+    public void update_the_trainers_list_for_with_trainers(String username, String trainerUsernames) {
+        List<String> trainerUsernamesList = Arrays.asList(trainerUsernames.split(", "));
+        TraineeWithTrainerListToUpdateRequestDTO requestDTO = new TraineeWithTrainerListToUpdateRequestDTO();
+        context.setUsernames(trainerUsernamesList);
+        requestDTO.setUserName(username);
+
+        List<TraineeWithTrainerListToUpdateRequestDTO.TrainerUsername> list = trainerUsernamesList.stream()
+                .map(TraineeWithTrainerListToUpdateRequestDTO.TrainerUsername::new).toList();
+
+        requestDTO.setTrainers(list);
+        List<Trainer> trainers = traineeService.updateTrainersListInTraineeByUsername(requestDTO);
+        context.setTrainers(trainers);
+
+    }
+
+    @Then("the trainers list for {string} should be updated with {string}")
+    public void the_trainers_list_for_should_be_updated_with(String username, String expectedTrainerUsernames) {
+        List<String> trainerUsernamesList = Arrays.asList(expectedTrainerUsernames.split(", "));
+        Trainee traineeByUsername = traineeService.getTraineeByUsername(username);
+        List<String> list = traineeByUsername.getTrainers().stream()
+                .map(trainer -> trainer.getUser().getUserName())
+                .toList();
+
+        assertEquals(trainerUsernamesList.size(), list.size());
+        assertTrue(list.containsAll(trainerUsernamesList));
     }
 }

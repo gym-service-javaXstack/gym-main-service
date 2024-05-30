@@ -53,3 +53,12 @@ Feature: Trainee Service
     Given a non-existent trainee with username "Non.Exist"
     When a request to delete the trainee with username "Non.Exist" is made
     Then an EntityNotFoundException is thrown
+
+  Scenario Outline: 009 - Update trainers list for a trainee
+    Given an existing trainee with username "<username>"
+    When update the trainers list for "<username>" with trainers "<listToUpdate>"
+    Then the trainers list for "<username>" should be updated with "<listToUpdate>"
+
+    Examples:
+      | username       | listToUpdate                |
+      | Update.Trainee | John.Trainer, Alice.Trainer |

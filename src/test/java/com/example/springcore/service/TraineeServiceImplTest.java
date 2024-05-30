@@ -156,8 +156,7 @@ class TraineeServiceImplTest {
         TraineeWithTrainerListToUpdateRequestDTO request = new TraineeWithTrainerListToUpdateRequestDTO();
         request.setUserName(traineeUsername);
 
-        TraineeWithTrainerListToUpdateRequestDTO.TrainerUsername trainerUsernameDTO = new TraineeWithTrainerListToUpdateRequestDTO.TrainerUsername();
-        trainerUsernameDTO.setUserName(trainerUsername);
+        TraineeWithTrainerListToUpdateRequestDTO.TrainerUsername trainerUsernameDTO = new TraineeWithTrainerListToUpdateRequestDTO.TrainerUsername(trainerUsername);
         request.setTrainers(Collections.singletonList(trainerUsernameDTO));
 
         when(traineeRepository.getTraineeByUser_UserName(eq(traineeUsername))).thenReturn(Optional.of(trainee));
