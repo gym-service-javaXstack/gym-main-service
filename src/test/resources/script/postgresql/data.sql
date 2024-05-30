@@ -8,8 +8,10 @@ INSERT INTO usr (id, first_name, last_name, user_name, password, is_active) VALU
 INSERT INTO usr (id, first_name, last_name, user_name, password, is_active) VALUES (4, 'Bob', 'Trainee', 'Bob.Trainee', '$2a$12$8PlfeAePckMQHKunPL7A/uGTObIZ7/1TNE19yTonkf/edsOaifNaq', true);
 INSERT INTO usr (id, first_name, last_name, user_name, password, is_active) VALUES (5, 'Bob', 'Trainee', 'Bob.Trainee1', '$2a$12$8PlfeAePckMQHKunPL7A/uGTObIZ7/1TNE19yTonkf/edsOaifNaq', true);
 INSERT INTO usr (id, first_name, last_name, user_name, password, is_active) VALUES (6, 'John', 'Trainer', 'John.Trainer1', '$2a$12$8PlfeAePckMQHKunPL7A/uGTObIZ7/1TNE19yTonkf/edsOaifNaq', true);
+INSERT INTO usr (id, first_name, last_name, user_name, password, is_active) VALUES (7, 'Delete', 'Trainee', 'Delete.Trainee', '$2a$12$8PlfeAePckMQHKunPL7A/uGTObIZ7/1TNE19yTonkf/edsOaifNaq', true);
 
-ALTER SEQUENCE usr_seq RESTART WITH 56;
+
+ALTER SEQUENCE usr_seq RESTART WITH 57;
 
 -- Creating trainers
 INSERT INTO trainer (id, specialization_id, usr_id) VALUES (1, 1, 1);
@@ -22,8 +24,9 @@ ALTER SEQUENCE trainer_seq RESTART WITH 55;
 INSERT INTO trainee (id, address, date_of_birth, usr_id) VALUES (1, '123 Main St', '2000-01-01', 2);
 INSERT INTO trainee (id, address, date_of_birth, usr_id) VALUES (2, '456 Elm St', '2000-02-02', 4);
 INSERT INTO trainee (id, address, date_of_birth, usr_id) VALUES (3, '257 Apple St', '1990-02-02', 5);
+INSERT INTO trainee (id, address, date_of_birth, usr_id) VALUES (4, '257 Apple St', '1990-02-02', 7);
 
-ALTER SEQUENCE trainee_seq RESTART WITH 54;
+ALTER SEQUENCE trainee_seq RESTART WITH 55;
 
 -- Link relations
 INSERT INTO trainee_trainer (trainee_id, trainer_id) VALUES (1, 1);

@@ -143,17 +143,6 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void testGetTrainersNotAssignedToTrainee() {
-        String username = "testUsername";
-
-        when(traineeRepository.getTrainersNotAssignedToTrainee(anyString())).thenReturn(Collections.emptyList());
-
-        traineeServiceImpl.getTrainersNotAssignedToTrainee(username);
-
-        verify(traineeRepository, times(1)).getTrainersNotAssignedToTrainee(username);
-    }
-
-    @Test
     void testUpdateTrainersListInTraineeByUsername() {
         String traineeUsername = "traineeUsername";
         String trainerUsername = "trainerUsername";

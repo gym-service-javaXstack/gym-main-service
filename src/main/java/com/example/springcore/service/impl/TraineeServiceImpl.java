@@ -176,7 +176,10 @@ public class TraineeServiceImpl implements TraineeService {
     public List<Trainer> getTrainersNotAssignedToTrainee(String username) {
         log.info("Enter TraineeServiceImpl getTrainersNotAssignedToTrainee method: {}", username);
 
-        List<Trainer> trainersNotAssignedToTrainee = traineeRepository.getTrainersNotAssignedToTrainee(username);
+        Trainee trainee = traineeRepository.getTraineeByUser_UserName(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + username + " not found"));
+
+        List<Trainer> trainersNotAssignedToTrainee = traineeRepository.getTrainersNotAssignedToTrainee(trainee.getUser().getUserName());
 
         log.info("Exit TraineeServiceImpl getTrainersNotAssignedToTrainee method: {}", username);
         return trainersNotAssignedToTrainee;

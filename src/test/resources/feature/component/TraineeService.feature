@@ -33,3 +33,23 @@ Feature: Trainee Service
     Given a non-existent trainee with username "Non.Exist"
     When a request to get the non-existent trainee is made
     Then an EntityNotFoundException is thrown
+
+  Scenario: 005 - Get trainers not assigned to an existing trainee
+    Given an existing trainee with username "Jane.Trainee"
+    When a request to get trainers not assigned to the trainee is made
+    Then a list of trainers not assigned to "Jane.Trainee" should be returned
+
+  Scenario: 006 - Get trainers not assigned to a non-existent trainee
+    Given a non-existent trainee with username "Non.Exist"
+    When a request to get trainers not assigned to the non-existent trainee is made
+    Then an EntityNotFoundException is thrown
+
+  Scenario: 007 - Successfully delete an existing trainee
+    Given an existing trainee with username "Delete.Trainee"
+    When a request to delete the trainee with username "Delete.Trainee" is made
+    Then the trainee with username "Delete.Trainee" should be deleted
+
+  Scenario: 008 - Fail to delete a non-existing trainee
+    Given a non-existent trainee with username "Non.Exist"
+    When a request to delete the trainee with username "Non.Exist" is made
+    Then an EntityNotFoundException is thrown
