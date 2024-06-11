@@ -3,12 +3,9 @@ package com.example.springcore.service.impl;
 import com.example.springcore.dto.ActionType;
 import com.example.springcore.dto.TraineeDTO;
 import com.example.springcore.dto.TraineeWithTrainerListToUpdateRequestDTO;
-import com.example.springcore.dto.TraineeWithTrainersDTO;
-import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWorkLoadRequest;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
-import com.example.springcore.mapper.TrainerMapper;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
@@ -38,7 +35,6 @@ public class TraineeServiceImpl implements TraineeService {
     private final TrainerService trainerService;
     private final ProfileService profileService;
 
-    private final TrainerMapper trainerMapper;
     private final TraineeWithTrainersMapper traineeWithTrainersMapper;
 
     private final GymReportsService gymReportsService;
@@ -78,7 +74,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     @Transactional
-    public TraineeWithTrainersDTO updateTrainee(TraineeDTO traineeDTO) {
+    public Trainee updateTrainee(TraineeDTO traineeDTO) {
         log.info("Enter TraineeServiceImpl updateTrainee");
 
         Trainee trainee = traineeRepository.getTraineeByUser_UserName(traineeDTO.getUserName())
@@ -89,7 +85,7 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee updated = traineeRepository.save(trainee);
 
         log.info("Exit TraineeServiceImpl updateTrainee trainee: {}", updated.getUser().getId());
-        return traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(updated);
+        return updated;
     }
 
     @Override
@@ -130,18 +126,6 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     @Transactional(readOnly = true)
-    public TraineeWithTrainersDTO getTraineeDTOByUsername(String username) {
-        log.info("Enter TraineeServiceImpl  getTraineeDTOByUsername trainee: {}", username);
-
-        Trainee trainee = traineeRepository.getTraineeByUser_UserName(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + username + " not found"));
-
-        log.info("Exit TraineeServiceImpl getTraineeDTOByUsername trainee: {}", username);
-        return traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(trainee);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Trainee getTraineeByUsername(String username) {
         log.info("Enter TraineeServiceImpl  getTraineeDTOByUsername trainee: {}", username);
 
@@ -167,7 +151,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     @Transactional
-    public List<TrainerDTO> updateTrainersListInTraineeByUsername(TraineeWithTrainerListToUpdateRequestDTO traineeWithTrainerListToUpdateRequestDTO) {
+    public List<Trainer> updateTrainersListInTraineeByUsername(TraineeWithTrainerListToUpdateRequestDTO traineeWithTrainerListToUpdateRequestDTO) {
         log.info("Enter TraineeServiceImpl updateTrainersListInTraineeByUsername");
 
         Trainee trainee = traineeRepository.getTraineeByUser_UserName(traineeWithTrainerListToUpdateRequestDTO.getUserName())
@@ -184,17 +168,20 @@ public class TraineeServiceImpl implements TraineeService {
         traineeRepository.save(trainee);
 
         log.info("Exit TraineeServiceImpl updateTrainersListInTraineeByUsername: {}", trainee.getId());
-        return trainerMapper.fromTrainerListToTrainerListDTO(trainersByUsernameList);
+        return trainersByUsernameList;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<TrainerDTO> getTrainersNotAssignedToTrainee(String username) {
+    public List<Trainer> getTrainersNotAssignedToTrainee(String username) {
         log.info("Enter TraineeServiceImpl getTrainersNotAssignedToTrainee method: {}", username);
 
-        List<Trainer> trainersNotAssignedToTrainee = traineeRepository.getTrainersNotAssignedToTrainee(username);
+        Trainee trainee = traineeRepository.getTraineeByUser_UserName(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee with username " + username + " not found"));
+
+        List<Trainer> trainersNotAssignedToTrainee = traineeRepository.getTrainersNotAssignedToTrainee(trainee.getUser().getUserName());
 
         log.info("Exit TraineeServiceImpl getTrainersNotAssignedToTrainee method: {}", username);
-        return trainerMapper.fromTrainerListToTrainerListDTO(trainersNotAssignedToTrainee);
+        return trainersNotAssignedToTrainee;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.springcore.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
@@ -15,8 +16,8 @@ public class TraineeWithTrainerListToUpdateRequestDTO {
     private List<TrainerUsername> trainers;
 
     @Data
+    @AllArgsConstructor
     public static class TrainerUsername {
-
         @NotEmpty
         private String userName;
     }

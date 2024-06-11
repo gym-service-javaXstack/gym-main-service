@@ -50,8 +50,8 @@ public class TestUtil {
                 .user(user)
                 .address("address")
                 .dateOfBirth(LocalDate.now())
-                .trainers(new HashSet<>()) // инициализация списка тренеров
-                .trainings(new ArrayList<>()) // инициализация списка тренировок
+                .trainers(new HashSet<>())
+                .trainings(new ArrayList<>())
                 .build();
         if (trainer != null) {
             trainee.addTrainer(trainer);

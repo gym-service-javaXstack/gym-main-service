@@ -1,7 +1,5 @@
 package com.example.springcore.service.impl;
 
-import com.example.springcore.dto.TrainingTypeDTO;
-import com.example.springcore.mapper.TrainingTypeMapper;
 import com.example.springcore.model.TrainingType;
 import com.example.springcore.repository.TrainingTypeRepository;
 import com.example.springcore.service.TrainingTypeService;
@@ -18,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrainingTypeServiceImpl implements TrainingTypeService {
     private final TrainingTypeRepository trainingTypeRepository;
-    private final TrainingTypeMapper trainingTypeMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -35,10 +32,10 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TrainingTypeDTO> getTrainingTypeList() {
+    public List<TrainingType> getTrainingTypeList() {
         log.info("Entry TrainingTypeServiceImpl getTrainingTypeList");
 
-        List<TrainingTypeDTO> trainingTypeDTOS = trainingTypeMapper.fromTrainingTypeListToTrainingTypeDTOList(trainingTypeRepository.findAll());
+        List<TrainingType> trainingTypeDTOS = trainingTypeRepository.findAll();
 
         log.info("Exit TrainingTypeServiceImpl getTrainingTypeList");
         return trainingTypeDTOS;

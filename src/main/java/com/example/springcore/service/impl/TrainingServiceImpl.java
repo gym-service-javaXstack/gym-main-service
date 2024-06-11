@@ -3,8 +3,6 @@ package com.example.springcore.service.impl;
 import com.example.springcore.dto.ActionType;
 import com.example.springcore.dto.TrainerWorkLoadRequest;
 import com.example.springcore.dto.TrainingDTO;
-import com.example.springcore.mapper.TraineeTrainingMapper;
-import com.example.springcore.mapper.TrainerTrainingMapper;
 import com.example.springcore.model.Trainee;
 import com.example.springcore.model.Trainer;
 import com.example.springcore.model.Training;
@@ -34,9 +32,6 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainerService trainerService;
 
     private final GymReportsService gymReportsService;
-
-    private final TrainerTrainingMapper trainerTrainingMapper;
-    private final TraineeTrainingMapper traineeTrainingMapper;
 
 
     @Override
@@ -81,7 +76,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TrainingDTO> getTrainerTrainingsByCriteria(
+    public List<Training> getTrainerTrainingsByCriteria(
             String username,
             LocalDate fromDate,
             LocalDate toDate,
@@ -89,8 +84,7 @@ public class TrainingServiceImpl implements TrainingService {
     ) {
         log.info("Enter TrainerServiceImpl getTrainerTrainingsByCriteria method: {}", username);
 
-
-        return trainerTrainingMapper.fromTrainingListToTrainerTrainingListDTO(trainingRepository.findAll(
+        return trainingRepository.findAll(
                 (root, query, cb) -> {
                     root.fetch("trainer", JoinType.LEFT).fetch("user", JoinType.LEFT);
                     root.fetch("trainee", JoinType.LEFT).fetch("user", JoinType.LEFT);
@@ -109,12 +103,12 @@ public class TrainingServiceImpl implements TrainingService {
                     log.info("Exit TrainerServiceImpl getTrainerTrainingsByCriteria method: {}", username);
                     return cb.and(predicates.toArray(new Predicate[0]));
                 }
-        ));
+        );
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<TrainingDTO> getTraineeTrainingsByCriteria(
+    public List<Training> getTraineeTrainingsByCriteria(
             String username,
             LocalDate fromDate,
             LocalDate toDate,
@@ -123,7 +117,7 @@ public class TrainingServiceImpl implements TrainingService {
     ) {
         log.info("Enter TraineeServiceImpl getTraineeTrainingsByCriteria method: {}", username);
 
-        return traineeTrainingMapper.fromTrainingListToTraineeTrainingListDTO(trainingRepository.findAll(
+        return trainingRepository.findAll(
                 (root, query, cb) -> {
                     root.fetch("trainee", JoinType.LEFT).fetch("user", JoinType.LEFT);
                     root.fetch("trainer", JoinType.LEFT).fetch("user", JoinType.LEFT);
@@ -145,6 +139,6 @@ public class TrainingServiceImpl implements TrainingService {
                     log.info("Exit TraineeServiceImpl getTraineeTrainingsByCriteria method: {}", username);
                     return cb.and(predicates.toArray(new Predicate[0]));
                 }
-        ));
+        );
     }
 }

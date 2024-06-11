@@ -1,7 +1,5 @@
 package com.example.springcore.service;
 
-import com.example.springcore.dto.TrainingTypeDTO;
-import com.example.springcore.mapper.TrainingTypeMapper;
 import com.example.springcore.model.TrainingType;
 import com.example.springcore.repository.TrainingTypeRepository;
 import com.example.springcore.service.impl.TrainingTypeServiceImpl;
@@ -27,22 +25,15 @@ class TrainingTypeServiceImplTest {
     @Mock
     private TrainingTypeRepository trainingTypeRepository;
 
-    @Mock
-    private TrainingTypeMapper trainingTypeMapper;
-
     @InjectMocks
     private TrainingTypeServiceImpl trainingTypeServiceImpl;
 
     private TrainingType testTrainingType;
-    private TrainingTypeDTO testTrainingTypeDTO;
 
     @BeforeEach
     public void setUp() {
         testTrainingType = new TrainingType();
         testTrainingType.setTrainingTypeName("testTrainingType");
-
-        testTrainingTypeDTO = new TrainingTypeDTO();
-        testTrainingTypeDTO.setTrainingTypeName("testTrainingType");
     }
 
     @Test
@@ -61,14 +52,10 @@ class TrainingTypeServiceImplTest {
         List<TrainingType> trainingTypes = Arrays.asList(testTrainingType);
         when(trainingTypeRepository.findAll()).thenReturn(trainingTypes);
 
-        List<TrainingTypeDTO> trainingTypeDTOs = Arrays.asList(testTrainingTypeDTO);
-        when(trainingTypeMapper.fromTrainingTypeListToTrainingTypeDTOList(trainingTypes)).thenReturn(trainingTypeDTOs);
+        List<TrainingType> result = trainingTypeServiceImpl.getTrainingTypeList();
 
-        List<TrainingTypeDTO> result = trainingTypeServiceImpl.getTrainingTypeList();
-
-        assertThat(result, is(trainingTypeDTOs));
+        assertThat(result, is(trainingTypes));
 
         verify(trainingTypeRepository, times(1)).findAll();
-        verify(trainingTypeMapper, times(1)).fromTrainingTypeListToTrainingTypeDTOList(trainingTypes);
     }
 }

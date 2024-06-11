@@ -1,7 +1,6 @@
 package com.example.springcore.service.impl;
 
 import com.example.springcore.dto.TrainerDTO;
-import com.example.springcore.dto.TrainerWithTraineesDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TrainerWithTraineesMapper;
 import com.example.springcore.model.Trainer;
@@ -70,7 +69,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     @Transactional
-    public TrainerWithTraineesDTO updateTrainer(TrainerDTO trainerDTO) {
+    public Trainer updateTrainer(TrainerDTO trainerDTO) {
         log.info("Enter TrainerServiceImpl updateTrainer trainer: {}", trainerDTO.getUserName());
 
         Trainer trainer = trainerRepository.getTrainerByUser_UserName(trainerDTO.getUserName())
@@ -84,19 +83,7 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer updated = trainerRepository.save(trainer);
 
         log.info("Exit TrainerServiceImpl updateTrainer trainer: {}", trainerDTO.getUserName());
-        return trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(updated);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public TrainerWithTraineesDTO getTrainerDTOByUserName(String userName) {
-        log.info("Enter TrainerServiceImpl getTrainerDTOByUserName trainer: {}", userName);
-
-        Trainer trainer = trainerRepository.getTrainerByUser_UserName(userName)
-                .orElseThrow(() -> new EntityNotFoundException("Trainer with userName " + userName + " not found"));
-
-        log.info("Exit TrainerServiceImpl getTrainerDTOByUserName trainer: {}", userName);
-        return trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(trainer);
+        return updated;
     }
 
     @Override
