@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -26,6 +27,9 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserServiceImpl userServiceImpl;
@@ -53,13 +57,17 @@ class UserServiceImplTest {
     @Test
     void testChangeUserPassword() {
         when(userRepository.getUserByUserName("testUser")).thenReturn(Optional.of(testUser));
+        when(passwordEncoder.matches("testPassword", testUser.getPassword())).thenReturn(true);
+        when(passwordEncoder.encode("newPassword")).thenReturn("encodedNewPassword");
 
         userServiceImpl.changeUserPassword("testUser", "testPassword", "newPassword");
 
-        assertThat(testUser.getPassword(), is("newPassword"));
+        assertThat(testUser.getPassword(), is("encodedNewPassword"));
+
 
         verify(userRepository, times(1)).getUserByUserName("testUser");
         verify(userRepository, times(1)).save(testUser);
+        verify(passwordEncoder, times(1)).encode("newPassword");
     }
 
     @Test
@@ -74,9 +82,11 @@ class UserServiceImplTest {
     @Test
     void testChangeUserPasswordThrowsIllegalArgumentException() {
         when(userRepository.getUserByUserName("testUser")).thenReturn(Optional.of(testUser));
+        when(passwordEncoder.matches("wrongPassword", testUser.getPassword())).thenReturn(false);
 
         assertThrows(IllegalArgumentException.class, () -> userServiceImpl.changeUserPassword("testUser", "wrongPassword", "newPassword"));
 
         verify(userRepository, times(1)).getUserByUserName("testUser");
+        verify(passwordEncoder, times(1)).matches("wrongPassword", testUser.getPassword());
     }
 }

@@ -1,7 +1,6 @@
 package com.example.springcore.service;
 
 import com.example.springcore.dto.TrainerDTO;
-import com.example.springcore.dto.TrainerWithTraineesDTO;
 import com.example.springcore.dto.TrainingTypeDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TrainerWithTraineesMapper;
@@ -101,30 +100,11 @@ class TrainerServiceImplTest {
         when(trainingTypeServiceImpl.findTrainingTypeByName(anyString())).thenReturn(new TrainingType());
         when(trainerRepository.save(any(Trainer.class))).thenReturn(trainer);
 
-        TrainerWithTraineesDTO trainerWithTraineesDTO = new TrainerWithTraineesDTO();
-        when(trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(any(Trainer.class))).thenReturn(trainerWithTraineesDTO);
 
-        TrainerWithTraineesDTO result = trainerServiceImpl.updateTrainer(trainerDTO);
+        Trainer result = trainerServiceImpl.updateTrainer(trainerDTO);
 
         assertNotNull(result);
         verify(trainerRepository).save(any(Trainer.class));
-    }
-
-    @Test
-    void testGetTrainerDTOByUserName() {
-        String userName = "username";
-
-        Trainer trainer = new Trainer();
-        trainer.setUser(new User());
-
-        when(trainerRepository.getTrainerByUser_UserName(anyString())).thenReturn(Optional.of(trainer));
-
-        TrainerWithTraineesDTO trainerWithTraineesDTO = new TrainerWithTraineesDTO();
-        when(trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(any(Trainer.class))).thenReturn(trainerWithTraineesDTO);
-
-        TrainerWithTraineesDTO result = trainerServiceImpl.getTrainerDTOByUserName(userName);
-
-        assertNotNull(result);
     }
 
     @Test

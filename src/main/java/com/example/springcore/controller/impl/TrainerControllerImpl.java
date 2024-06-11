@@ -5,6 +5,8 @@ import com.example.springcore.dto.TrainerDTO;
 import com.example.springcore.dto.TrainerWithTraineesDTO;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
+import com.example.springcore.mapper.TrainerTrainingMapper;
+import com.example.springcore.mapper.TrainerWithTraineesMapper;
 import com.example.springcore.service.TrainerService;
 import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.UserService;
@@ -26,6 +28,9 @@ public class TrainerControllerImpl implements TrainerApi {
     private final TrainingService trainingService;
     private final UserService userService;
 
+    private final TrainerTrainingMapper trainerTrainingMapper;
+    private final TrainerWithTraineesMapper trainerWithTraineesMapper;
+
     @Timed(value = "create.trainer.time", description = "Time taken to create trainer")
     @Override
     public ResponseEntity<UserCredentialsDTO> createTrainer(TrainerDTO trainerDTO) {
@@ -34,19 +39,27 @@ public class TrainerControllerImpl implements TrainerApi {
 
     @Override
     public ResponseEntity<TrainerWithTraineesDTO> getTrainerByUserName(String username) {
-        TrainerWithTraineesDTO trainerByUsername = trainerService.getTrainerDTOByUserName(username);
+        TrainerWithTraineesDTO trainerByUsername = trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(trainerService.getTrainerByUserName(username));
         return new ResponseEntity<>(trainerByUsername, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<TrainerWithTraineesDTO> updateTrainer(TrainerDTO trainerDTO) {
-        TrainerWithTraineesDTO trainerWithTraineesDTO = trainerService.updateTrainer(trainerDTO);
+        TrainerWithTraineesDTO trainerWithTraineesDTO = trainerWithTraineesMapper.fromTrainerToTrainerWithTraineesDTO(trainerService.updateTrainer(trainerDTO));
         return new ResponseEntity<>(trainerWithTraineesDTO, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<TrainingDTO>> getTrainerTrainingsByCriteria(String username, LocalDate fromDate, LocalDate toDate, String traineeUsername) {
-        List<TrainingDTO> trainerTrainingsByCriteria = trainingService.getTrainerTrainingsByCriteria(username, fromDate, toDate, traineeUsername);
+        List<TrainingDTO> trainerTrainingsByCriteria = trainerTrainingMapper.
+                fromTrainingListToTrainerTrainingListDTO(
+                        trainingService.getTrainerTrainingsByCriteria(
+                                username,
+                                fromDate,
+                                toDate,
+                                traineeUsername
+                        )
+                );
         return new ResponseEntity<>(trainerTrainingsByCriteria, HttpStatus.OK);
     }
 

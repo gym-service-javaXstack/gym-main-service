@@ -3,6 +3,7 @@ package com.example.springcore.controller.impl;
 import com.example.springcore.controller.TrainingApi;
 import com.example.springcore.dto.TrainingDTO;
 import com.example.springcore.dto.TrainingTypeDTO;
+import com.example.springcore.mapper.TrainingTypeMapper;
 import com.example.springcore.service.TrainingService;
 import com.example.springcore.service.TrainingTypeService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 public class TrainingControllerImpl implements TrainingApi {
     private final TrainingService trainingService;
     private final TrainingTypeService trainingTypeService;
+    private final TrainingTypeMapper trainingTypeMapper;
 
     @Override
     public ResponseEntity<Void> createTraining(TrainingDTO trainingDTO) {
@@ -28,7 +30,7 @@ public class TrainingControllerImpl implements TrainingApi {
 
     @Override
     public ResponseEntity<List<TrainingTypeDTO>> getTrainingTypeList() {
-        List<TrainingTypeDTO> trainingTypeList = trainingTypeService.getTrainingTypeList();
+        List<TrainingTypeDTO> trainingTypeList = trainingTypeMapper.fromTrainingTypeListToTrainingTypeDTOList(trainingTypeService.getTrainingTypeList());
         return new ResponseEntity<>(trainingTypeList, HttpStatus.OK);
     }
 }

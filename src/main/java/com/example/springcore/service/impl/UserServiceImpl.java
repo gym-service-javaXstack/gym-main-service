@@ -6,54 +6,64 @@ import com.example.springcore.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    public static final String OLD_PASSWORD_IS_INCORRECT = "Old password is incorrect";
+    public static final String USER_NOT_FOUND = "User not found: ";
+
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
-    public void changeUserStatus(String userName, boolean isActive) {
-        log.info("Enter UserServiceImpl changeUserStatus userName: {}, status: {}", userName, isActive);
+    public void changeUserStatus(String username, boolean isActive) {
+        log.info("Enter UserServiceImpl changeUserStatus username: {}, status: {}", username, isActive);
 
-        Optional<User> userByUsername = userRepository.getUserByUserName(userName);
+        Optional<User> userByUsername = userRepository.getUserByUserName(username);
         userByUsername.ifPresent(user -> {
                     user.setIsActive(isActive);
                     userRepository.save(user);
                 }
         );
-        log.info("Exit UserServiceImpl changeUserStatus userName: {}, status: {}", userName, isActive);
+        log.info("Exit UserServiceImpl changeUserStatus username: {}, status: {}", username, isActive);
     }
 
     @Override
     @Transactional
-    public void changeUserPassword(String userName, String oldPassword, String newPassword) {
-        log.info("Enter UserServiceImpl changeUserPassword userName");
+    public void changeUserPassword(String username, String oldPassword, String newPassword) {
+        log.info("Enter UserServiceImpl changeUserPassword username");
 
-        User user = userRepository.getUserByUserName(userName)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + userName));
+        User user = checkPassword(username, oldPassword);
 
-        if (!Objects.equals(user.getPassword(), oldPassword)) {
-            throw new IllegalArgumentException("Old password is incorrect");
-        }
-
-        user.setPassword(newPassword);
+        user.setPassword(passwordEncoder.encode(newPassword));
 
         userRepository.save(user);
 
-        log.info("Exit UserServiceImpl changeUserPassword userName: {}, oldPassword: {}, newPassword: {}",
-                userName,
+        log.info("Exit UserServiceImpl changeUserPassword username: {}, oldPassword: {}, newPassword: {}",
+                username,
                 oldPassword,
                 newPassword
         );
+    }
+
+    private User checkPassword(String username, String oldPassword) {
+        User user = userRepository.getUserByUserName(username)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + username));
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new IllegalArgumentException(OLD_PASSWORD_IS_INCORRECT);
+        }
+        return user;
     }
 
     @Override
@@ -61,11 +71,5 @@ public class UserServiceImpl implements UserService {
     public List<String> getUsernameByFirstNameAndLastName(String firstName, String lastName) {
         String baseUserName = firstName + "." + lastName;
         return userRepository.getUserNamesByFirstNameAndLastName(baseUserName);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<User> getUserByUserName(String username) {
-        return userRepository.getUserByUserName(username);
     }
 }

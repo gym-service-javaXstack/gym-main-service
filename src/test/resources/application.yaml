@@ -1,0 +1,37 @@
+#SELECT COMMUNICATION BETWEEN SERVICES
+INTERACTION_BETWEEN_MICROSERVICES: activemq
+application:
+  #MESSAGING QUEUE'S CONFIGURATION
+  messaging:
+    queue:
+      workload: trainerWorkloadQueue
+      trainer-summary:
+        response: trainerSummaryResponseQueue
+        request: trainerSummaryRequestQueue
+spring:
+  sql:
+    init:
+      data-locations: classpath:/script/postgresql/data.sql
+      mode: always # This setting tells Spring Boot to execute SQL scripts every time the application starts, regardless of whether tables exist or not.
+  jpa:
+    defer-datasource-initialization: true # This is useful when you need to execute data.sql after creating tables using schema.sql or Hibernate.ddl
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: create-drop
+        format_sql: true
+        use_sql_comments: true
+        show_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: default
+      password: redis
+
+#JWT
+token:
+  signing:
+    key: thisIsASecretKeyWith64CharactersthisIsASecretKeyWith64Characters
+  expiration:
+    minutes: 30

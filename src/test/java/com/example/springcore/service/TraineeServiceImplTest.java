@@ -1,15 +1,19 @@
 package com.example.springcore.service;
 
 import com.example.springcore.dto.TraineeDTO;
-import com.example.springcore.dto.TraineeWithTrainersDTO;
+import com.example.springcore.dto.TraineeWithTrainerListToUpdateRequestDTO;
 import com.example.springcore.dto.UserCredentialsDTO;
 import com.example.springcore.mapper.TraineeWithTrainersMapper;
 import com.example.springcore.model.Trainee;
+import com.example.springcore.model.Trainer;
+import com.example.springcore.model.Training;
+import com.example.springcore.model.TrainingType;
 import com.example.springcore.model.User;
 import com.example.springcore.repository.TraineeRepository;
 import com.example.springcore.service.impl.ProfileServiceImpl;
 import com.example.springcore.service.impl.TraineeServiceImpl;
 import com.example.springcore.service.util.TestUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,12 +21,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,10 +48,16 @@ class TraineeServiceImplTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
+    private GymReportsService gymReportsService;
+
+    @Mock
     private TraineeWithTrainersMapper traineeWithTrainersMapper;
 
     @InjectMocks
     private TraineeServiceImpl traineeServiceImpl;
+
+    @Mock
+    private TrainerService trainerService;
 
     @Test
     void testCreateTrainee() {
@@ -82,10 +96,7 @@ class TraineeServiceImplTest {
         when(traineeRepository.getTraineeByUser_UserName(anyString())).thenReturn(Optional.of(trainee));
         when(traineeRepository.save(any(Trainee.class))).thenReturn(trainee);
 
-        TraineeWithTrainersDTO traineeWithTrainersDTO = new TraineeWithTrainersDTO();
-        when(traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(any(Trainee.class))).thenReturn(traineeWithTrainersDTO);
-
-        TraineeWithTrainersDTO result = traineeServiceImpl.updateTrainee(traineeDTO);
+        Trainee result = traineeServiceImpl.updateTrainee(traineeDTO);
 
         assertNotNull(result);
         verify(traineeRepository, times(1)).save(any(Trainee.class));
@@ -93,33 +104,27 @@ class TraineeServiceImplTest {
 
     @Test
     void testDeleteTrainee() {
-        String username = "username";
+        String traineeUsername = "traineeUsername";
+        String trainerUsername = "trainerUsername";
 
-        User user = TestUtil.createUser(username, "password");
-        Trainee trainee = TestUtil.createTrainee(user, null);
+        TrainingType trainingType = TestUtil.createTrainingType("test");
 
+        User traineeUser = TestUtil.createUser(traineeUsername, "password");
+        Trainee trainee = TestUtil.createTrainee(traineeUser, null);
+
+        User trainerUser = TestUtil.createUser(trainerUsername, "password");
+        Trainer trainer = TestUtil.createTrainer(trainerUser, trainingType);
+
+        Training training = TestUtil.createTraining(trainee, trainer, trainingType);
+
+        List<Training> trainings = Collections.singletonList(training);
+
+        trainee.setTrainings(trainings);
         when(traineeRepository.getTraineeByUser_UserName(anyString())).thenReturn(Optional.of(trainee));
 
-        traineeServiceImpl.deleteTrainee(username);
+        traineeServiceImpl.deleteTrainee(traineeUsername);
 
         verify(traineeRepository, times(1)).delete(any(Trainee.class));
-    }
-
-    @Test
-    void testGetTraineeDTOByUsername() {
-        String username = "username";
-
-        User user = TestUtil.createUser(username, "password");
-        Trainee trainee = TestUtil.createTrainee(user, null);
-
-        when(traineeRepository.getTraineeByUser_UserName(anyString())).thenReturn(Optional.of(trainee));
-
-        TraineeWithTrainersDTO traineeWithTrainersDTO = new TraineeWithTrainersDTO();
-        when(traineeWithTrainersMapper.fromTraineeToTraineeWithTrainersDTO(any(Trainee.class))).thenReturn(traineeWithTrainersDTO);
-
-        TraineeWithTrainersDTO result = traineeServiceImpl.getTraineeDTOByUsername(username);
-
-        assertNotNull(result);
     }
 
     @Test
@@ -135,5 +140,35 @@ class TraineeServiceImplTest {
 
         assertNotNull(result);
         assertEquals(trainee, result);
+    }
+
+    @Test
+    void testUpdateTrainersListInTraineeByUsername() {
+        String traineeUsername = "traineeUsername";
+        String trainerUsername = "trainerUsername";
+
+        User traineeUser = TestUtil.createUser(traineeUsername, "password");
+        Trainee trainee = TestUtil.createTrainee(traineeUser, null);
+
+        User trainerUser = TestUtil.createUser(trainerUsername, "password");
+        Trainer trainer = TestUtil.createTrainer(trainerUser, null);
+
+        TraineeWithTrainerListToUpdateRequestDTO request = new TraineeWithTrainerListToUpdateRequestDTO();
+        request.setUserName(traineeUsername);
+
+        TraineeWithTrainerListToUpdateRequestDTO.TrainerUsername trainerUsernameDTO = new TraineeWithTrainerListToUpdateRequestDTO.TrainerUsername(trainerUsername);
+        request.setTrainers(Collections.singletonList(trainerUsernameDTO));
+
+        when(traineeRepository.getTraineeByUser_UserName(eq(traineeUsername))).thenReturn(Optional.of(trainee));
+        when(trainerService.getTrainersByUsernameList(anyList())).thenReturn(Collections.singletonList(trainer));
+
+        traineeServiceImpl.updateTrainersListInTraineeByUsername(request);
+
+        verify(traineeRepository, times(1)).getTraineeByUser_UserName(traineeUsername);
+        verify(trainerService, times(1)).getTrainersByUsernameList(anyList());
+        verify(traineeRepository, times(1)).save(any(Trainee.class));
+
+        assertEquals(1, trainee.getTrainers().size());
+        Assertions.assertTrue(trainee.getTrainers().contains(trainer));
     }
 }
