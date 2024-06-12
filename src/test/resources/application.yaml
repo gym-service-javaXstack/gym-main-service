@@ -35,3 +35,8 @@ token:
     key: thisIsASecretKeyWith64CharactersthisIsASecretKeyWith64Characters
   expiration:
     minutes: 30
+
+#EUREKA DISCOVERY CLIENT CONFIGURATION
+eureka:
+  client:
+    enabled: false
